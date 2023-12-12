@@ -145,14 +145,13 @@ static void setting_password_modiy_confirm_click(lv_event_t *ev)
                         user_data_save(true, true);
                         if (!reset_unit)
                         {
-                                char msg[1024] = {0};
-                                commax_https_server_lobbyphone_change_password(network_data_get()->local_server, "443", "1234", "5678", buffer, msg, 0, 500);
-                                printf("msg is %s\n", msg);
+                                commax_https_server_lobbyphone_change_password(network_data_get()->local_server, "443", "1234", "5678", buffer, NULL, 0, 500);
                         }
                         sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
         }
 }
+
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-2-1 8:51:49
@@ -177,6 +176,7 @@ static lv_obj_t *setting_password_textarea_focused_get(void)
         }
         return textarea;
 }
+
 static void setting_password_text_next_foucued(void)
 {
         lv_obj_t *textarea = NULL;
