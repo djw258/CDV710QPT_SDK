@@ -3,6 +3,7 @@
 #include "layout_intercom_call.h"
 #include "layout_away_count.h"
 #include "tuya_api.h"
+#include "common/commax_websocket.h"
 enum
 {
         monitor_obj_id_other_call_list,
@@ -802,7 +803,7 @@ static void *monitor_unlock_ctrl_task(void *arg)
                         sat_ipcamera_report_shellcmd(network_data_get()->door_device[info->ch].ipaddr, network_data_get()->door_device[info->ch].port, network_data_get()->door_device[info->ch].username, network_data_get()->door_device[info->ch].password, cmd[i], 1000);
                 }
         }
-        else
+        else if (info->ch != MON_CH_LOBBY && info->ch != MON_CH_GUARD)
         {
                 // const char *user = monitor_channel_get_url(ch, false);
                 char *cmd[3] = {
@@ -821,6 +822,11 @@ static void *monitor_unlock_ctrl_task(void *arg)
                         sat_ipcamera_report_shellcmd(network_data_get()->door_device[info->ch].ipaddr, 80, "admiin", network_data_get()->door_device[info->ch].password, cmd[i], 1000);
                 }
         }
+        else if (info->ch == MON_CH_LOBBY)
+        {
+                commax_https_lobbyphone_open_the_door(commax_transport_ip_get(), "29752", 1000);
+        }
+
         pthread_mutex_unlock(&door_lock_mutex);
         return NULL;
 }

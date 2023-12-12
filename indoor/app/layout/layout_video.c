@@ -636,6 +636,7 @@ static void sat_layout_enter(video)
 }
 static void sat_layout_quit(video)
 {
+        standby_timer_restart(true);
         //   sat_linphone_media_thumb_destroy();
         lv_obj_pressed_func = lv_layout_touch_callback;
 

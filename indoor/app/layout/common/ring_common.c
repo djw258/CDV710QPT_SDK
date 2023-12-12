@@ -84,7 +84,6 @@ bool ring_intercom_play(int index, int count)
 ************************************************************/
 bool ring_alarm_play(void)
 {
-        return false;
         sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm/alarm.mp3", 1);
         sat_linphone_audio_play_volume_set(100);
         return true;

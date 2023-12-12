@@ -1,5 +1,5 @@
 #include "layout_define.h"
-
+#include "onvif.h"
 bool frame_display_timeout_check(void);
 static void motion_timer_check_task(lv_timer_t *ptimer);
 static bool layout_close_motion_dectection_callback(void);
@@ -12,9 +12,8 @@ enum
 
 static bool is_motion_snapshot_ing = false;
 static bool is_motion_record_video_ing = false;
-
 static int motion_timeout_sec = 0;
-
+static bool is_monitoring;
 static void layout_close_click(lv_event_t *ev)
 {
     sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -177,7 +176,9 @@ static bool motion_timer_timeout_check(void)
 ************************************************************/
 static void layout_motion_monitor_open(void)
 {
+    is_monitoring = true;
     monitor_channel_set(user_data_get()->motion.select_camera);
+    monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
     monitor_open(true, true);
 }
 
@@ -189,7 +190,8 @@ static void layout_motion_monitor_open(void)
 ***/
 static void layout_motion_restart_motion_detection(void)
 {
-    backlight_enable(false);
+    // backlight_enable(false);
+    is_monitoring = false;
     monitor_close(0x02);
     lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 3000, NULL));
 }
@@ -258,7 +260,7 @@ static bool layout_close_motion_dectection_callback(void)
 
     if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)) && (user_data_get()->motion.saving_fmt == 0))
     {
-        record_video_start(true, REC_MODE_MOTION);
+        record_video_start(false, REC_MODE_MOTION);
         record_jpeg_start(REC_MODE_TUYA_MOTION);
     }
     else
@@ -515,11 +517,36 @@ static void frame_show_param_checktimer(lv_timer_t *ptimer)
     }
 }
 
+static void layout_close_motion_daemon_timer(lv_timer_t *t)
+{
+    if (!is_monitoring)
+    {
+        return;
+    }
+    struct ipcamera_info *ipc_device = NULL;
+    int ch = 0;
+    if (user_data_get()->motion.select_camera >= 8)
+    {
+        ipc_device = network_data_get()->cctv_device;
+        ch = user_data_get()->motion.select_camera - 8;
+    }
+    else
+    {
+        ipc_device = network_data_get()->door_device;
+        ch = user_data_get()->motion.select_camera;
+    }
+    char name[64] = {0};
+    if (ipc_camera_device_name_get(name, ipc_device[ch].ipaddr, ipc_device[ch].port, ipc_device[ch].username, ipc_device[ch].password, ipc_device[ch].auther_flag, 1000) == false)
+    {
+        sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+    }
+}
+
 static void sat_layout_enter(close)
 {
     standby_timer_close();
     backlight_enable(true);
-    backlight_enable(false);
+    // backlight_enable(false);
     close_cancel_btn_create();
     buzzer_call_callback_register(layout_close_buzzer_alarm_trigger_default);
     if (user_data_get()->motion.enable && ((user_data_get()->system_mode & 0x0f) == 0x01) && (monitor_valid_channel_check(user_data_get()->motion.select_camera)))
@@ -547,6 +574,7 @@ static void sat_layout_enter(close)
         {
             lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 1000, NULL));
         }
+        lv_sat_timer_create(layout_close_motion_daemon_timer, 20000, NULL);
     }
     else if ((user_data_get()->display.standby_mode == 1) && (frame_display_timeout_check() == false))
     {

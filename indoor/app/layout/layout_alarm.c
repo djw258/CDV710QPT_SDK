@@ -111,6 +111,7 @@ static void layout_alarm_monitor_open(void)
                                         if (monitor_valid_channel_check(MON_CH_CCTV1 + i))
                                         {
                                                 monitor_channel_set(MON_CH_CCTV1 + i);
+                                                monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
                                                 monitor_open(false, true);
                                         }
                                         break;
@@ -903,6 +904,7 @@ static void sat_layout_enter(alarm)
         }
         buzzer_call_callback_register(layout_alarm_buzzer_alarm_call_callback);
         lv_obj_pressed_func = layout_alarm_touch_callback;
+        lv_obj_pressed_func = lv_layout_touch_callback;
 }
 
 static void sat_layout_quit(alarm)
