@@ -7,7 +7,6 @@
 enum
 {
 	MSG_EVENT_CMD_SD_CHANGE = 0X0000,
-
 	/****************************************************************
 	2022-09-21 author:leo.liu 说明:开始，0：拍照完成
 	*****************************************************************/
@@ -17,23 +16,19 @@ enum
 	2022-09-21 author:leo.liu 说明:arg1:开始录制，0：录制完成
 	*****************************************************************/
 	MSG_EVENT_CMD_RECORD,
-
 	/****************************************************************
 	2022-09-21 author:leo.liu 说明:arg1 1:online,arg2:online num
 										 2:rtsp streadm,arg2:avlid num
 	*****************************************************************/
 	MSG_EVENT_CMD_IPCAMERA,
-
 	/****************************************************************
 	2022-09-21 author:leo.liu 说明:arg1 :0:空闲，1:播放，2:暂停s
 	*****************************************************************/
 	MSG_EVENT_CMD_VIDEO_PLAY_STATE,
-
 	/****************************************************************
 	2022-09-21 author:leo.liu 说明:arg1 :cur,arg2:total
 	*****************************************************************/
 	MSG_EVENT_CMD_VIDEO_PLAY_DURATION,
-
 	/***********************************************
 	** 作者: leo.liu
 	** 日期: 2022-12-28 13:41:34
@@ -43,21 +38,21 @@ enum
 	/***********************************************
 	** 作者: leo.liu
 	** 日期: 2022-12-28 13:41:34
-	** 说明:查询在线发送的事件
-	***********************************************/
-	MSG_EVENT_CMD_SIP_CALL_ONLINE,
-	/***********************************************
-	** 作者: leo.liu
-	** 日期: 2022-12-28 13:41:34
-	** 说明:本机通话状态查询
-	***********************************************/
-	MSG_EVENT_CMD_SIP_CALL_STATUS,
-	/***********************************************
-	** 作者: leo.liu
-	** 日期: 2022-12-28 13:41:34
 	** 说明:视频流状态
 	***********************************************/
-	MSG_EVNET_CMD_VIDEO_STREAM
+	MSG_EVNET_CMD_VIDEO_STREAM,
+	/***********************************************
+	 ** 作者: leo.liu
+	 ** 日期: 2022-12-28 13:41:34
+	 ** 说明:CALL RING
+	 ***********************************************/
+	MSG_EVNET_CMD_CALL_RING,
+	/****************************************************************
+	 2022-09-21 author:leo.liu ring play:arg1:0,start,1:finish
+	*****************************************************************/
+	MSG_EVENT_CMD_AUDIO_RING_PLAY,
+	/*linphone 通话状态*/
+	MSG_EVENT_CMD_LINPHONE_STATE,
 };
 
 typedef struct
@@ -82,8 +77,8 @@ bool sat_mian_task_init(void);
 ** 返回参数说明：
 ***/
 #define sat_layout_create(x) sat_layout_info layout_##x = {   \
-				 .enter = layout_##x##_enter, \
-				 .quit = layout_##x##_quit};
+																 .enter = layout_##x##_enter, \
+																 .quit = layout_##x##_quit};
 
 /***
 ** 日期: 2022-04-25 16:14
@@ -199,13 +194,21 @@ void system_timer_callback_register(void (*callback)(void));
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-12-28 13:42:13
-** 说明: 注册call在线函数注册
+** 说明: 视频流状态注册
 ***********************************************/
-void sip_call_online_func_register(void (*callback)(void));
+void video_stream_status_callback_register(void (*callback)(bool));
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-12-28 13:42:13
 ** 说明: 视频流状态注册
 ***********************************************/
-void video_stream_status_callback_register(void (*callback)(bool));
+void call_ring_event_fun_register(void (*callback)(void));
+/*铃声播放状态*/
+void call_ring_play_status_func_register(void (*callback)(int));
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-12-28 13:42:13
+** 说明: linphone通话状态
+***********************************************/
+void linphone_call_status_event_func_register(void (*callback)(int));
 #endif
