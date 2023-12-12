@@ -1,0 +1,20 @@
+POST / HTTP/1.1
+Authorization: Basic %s
+Content-Type: text/html
+User-Agent: PostmanRuntime/7.29.0
+Accept: */*
+Host: %s
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: %d
+ 
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:ns5="urn:clbs">
+<SOAP-ENV:Body>
+<ns5:setOutOfBandDoorOpen>1</ns5:setOutOfBandDoorOpen>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

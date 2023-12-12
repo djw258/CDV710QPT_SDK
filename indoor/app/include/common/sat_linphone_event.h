@@ -215,7 +215,6 @@ bool sat_linphone_audio_talk_volume_set(int volume);
 ** 日期: 2022-10-19 8:57:42
 ** 说明: 获取一个已经存入的节点
 ***********************************************/
-
 linphone_incomming_info *linphone_incomming_used_node_get(bool is_doorcamera);
 /***********************************************
 ** 作者: leo.liu
