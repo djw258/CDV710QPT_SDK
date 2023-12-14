@@ -13,7 +13,8 @@ enum
 static bool is_motion_snapshot_ing = false;
 static bool is_motion_record_video_ing = false;
 static int motion_timeout_sec = 0;
-static bool is_monitoring;
+static bool is_trigger_motion;
+static lv_timer_t *daemon_timer = NULL;
 static void layout_close_click(lv_event_t *ev)
 {
     sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -166,6 +167,23 @@ static bool motion_timer_timeout_check(void)
     }
     return false;
 }
+/************************************************************
+** 函数说明: 室内机在没有触发移动侦测时，每隔一分钟重新拉流
+** 作者: xiaoxiao
+** 日期：2023-12-12 15:20:54
+** 参数说明:防止门口机等设备死机且在极短时间内由守护线程重新启动（这样室内机无法及时检测到设备是否有重启过，有可能导致室内机设备一直没有重新向门口机等设备重新拉流，导致移动侦测功能异常）
+** 注意事项：
+************************************************************/
+
+static void layout_close_motion_daemon_timer(lv_timer_t *t)
+{
+    SAT_DEBUG("================");
+    if (is_trigger_motion)
+    {
+        return;
+    }
+    sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+}
 
 /************************************************************
 ** 函数说明: 开启移动侦测监控
@@ -176,7 +194,6 @@ static bool motion_timer_timeout_check(void)
 ************************************************************/
 static void layout_motion_monitor_open(void)
 {
-    is_monitoring = true;
     monitor_channel_set(user_data_get()->motion.select_camera);
     monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
     monitor_open(true, true);
@@ -191,7 +208,7 @@ static void layout_motion_monitor_open(void)
 static void layout_motion_restart_motion_detection(void)
 {
     // backlight_enable(false);
-    is_monitoring = false;
+    is_trigger_motion = false;
     monitor_close(0x02);
     lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 3000, NULL));
 }
@@ -248,10 +265,13 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_close_motion_dectection_callback(void)
 {
+    return false;
+
     if (is_motion_snapshot_ing || is_motion_record_video_ing)
     {
         return false;
     }
+    is_trigger_motion = true;
     monitor_obj_timeout_label_display();
     if (user_data_get()->motion.lcd_en == true)
     {
@@ -267,6 +287,7 @@ static bool layout_close_motion_dectection_callback(void)
     {
         record_jpeg_start(REC_MODE_MOTION | REC_MODE_TUYA_MOTION);
     }
+    lv_timer_reset(daemon_timer); // 触发移动侦测，重置移动侦测守护定时器时间（因为有可能在这一段时间内出现其他移动物体的概率更大，且门口机等设备在这一分钟内出故障的概率更小）
     lv_sat_timer_create(motion_obj_timeout_timer, 1000, NULL);
     return true;
 }
@@ -517,31 +538,6 @@ static void frame_show_param_checktimer(lv_timer_t *ptimer)
     }
 }
 
-static void layout_close_motion_daemon_timer(lv_timer_t *t)
-{
-    if (!is_monitoring)
-    {
-        return;
-    }
-    struct ipcamera_info *ipc_device = NULL;
-    int ch = 0;
-    if (user_data_get()->motion.select_camera >= 8)
-    {
-        ipc_device = network_data_get()->cctv_device;
-        ch = user_data_get()->motion.select_camera - 8;
-    }
-    else
-    {
-        ipc_device = network_data_get()->door_device;
-        ch = user_data_get()->motion.select_camera;
-    }
-    char name[64] = {0};
-    if (ipc_camera_device_name_get(name, ipc_device[ch].ipaddr, ipc_device[ch].port, ipc_device[ch].username, ipc_device[ch].password, ipc_device[ch].auther_flag, 1000) == false)
-    {
-        sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-    }
-}
-
 static void sat_layout_enter(close)
 {
     standby_timer_close();
@@ -554,6 +550,10 @@ static void sat_layout_enter(close)
         motion_timeout_sec = 10;
         is_motion_snapshot_ing = false;
         is_motion_record_video_ing = false;
+        is_trigger_motion = false;
+
+        daemon_timer = lv_sat_timer_create(layout_close_motion_daemon_timer, 60000, NULL);
+
         user_linphone_call_streams_running_receive_register(layout_motion_streams_running_register_callback);
         /*记录注册*/
         record_state_callback_register(layout_motion_video_state_callback);
@@ -574,7 +574,6 @@ static void sat_layout_enter(close)
         {
             lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 1000, NULL));
         }
-        lv_sat_timer_create(layout_close_motion_daemon_timer, 20000, NULL);
     }
     else if ((user_data_get()->display.standby_mode == 1) && (frame_display_timeout_check() == false))
     {

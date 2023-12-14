@@ -1784,7 +1784,7 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t *ev)
                         monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
                 }
         }
-        else if (is_channel_ipc_camera(ch) == 0x01)
+        else if (is_channel_ipc_camera(ch) == 0x00)
         {
                 int index = monitor_door_first_valid_get(false);
                 if (index != -1)

@@ -1099,14 +1099,14 @@ void time_correction_timer(lv_timer_t *t)
 {
         struct timeval tim;
         gettimeofday(&tim, NULL);
-        if ((tim.tv_usec) > 100000)
+        if ((tim.tv_usec) > 20000)
         {
-                tim.tv_usec -= 100000;
+                tim.tv_usec -= 20000;
         }
         else
         {
                 tim.tv_sec -= 1;
-                tim.tv_usec += 900000;
+                tim.tv_usec += 980000;
         }
         settimeofday(&tim, NULL);
         system("hwclock -w");
@@ -1115,10 +1115,10 @@ void time_correction_timer(lv_timer_t *t)
 static void sat_layout_quit(logo)
 {
         /**
-         * 原因：时间比标准时间每天快了大约3秒
-         * 函数作用：每隔4.8分种让时间减少10豪秒(定时器时间也依赖系统时间，所以得减去相应的时间误差；公式：48/（24*60）*3 *1000 = 100)
+         * 原因：时间比标准时间每天快了大约6秒
+         * 函数作用：每隔4.8分种让时间减少20豪秒(定时器时间也依赖系统时间，所以得减去相应的时间误差；公式：48/（24*60）*3 *1000 = 200)
          **/
-        lv_timer_create(time_correction_timer, 60 * 480000 - 100, NULL);
+        lv_timer_create(time_correction_timer, 60 * 480000 - 200, NULL);
 }
 
 sat_layout_create(logo);

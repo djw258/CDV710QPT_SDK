@@ -33,6 +33,8 @@ enum
         setting_password_obj_id_text,
         setting_password_obj_id_confirm,
         setting_password_obj_id_confirm_img,
+
+        setting_password_obj_id_easy_msgbox_bg,
 };
 
 static bool reset_unit = false;
@@ -116,6 +118,11 @@ static bool setting_password_check_passowrd_easy(char *passwd)
         return false;
 }
 
+static void setting_password_easy_passwd_confirm_clickk(lv_event_t *ev)
+{
+        setting_msgdialog_msg_del(setting_password_obj_id_easy_msgbox_bg);
+}
+
 static void setting_password_modiy_confirm_click(lv_event_t *ev)
 {
         lv_obj_t *input_cont1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_password_obj_id_modiy_cont), setting_password_obj_id_modiy_inputbox1_cont);
@@ -137,7 +144,9 @@ static void setting_password_modiy_confirm_click(lv_event_t *ev)
         {
                 if (setting_password_check_passowrd_easy(verify_buffer) == true)
                 {
-                        return;
+                        lv_obj_t *msgbox = setting_msgdialog_msg_bg_create(setting_password_obj_id_easy_msgbox_bg, 0, 282, 143, 460, 283);
+                        setting_msgdialog_msg_create(msgbox, 1, lang_str_get(POWER_SETTING_XLS_LASETTING_PASSWORD_XLS_LANG_ID_EASY_PASSWD), 0, 60, 460, 120, false);
+                        setting_msgdialog_msg_confirm_btn_create(msgbox, 2, setting_password_easy_passwd_confirm_clickk);
                 }
                 else
                 {

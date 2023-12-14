@@ -135,7 +135,7 @@ static void wifi_input_animation_connecting_task(lv_timer_t *task)
         {
                 int *ploop = (int *)task->user_data;
                 int loop = *ploop;
-                if (loop > 30)
+                if (loop > 20)
                 {
                         wifi_device_conneting();
 

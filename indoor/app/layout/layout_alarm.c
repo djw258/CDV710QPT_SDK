@@ -159,16 +159,16 @@ static void alarm_stop_obj_click(lv_event_t *ev)
         sat_linphone_audio_play_stop();
         lv_obj_t *passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_passwd_cont);
 
-        struct tm tm;
-        user_time_read(&tm);
-        if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
-        {
-                alarm_list_add(security_emergency_stop, 7, &tm);
-        }
-        else
-        {
-                alarm_list_add(emergency_stop, 7, &tm);
-        }
+        // struct tm tm;
+        // user_time_read(&tm);
+        // if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
+        // {
+        //         alarm_list_add(security_emergency_stop, 7, &tm);
+        // }
+        // else
+        // {
+        //         alarm_list_add(emergency_stop, 7, &tm);
+        // }
         lv_obj_clear_flag(passwd_cont, LV_OBJ_FLAG_HIDDEN);
 }
 
@@ -328,10 +328,6 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                         {
                                                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                                                         }
-
-                                                        struct tm tm;
-                                                        user_time_read(&tm);
-                                                        alarm_list_add(emergency_stop, ch, &tm);
                                                 }
                                                 else
                                                 {
