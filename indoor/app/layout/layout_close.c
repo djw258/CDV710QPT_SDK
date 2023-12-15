@@ -15,6 +15,7 @@ static bool is_motion_record_video_ing = false;
 static int motion_timeout_sec = 0;
 static bool is_trigger_motion;
 static lv_timer_t *daemon_timer = NULL;
+static lv_timer_t *backlight_timer = NULL;
 static void layout_close_click(lv_event_t *ev)
 {
     sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -207,7 +208,7 @@ static void layout_motion_monitor_open(void)
 ***/
 static void layout_motion_restart_motion_detection(void)
 {
-    // backlight_enable(false);
+    backlight_enable(false);
     is_trigger_motion = false;
     monitor_close(0x02);
     lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 3000, NULL));
@@ -540,9 +541,9 @@ static void frame_show_param_checktimer(lv_timer_t *ptimer)
 
 static void sat_layout_enter(close)
 {
+
     standby_timer_close();
-    backlight_enable(true);
-    // backlight_enable(false);
+    backlight_enable(false);
     close_cancel_btn_create();
     buzzer_call_callback_register(layout_close_buzzer_alarm_trigger_default);
     if (user_data_get()->motion.enable && ((user_data_get()->system_mode & 0x0f) == 0x01) && (monitor_valid_channel_check(user_data_get()->motion.select_camera)))
@@ -592,6 +593,8 @@ static void sat_layout_enter(close)
 static void layout_close_backlight_open_timer(lv_timer_t *t)
 {
     backlight_enable(true);
+    lv_timer_del(backlight_timer);
+    backlight_timer = NULL;
 }
 
 static void sat_layout_quit(close)
@@ -621,7 +624,7 @@ static void sat_layout_quit(close)
     user_linphone_call_streams_running_receive_register(NULL);
     lv_obj_clean(sat_cur_layout_screen_get());
 
-    lv_timer_set_repeat_count(lv_timer_create(layout_close_backlight_open_timer, 300, NULL), 1);
+    backlight_timer = lv_timer_create(layout_close_backlight_open_timer, 300, NULL);
 
     standby_timer_restart(true);
 }

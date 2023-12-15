@@ -9,7 +9,10 @@
         printf("\n\033[41;37;1m [%s:%d]", __func__, __LINE__); \
         printf(x);                                             \
         printf("\033[0m\n");
-
+#define XIAOXIAO_DEBUG(x...)                                   \
+        printf("\n\033[42;37;1m [%s:%d]", __func__, __LINE__); \
+        printf(x);                                             \
+        printf("\033[0m\n");
 #define NETWORK_ETH_NAME "eth0"
 
 typedef struct
