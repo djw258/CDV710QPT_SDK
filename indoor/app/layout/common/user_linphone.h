@@ -8,6 +8,7 @@ typedef bool (*user_linphone_func)(char *args);
 
 #define LinphoneCallIncomingReceivedStr "LinphoneCallIncomingReceived"
 #define LinphoneCallStreamsRunningStr "LinphoneCallStreamsRunning"
+#define LinphoneCallStreamsStoppingStr "LinphoneCallStreamsStopping"
 #define LinphoneCallConnectedStr "LinphoneCallConnected"
 #define LinphoneCallPasswordErrorStr "LinphoneCallPasswordError"
 #define LinphoneCallOnlineQueryStr "LinphoneCallOnlineQuery"
@@ -43,6 +44,12 @@ void user_linphone_call_incoming_received_register(user_linphone_func callback);
 ** 说明: 流建立后的处理函数
 ***********************************************/
 void user_linphone_call_streams_running_receive_register(user_linphone_func callback);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 流停止后的处理函数
+***********************************************/
+void user_linphone_call_streams_stopping_receive_register(user_linphone_func callback);
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 10:46:3

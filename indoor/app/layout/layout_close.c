@@ -14,7 +14,7 @@ static bool is_motion_snapshot_ing = false;
 static bool is_motion_record_video_ing = false;
 static int motion_timeout_sec = 0;
 static bool is_trigger_motion;
-static lv_timer_t *daemon_timer = NULL;
+
 static lv_timer_t *backlight_timer = NULL;
 static void layout_close_click(lv_event_t *ev)
 {
@@ -168,23 +168,6 @@ static bool motion_timer_timeout_check(void)
     }
     return false;
 }
-/************************************************************
-** 函数说明: 室内机在没有触发移动侦测时，每隔一分钟重新拉流
-** 作者: xiaoxiao
-** 日期：2023-12-12 15:20:54
-** 参数说明:防止门口机等设备死机且在极短时间内由守护线程重新启动（这样室内机无法及时检测到设备是否有重启过，有可能导致室内机设备一直没有重新向门口机等设备重新拉流，导致移动侦测功能异常）
-** 注意事项：
-************************************************************/
-
-static void layout_close_motion_daemon_timer(lv_timer_t *t)
-{
-    SAT_DEBUG("================");
-    if (is_trigger_motion)
-    {
-        return;
-    }
-    sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-}
 
 /************************************************************
 ** 函数说明: 开启移动侦测监控
@@ -266,7 +249,6 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_close_motion_dectection_callback(void)
 {
-    return false;
 
     if (is_motion_snapshot_ing || is_motion_record_video_ing)
     {
@@ -288,7 +270,6 @@ static bool layout_close_motion_dectection_callback(void)
     {
         record_jpeg_start(REC_MODE_MOTION | REC_MODE_TUYA_MOTION);
     }
-    lv_timer_reset(daemon_timer); // 触发移动侦测，重置移动侦测守护定时器时间（因为有可能在这一段时间内出现其他移动物体的概率更大，且门口机等设备在这一分钟内出故障的概率更小）
     lv_sat_timer_create(motion_obj_timeout_timer, 1000, NULL);
     return true;
 }
@@ -495,6 +476,14 @@ static void motion_detection_start_timer(lv_timer_t *timer)
     lv_timer_del(timer);
 }
 
+static bool layout_motion_streams_stopping_register_callback(char *arg)
+{
+
+    sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, true);
+
+    return true;
+}
+
 static bool layout_motion_streams_running_register_callback(char *arg)
 {
 
@@ -552,8 +541,12 @@ static void sat_layout_enter(close)
         is_motion_snapshot_ing = false;
         is_motion_record_video_ing = false;
         is_trigger_motion = false;
-
-        daemon_timer = lv_sat_timer_create(layout_close_motion_daemon_timer, 60000, NULL);
+        if (backlight_timer != NULL)
+        {
+            lv_timer_del(backlight_timer);
+            backlight_timer = NULL;
+        }
+        user_linphone_call_streams_stopping_receive_register(layout_motion_streams_stopping_register_callback);
 
         user_linphone_call_streams_running_receive_register(layout_motion_streams_running_register_callback);
         /*记录注册*/
@@ -620,6 +613,8 @@ static void sat_layout_quit(close)
 
     /*sd卡状态处理*/
     sd_state_channge_callback_register(sd_state_change_default_callback);
+
+    user_linphone_call_streams_stopping_receive_register(NULL);
 
     user_linphone_call_streams_running_receive_register(NULL);
     lv_obj_clean(sat_cur_layout_screen_get());

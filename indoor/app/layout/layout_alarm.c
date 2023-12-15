@@ -111,7 +111,7 @@ static void layout_alarm_monitor_open(void)
                                         if (monitor_valid_channel_check(MON_CH_CCTV1 + i))
                                         {
                                                 monitor_channel_set(MON_CH_CCTV1 + i);
-                                                monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
+                                                monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
                                                 monitor_open(false, true);
                                         }
                                         break;

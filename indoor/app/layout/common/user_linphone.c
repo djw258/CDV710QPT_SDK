@@ -35,39 +35,41 @@ static bool linphone_call_online_query_func_defalut(char *args)
 ** 说明: 用户呼入处理
 ***********************************************/
 static user_linphone_func_s user_linphone_func_array[] =
-	{
 		{
-			LinphoneCallIncomingReceivedStr,
-			NULL,
-		},
-		{LinphoneCallStreamsRunningStr,
-		 NULL},
-		{LinphoneCallConnectedStr,
-		 NULL},
-		{LinphoneCallPasswordErrorStr,
-		 NULL},
-		{
-			LinphoneCallOnlineQueryStr,
-			linphone_call_online_query_func_defalut,
-		},
-		{
-			LinphoneCallOutgoingInitStr,
-			NULL,
-		},
-		{
-			LinphoneCallEndStr,
-			NULL,
-		},
-		{
-			LinphoneCallAnswerStr,
-			NULL,
-		},
-		{LinphoneCallBusyStr,
-		 NULL},
-		{LinphoneCallErrorStr,
-		 NULL},
-		{LinphoneCallOutgoingEarlyMediaStr,
-		 NULL},
+				{
+						LinphoneCallIncomingReceivedStr,
+						NULL,
+				},
+				{LinphoneCallStreamsRunningStr,
+				 NULL},
+				{LinphoneCallStreamsStoppingStr,
+				 NULL},
+				{LinphoneCallConnectedStr,
+				 NULL},
+				{LinphoneCallPasswordErrorStr,
+				 NULL},
+				{
+						LinphoneCallOnlineQueryStr,
+						linphone_call_online_query_func_defalut,
+				},
+				{
+						LinphoneCallOutgoingInitStr,
+						NULL,
+				},
+				{
+						LinphoneCallEndStr,
+						NULL,
+				},
+				{
+						LinphoneCallAnswerStr,
+						NULL,
+				},
+				{LinphoneCallBusyStr,
+				 NULL},
+				{LinphoneCallErrorStr,
+				 NULL},
+				{LinphoneCallOutgoingEarlyMediaStr,
+				 NULL},
 
 };
 
@@ -155,6 +157,15 @@ void user_linphone_call_incoming_received_register(user_linphone_func callback)
 void user_linphone_call_streams_running_receive_register(user_linphone_func callback)
 {
 	user_linphone_event_received_register(LinphoneCallStreamsRunningStr, callback);
+}
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 流停止后的处理函数
+***********************************************/
+void user_linphone_call_streams_stopping_receive_register(user_linphone_func callback)
+{
+	user_linphone_event_received_register(LinphoneCallStreamsStoppingStr, callback);
 }
 /***********************************************
 ** 作者: leo.liu
