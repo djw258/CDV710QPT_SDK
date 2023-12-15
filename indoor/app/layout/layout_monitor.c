@@ -824,7 +824,7 @@ static void *monitor_unlock_ctrl_task(void *arg)
         }
         else if (info->ch == MON_CH_LOBBY)
         {
-                commax_https_lobbyphone_open_the_door(commax_transport_ip_get(), "29752", 1000);
+                // commax_https_lobbyphone_open_the_door(commax_transport_ip_get(), "29752", 1000);
         }
 
         pthread_mutex_unlock(&door_lock_mutex);

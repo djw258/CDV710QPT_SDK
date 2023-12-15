@@ -322,7 +322,7 @@ static void setting_user_wifi_discovered_network_display(void)
         ** 说明:添加wifi
         ***********************************************/
         {
-                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_discovered_user_cont, user_wifi_display_mode ? 0 : 360, list_item_y, user_wifi_display_mode ? 1024 : 718, 48,
+                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_discovered_user_cont, user_wifi_display_mode ? 0 : 306, list_item_y, user_wifi_display_mode ? 1024 : 718, 48,
                                               settign_wifi_add_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
