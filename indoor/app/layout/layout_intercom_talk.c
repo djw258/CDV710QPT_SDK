@@ -758,7 +758,7 @@ bool layout_intercom_talk_call_incoming_func(char *arg)
 static void intercom_talk_buzzer_call_delay_close_task(lv_timer_t *ptimer)
 {
         user_data_get()->alarm.buzzer_alarm = false;
-        user_data_save(false, false);
+        user_data_save(true, true);
         lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
         if (obj != NULL)
         {
@@ -792,11 +792,14 @@ static void intercom_talk_buzzer_alarm_call_callback(void)
                 }
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
-                if (obj->user_data)
+                if ((user_data_get()->system_mode & 0x0f) == 0x01)
                 {
-                        lv_timer_del((lv_timer_t *)obj->user_data);
+                        if (obj->user_data)
+                        {
+                                lv_timer_del((lv_timer_t *)obj->user_data);
+                        }
+                        obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, 6000, obj);
                 }
-                obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, 6000, obj);
         }
         else
         {
@@ -1004,16 +1007,16 @@ static void sat_layout_quit(intercom_talk)
         char extension[32] = {0};
         int index = extern_index_get_by_user(intercom_call_user);
         sprintf(extension, "%d", index);
+        int call_duration = (intercom_call_state == 0x04 || intercom_call_state == 0x03) ? 60 - intercom_talk_timeout : 30 - intercom_talk_timeout;
         CALL_LOG_TYPE type;
         if (intercom_call_state == 0X01 || intercom_call_state == 0x04)
         {
                 type = CALL_OUT;
                 time_t time_val;
                 time_val = time(NULL);
-                time_val -= intercom_talk_timeout;
+                time_val -= call_duration;
                 struct tm *tm_val = localtime(&time_val);
-                user_time_read(tm_val);
-                call_list_add(type, extension, intercom_talk_timeout, tm_val);
+                call_list_add(type, extension, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
         else if (intercom_call_state == 0X02)
@@ -1021,10 +1024,9 @@ static void sat_layout_quit(intercom_talk)
                 type = IN_AND_NO_ANSWER;
                 time_t time_val;
                 time_val = time(NULL);
-                time_val -= intercom_talk_timeout;
+                time_val -= call_duration;
                 struct tm *tm_val = localtime(&time_val);
-                user_time_read(tm_val);
-                call_list_add(type, extension, intercom_talk_timeout, tm_val);
+                call_list_add(type, extension, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
         else if (intercom_call_state == 0X03)
@@ -1032,10 +1034,9 @@ static void sat_layout_quit(intercom_talk)
                 type = IN_AND_ANSWER;
                 time_t time_val;
                 time_val = time(NULL);
-                time_val -= intercom_talk_timeout;
+                time_val -= call_duration;
                 struct tm *tm_val = localtime(&time_val);
-                user_time_read(tm_val);
-                call_list_add(type, extension, intercom_talk_timeout, tm_val);
+                call_list_add(type, extension, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
 }

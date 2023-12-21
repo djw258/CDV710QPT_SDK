@@ -417,7 +417,7 @@ static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
     .network = {
-        .udhcp = false,
+        .udhcp = true,
         .ipaddr = {0},
         .mask = {"255.0.0.0"},
         .gateway = {"10.0.0.1"},

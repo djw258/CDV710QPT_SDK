@@ -108,7 +108,22 @@ static void layout_setting_time_save_time(void)
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_sec_roller);
                 lv_roller_get_selected_str(obj, buffer, 8);
                 sscanf(buffer, "%d", &(tm.tm_sec));
+                asterisk_server_sync_rtc_data_force(true);
                 user_time_set(&tm);
+                asterisk_register_info *p_info = asterisk_register_info_get();
+                unsigned long long timestamp = user_timestamp_get();
+                if (p_info != NULL)
+                {
+                        for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
+                        {
+                                if (p_info[i].name[0] != 0 && p_info[i].timestamp != 0)
+                                {
+                                        p_info[i].timestamp = timestamp;
+                                }
+                        }
+                }
+                asterisk_server_sync_rtc_data_force(false);
+                sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1500, NULL);
         }
 }
 

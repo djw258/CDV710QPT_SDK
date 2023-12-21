@@ -88,6 +88,8 @@ enum
         home_obj_id_the_monitoring_msgbox_cancel,
         home_obj_id_the_monitoring_msgbox_confirm,
 
+        home_obj_id_buzzer_call,
+
 };
 #define THUMB_WIDTH (304)
 #define THUMB_HIGHT (224)
@@ -976,8 +978,144 @@ static void home_obj_top_icon_display_timer(lv_timer_t *ptimer)
         layout_home_security_away_btn_display();
 }
 
+static void layout_home_buzzer_call_delay_close_task(lv_timer_t *ptimer)
+{
+        user_data_get()->alarm.buzzer_alarm = false;
+        user_data_save(true, true);
+        lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
+        if (obj != NULL)
+        {
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                obj->user_data = NULL;
+        }
+        lv_timer_del(ptimer);
+}
+
+/************************************************************
+** 函数说明: 蜂鸣器通知关闭
+** 作者: xiaoxiao
+** 日期：2023-10-14 14:53:38
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
+{
+        standby_timer_restart(true);
+        lv_obj_t *bg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_buzzer_call);
+        if (bg != NULL)
+        {
+                lv_obj_del(bg);
+                if (bg->user_data)
+                {
+                        lv_timer_del((lv_timer_t *)bg->user_data);
+                }
+                sat_linphone_audio_play_stop();
+                user_data_get()->alarm.buzzer_alarm = false;
+                user_data_save(true, true);
+                if (t != NULL) // 主动取消蜂鸣器报警才需要同步给其他室内机
+                {
+                        if ((user_data_get()->system_mode & 0X0f) != 0x01)
+                        {
+                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+                        }
+                }
+        }
+}
+
+static void layout_home_buzzer_call_ui_create(void)
+{
+        {
+                lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_buzzer_call);
+                if (parent != NULL)
+                {
+                        lv_obj_del(parent);
+                }
+                parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_buzzer_call, 0, 0, 1024, 600,
+                                                  NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                  NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+                parent = lv_common_img_btn_create(parent, 0, 0, 0, 1024, 600,
+                                                  NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                  resource_ui_src_get("bg_popup_buzzer call.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_common_text_create(parent, 1, 303, 58, 418, 38,
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+
+                lv_common_img_btn_create(parent, 2, 303, 142, 418, 314,
+                                         NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("img_calling_bell.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+                lv_common_img_btn_create(parent, 3, 388, 472, 248, 72,
+                                         buzzer_alarm_confirm_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("btn_buzzer_confrim.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+}
+
+static void intercom_talk_buzzer_call_delay_close_task(lv_timer_t *ptimer)
+{
+        standby_timer_restart(true);
+        user_data_get()->alarm.buzzer_alarm = false;
+        user_data_save(true, true);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_buzzer_call);
+        if (obj != NULL)
+        {
+                lv_obj_del(obj);
+                obj->user_data = NULL;
+        }
+        lv_timer_del(ptimer);
+}
+
+/************************************************************
+** 函数说明: 蜂鸣器警报触发函数
+** 作者: xiaoxiao
+** 日期：2023-09-12 08:00:33
+** 参数说明:
+** 注意事项：
+************************************************************/
+void layout_home_buzzer_alarm_trigger_callback(void)
+{
+        standby_timer_close();
+        if (user_data_get()->is_device_init == false)
+        {
+                return;
+        }
+        if (user_data_get()->alarm.buzzer_alarm)
+        {
+                buzzer_call_timestamp_set(user_timestamp_get());
+                layout_home_buzzer_call_ui_create();
+                if (user_data_get()->audio.ring_mute == false)
+                {
+                        ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+                }
+                if ((user_data_get()->system_mode & 0x0f) == 0x01)
+                {
+                        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_buzzer_call);
+                        if (obj->user_data)
+                        {
+                                lv_timer_del((lv_timer_t *)obj->user_data);
+                        }
+                        obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, 6000, NULL);
+                }
+        }
+        else
+        {
+                buzzer_alarm_confirm_btn_click(NULL);
+        }
+}
+
 static void sat_layout_enter(home)
 {
+
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -1389,10 +1527,23 @@ static void sat_layout_enter(home)
 
                 lv_timer_set_repeat_count(lv_sat_timer_create(home_slave_sync_time_request_timer, 100, NULL), 3);
         }
+
+        if (user_data_get()->alarm.buzzer_alarm)
+        {
+                layout_home_buzzer_call_ui_create();
+                if (user_data_get()->audio.ring_mute == false)
+                {
+                        ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+                }
+                int time = user_timestamp_get() - buzzer_call_timestamp_get();
+                lv_sat_timer_create(layout_home_buzzer_call_delay_close_task, time > 6000 ? 6000 : time, NULL);
+        }
+        buzzer_call_callback_register(layout_home_buzzer_alarm_trigger_callback);
 }
 
 static void sat_layout_quit(home)
 {
+        buzzer_call_callback_register(buzzer_alarm_trigger_default);
         sat_linphone_media_thumb_destroy();
 
         thumb_display_refresh_register(NULL);

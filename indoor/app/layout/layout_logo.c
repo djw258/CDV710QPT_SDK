@@ -223,7 +223,7 @@ static void buzzer_call_trigger_ui_create(void)
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-static void default_buzzer_call_timer(lv_timer_t *timer)
+void default_buzzer_call_timer(lv_timer_t *timer)
 {
         if (user_data_get()->alarm.buzzer_alarm == true)
         {
@@ -285,7 +285,18 @@ bool buzzer_call_timestamp_set(unsigned long long timestamp)
         buzzer_call_timestamp = timestamp;
         return true;
 }
-
+static void intercom_talk_buzzer_call_delay_close_task(lv_timer_t *ptimer)
+{
+        user_data_get()->alarm.buzzer_alarm = false;
+        user_data_save(true, true);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_alarm_screen_id);
+        if (obj != NULL)
+        {
+                lv_obj_del(obj);
+                obj->user_data = NULL;
+        }
+        lv_timer_del(ptimer);
+}
 /************************************************************
 ** 函数说明: 蜂鸣器警报触发函数
 ** 作者: xiaoxiao
@@ -306,6 +317,16 @@ void buzzer_alarm_trigger_default(void)
                 if (user_data_get()->audio.ring_mute == false)
                 {
                         ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+                }
+                if ((user_data_get()->system_mode & 0x0f) == 0x01)
+                {
+
+                        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_alarm_screen_id);
+                        if (obj->user_data)
+                        {
+                                lv_timer_del((lv_timer_t *)obj->user_data);
+                        }
+                        obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, 6000, NULL);
                 }
         }
         else
@@ -368,20 +389,6 @@ static void security_mode_sync_callback()
         }
 }
 
-/************************************************************
-** 函数说明: 移动侦测数据更改回调
-** 作者: xiaoxiao
-** 日期：2023-12-11 09:12:27
-** 参数说明:
-** 注意事项：
-************************************************************/
-static void motion_detection_sync_callback()
-{
-        if (sat_cur_layout_get() == sat_playout_get(close) && (sat_cur_layout_get() == sat_playout_get(frame_show)))
-        {
-                sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-        }
-}
 /************************************************************
 ** 函数说明: 文件同步事件回调
 ** 作者: xiaoxiao
@@ -450,13 +457,6 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
                                 memcpy(&user_data_get()->alarm.alarm_gpio_value_group, &info->alarm.alarm_gpio_value_group, sizeof(user_data_get()->alarm.alarm_gpio_value_group));
                                 memcpy(&user_data_get()->alarm.alarm_enable_always, &info->alarm.alarm_enable_always, sizeof(user_data_get()->alarm.alarm_enable_always));
-
-                                printf("info->motion.enable is %d\n", info->motion.enable);
-                                if (memcmp(&user_data_get()->motion, &info->motion, sizeof(user_data_get()->motion)))
-                                {
-                                        memcpy(&user_data_get()->motion, &info->motion, sizeof(user_data_get()->motion));
-                                        motion_detection_sync_callback();
-                                }
                         }
 
                         user_data_get()->alarm.away_alarm_enable = info->alarm.away_alarm_enable;
@@ -519,6 +519,15 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         {
                                 memcpy(register_info, recv_data, max);
                         }
+                }
+                else if ((flag == 0x03) && (max == sizeof(struct tm)))
+                {
+                        struct tm *d_t = (struct tm *)recv_data;
+                        standby_timer_close();
+
+                        user_time_set(d_t);
+
+                        standby_timer_restart(true);
                 }
                 free(recv_data);
                 recv_data = NULL;
@@ -849,8 +858,8 @@ static void logo_enter_system_timer(lv_timer_t *t)
                 }
         }
 #endif
-        // 蜂鸣器警报执行任务
-        lv_timer_create(default_buzzer_call_timer, 500, NULL);
+        // // 蜂鸣器警报执行任务
+        // lv_timer_create(default_buzzer_call_timer, 500, NULL);
 
         /***** 音频输出初始化 *****/
         audio_output_cmd_register(audio_output_event_default_process);

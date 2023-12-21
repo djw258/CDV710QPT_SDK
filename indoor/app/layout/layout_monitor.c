@@ -824,7 +824,7 @@ static void *monitor_unlock_ctrl_task(void *arg)
         }
         else if (info->ch == MON_CH_LOBBY)
         {
-                // commax_https_lobbyphone_open_the_door(commax_transport_ip_get(), "29752", 1000);
+                commax_https_lobbyphone_open_the_door(commax_transport_ip_get(), "29752", 1000);
         }
 
         pthread_mutex_unlock(&door_lock_mutex);
@@ -2058,21 +2058,24 @@ static void layout_monitor_buzzer_alarm_call_callback(void)
                 if (obj->user_data)
                 {
                         lv_timer_del((lv_timer_t *)obj->user_data);
+                        obj->user_data = NULL;
                 }
-                obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 6000, obj);
+                if ((user_data_get()->system_mode & 0x0f) == 0x01)
+                {
+
+                        obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 6000, obj);
+                }
         }
         else
         {
-                if (strcmp(lv_label_get_text(obj), lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL)) == 0)
+                lv_timer_t *ptimer = (lv_timer_t *)obj->user_data;
+                if (ptimer != NULL)
                 {
-                        lv_timer_t *ptimer = (lv_timer_t *)obj->user_data;
-                        if (ptimer != NULL)
-                        {
-                                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                                lv_timer_del(ptimer);
-                                obj->user_data = NULL;
-                        }
+
+                        lv_timer_del(ptimer);
                 }
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                obj->user_data = NULL;
         }
 }
 
@@ -2535,7 +2538,6 @@ static void sat_layout_quit(monitor)
                 time_val = time(NULL);
                 time_val -= call_duration;
                 struct tm *tm_val = localtime(&time_val);
-                user_time_read(tm_val);
                 call_list_add(type, doorname, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
@@ -2546,7 +2548,6 @@ static void sat_layout_quit(monitor)
                 time_val = time(NULL);
                 time_val -= call_duration;
                 struct tm *tm_val = localtime(&time_val);
-                user_time_read(tm_val);
                 call_list_add(type, doorname, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
@@ -2557,7 +2558,6 @@ static void sat_layout_quit(monitor)
                 time_val = time(NULL);
                 time_val -= call_duration;
                 struct tm *tm_val = localtime(&time_val);
-                user_time_read(tm_val);
                 call_list_add(type, doorname, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
@@ -2568,7 +2568,6 @@ static void sat_layout_quit(monitor)
                 time_val = time(NULL);
                 time_val -= call_duration;
                 struct tm *tm_val = localtime(&time_val);
-                user_time_read(tm_val);
                 call_list_add(type, doorname, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
