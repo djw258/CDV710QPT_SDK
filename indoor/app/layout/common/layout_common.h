@@ -85,6 +85,14 @@ void asterisk_server_sync_user_data_force(bool is_sync);
 ** 注意事项:
 ************************************************************/
 void asterisk_server_sync_network_data_force(bool is_sync);
+/************************************************************
+** 函数说明: 设置RTC时间设置状态
+** 作者: xiaoxiao
+** 日期: 2023-08-04 08:33:44
+** 参数说明: flag : 0x00:user_data 0x01:network_data
+** 注意事项:
+************************************************************/
+void asterisk_server_sync_rtc_data_force(bool is_sync);
 
 /************************************************************
 ** 函数说明: 密码输入检验公共函数创建

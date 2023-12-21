@@ -333,13 +333,15 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                                         for (int i = 0; i < network_data_get()->door_device[layout_ipc_camera_edit_index_get()].profile_token_num; i++)
                                         {
                                                 memset(newurl, 0, sizeof(newurl));
-                                                if (modify_rtsp_url(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl) == false)
+                                                modify_rtsp_url(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
+                                                if (layout_setting_ipaddress_info_get()->network.udhcp == true)
                                                 {
                                                         sat_ipcamera_device_delete(layout_ipc_camera_edit_index_get(), 1500);
                                                         memset(&network_data_get()->door_device[layout_ipc_camera_edit_index_get()], 0, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()]));
                                                         network_data_save();
                                                         sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                                                 }
+
                                                 strncpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, newurl, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url));
                                         }
                                         strncpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].ipaddr, layout_setting_ipaddress_info_get()->network.ipaddr, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].ipaddr));
@@ -352,7 +354,8 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
 
                                                 memset(newurl, 0, sizeof(newurl));
 
-                                                if (modify_rtsp_url(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl) == false)
+                                                modify_rtsp_url(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
+                                                if (layout_setting_ipaddress_info_get()->network.udhcp == true)
                                                 {
                                                         memset(&network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()], 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()]));
                                                         network_data_save();

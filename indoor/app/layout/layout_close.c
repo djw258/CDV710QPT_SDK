@@ -249,7 +249,6 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_close_motion_dectection_callback(void)
 {
-
     if (is_motion_snapshot_ing || is_motion_record_video_ing)
     {
         return false;
@@ -471,7 +470,7 @@ static void layout_motion_snapshot_state_callback(bool record_ing)
 static void motion_detection_start_timer(lv_timer_t *timer)
 {
     int level = user_data_get()->motion.sensivity;
-    sat_linphone_motion_detection_start(50, level == 0 ? 100 : level == 1 ? 250
+    sat_linphone_motion_detection_start(80, level == 0 ? 120 : level == 1 ? 250
                                                                           : 400);
     lv_timer_del(timer);
 }
@@ -486,7 +485,6 @@ static bool layout_motion_streams_stopping_register_callback(char *arg)
 
 static bool layout_motion_streams_running_register_callback(char *arg)
 {
-
     lv_timer_reset(lv_sat_timer_create(motion_detection_start_timer, 1000, NULL));
 
     return true;

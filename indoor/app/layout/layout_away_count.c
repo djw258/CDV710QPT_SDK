@@ -130,9 +130,12 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
 {
     if ((arg1 == 7) && (arg2 < ALM_LOW))
     {
-        user_data_get()->alarm.buzzer_alarm = true;
-        user_data_save(true, true);
-        buzzer_call_trigger_check();
+        if (user_data_get()->alarm.buzzer_alarm == false)
+        {
+            user_data_get()->alarm.buzzer_alarm = true;
+            user_data_save(true, true);
+            buzzer_call_trigger_check();
+        }
     }
     else
     {

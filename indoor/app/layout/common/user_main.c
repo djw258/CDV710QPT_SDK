@@ -141,6 +141,7 @@ static void lv_task_scheduling_start(void)
 
 static bool is_asterisk_server_sync_user_data_force = false;
 static bool is_asterisk_server_sync_network_data_force = false;
+static bool is_asterisk_server_sync_rtc_data_force = false;
 void asterisk_server_sync_user_data_force(bool is_sync)
 {
         is_asterisk_server_sync_user_data_force = is_sync;
@@ -148,6 +149,10 @@ void asterisk_server_sync_user_data_force(bool is_sync)
 void asterisk_server_sync_network_data_force(bool is_sync)
 {
         is_asterisk_server_sync_network_data_force = is_sync;
+}
+void asterisk_server_sync_rtc_data_force(bool is_sync)
+{
+        is_asterisk_server_sync_rtc_data_force = is_sync;
 }
 /*使用线程异步发送*/
 static void *asterisk_server_sync_task(void *arg)

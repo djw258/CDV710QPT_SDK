@@ -268,9 +268,12 @@ void layout_alarm_trigger_default(int arg1, int arg2)
         }
         if ((arg1 == 7) && (arg2 < ALM_LOW))
         {
-                user_data_get()->alarm.buzzer_alarm = true;
-                user_data_save(true, true);
-                buzzer_call_trigger_check();
+                if (user_data_get()->alarm.buzzer_alarm == false)
+                {
+                        user_data_get()->alarm.buzzer_alarm = true;
+                        user_data_save(true, true);
+                        buzzer_call_trigger_check();
+                }
         }
         else
         {
@@ -279,7 +282,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                 {
                         return;
                 }
-                // 非
+                // 非总是检测情况下，没有使能警报
                 if ((user_data_get()->alarm.alarm_enable_always[0][arg1] == false) && (user_data_get()->alarm.alarm_enable_always[1][arg1] == false))
                 {
                         if (user_data_get()->alarm.away_alarm_enable == false && user_data_get()->alarm.security_alarm_enable == false)
