@@ -5,5 +5,5 @@ bool monitor_doorcamera_call_extern_func(char *arg);
 bool monitor_doorcamera_call_inside_func(char *arg);
 bool monitor_other_call_busy_inside_func(char *arg);
 bool monitor_other_call_busy_extern_func(char *arg);
-void layout_monitor_ch_name_set(char *doorname);
+void layout_call_log_create(CALL_LOG_TYPE type, int call_duration, int ch);
 #endif

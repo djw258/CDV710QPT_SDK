@@ -4,9 +4,10 @@
 
 typedef enum
 {
-    IN_AND_NO_ANSWER,
-    CALL_OUT,
-    IN_AND_ANSWER
+    CALL_LOG_UNKNOW,
+    CALL_LOG_IN_AND_NO_ANSWER,
+    CALL_LOG_CALL_OUT,
+    CALL_LOG_IN_AND_ANSWER
 
 } CALL_LOG_TYPE;
 /***

@@ -46,6 +46,31 @@ static void *tuya_event_report(void *arg)
         }
         return NULL;
 }
+
+static bool jpeg_record_is_success = false;
+/************************************************************
+** 函数说明: 获取抓拍状态
+** 作者: xiaoxiao
+** 日期：2023-12-21 18:11:40
+** 参数说明:
+** 注意事项：
+************************************************************/
+bool jpeg_record_state_get(void)
+{
+        return jpeg_record_is_success;
+}
+/************************************************************
+** 函数说明: 设置抓拍状态
+** 作者: xiaoxiao
+** 日期：2023-12-21 18:11:56
+** 参数说明:
+** 注意事项：
+************************************************************/
+bool jpeg_record_state_set(bool state)
+{
+        jpeg_record_is_success = state;
+        return true;
+}
 /***
  *
  ** 日期: 2022-05-19 10:37
@@ -57,7 +82,7 @@ static int jpeg_record_mode = REC_MODE_MANUAL;
 
 static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 {
-        printf("mode is 0x%x\n", mode);
+        jpeg_record_is_success = true;
         if ((mode & 0x3F))
         {
                 file_type type = FILE_TYPE_FLASH_PHOTO;
@@ -100,21 +125,24 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
         }
 
         static user_record_info info;
-        info.record_mode = mode;
-        if (info.data != NULL)
+        if ((mode & REC_MODE_TUYA_CALL) || (mode & REC_MODE_TUYA_ALARM) || (mode & REC_MODE_TUYA_MOTION))
         {
-                free((char *)info.data);
-                info.data = NULL;
+                info.record_mode = mode;
+                if (info.data != NULL)
+                {
+                        free((char *)info.data);
+                        info.data = NULL;
+                }
+
+                info.data = (char *)malloc(size);
+
+                memcpy(info.data, data, size);
+                info.size = size;
+
+                pthread_t task_id;
+                pthread_create(&task_id, sat_pthread_attr_get(), tuya_event_report, (void *)&info);
+                pthread_detach(task_id);
         }
-
-        info.data = (char *)malloc(size);
-
-        memcpy(info.data, data, size);
-        info.size = size;
-
-        pthread_t task_id;
-        pthread_create(&task_id, sat_pthread_attr_get(), tuya_event_report, (void *)&info);
-        pthread_detach(task_id);
 
         system("sync");
         return true;
@@ -127,6 +155,7 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 ***/
 bool record_jpeg_start(REC_MODE mode)
 {
+        jpeg_record_is_success = false;
         jpeg_record_mode = mode;
         return sat_linphone_snap(monitor_channel_get(), jpeg_record_mode, jpeg_write_callback);
 }
@@ -177,7 +206,7 @@ static bool record_video_callback(const char *path, int ch, int mode)
         sprintf(cmd, "mv %s %s", path, file_path);
         system(cmd);
         media_file_bad_check(file_path);
-        printf("record video:%s \n", file_path);
+
         return true;
 }
 /*

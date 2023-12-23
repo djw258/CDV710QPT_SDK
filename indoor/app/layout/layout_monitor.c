@@ -68,6 +68,8 @@ typedef enum
 
 } monitor_vol_cont_obj_id;
 
+unsigned long long call_timestamp[15];
+
 static void monitor_obj_handup_display(void);
 static void monitor_obj_normal_lock_display(void);
 static void monitor_obj_lock_1_display(void);
@@ -80,22 +82,13 @@ static void layout_monitor_contrast_bar_display(void);
 static void layout_monitor_color_bar_display(void);
 
 static int monitor_timeout_sec = 0;
-static int call_duration = 0;
 
 static bool is_monitor_door_camera_talk = false;
 static bool is_monitor_snapshot_ing = false;
 static bool is_monitor_record_video_ing = false;
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg);
 static lv_timer_t *unlock_timer = NULL;
-static char call_obj_name[64];
-void layout_monitor_ch_name_set(char *doorname)
-{
-        if (doorname == NULL)
-        {
-                return;
-        }
-        strncpy(call_obj_name, doorname, sizeof(call_obj_name));
-}
+
 /****************************************************************
  **@日期: 2023-09-20
  **@作者: leo.liu
@@ -239,17 +232,17 @@ static void monitior_obj_channel_info_obj_display(void)
                 // lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
                 lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
-        else if (strstr(call_obj_name, "guard") || strstr(call_obj_name, network_data_get()->guard_number))
+        else if (channel == 16)
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", call_obj_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", lang_str_get(COMMON_XLS_OBJ_ID_LOBBY), tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
-        else if (strstr(call_obj_name, "lobby"))
+        else if (channel == 17)
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", call_obj_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", lang_str_get(COMMON_XLS_OBJ_ID_GUARD), tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
 }
 /***********************************************
@@ -386,6 +379,39 @@ static void monitor_obj_timeout_label_display(void)
         lv_label_set_text_fmt(obj, "%02d:%02d", monitor_timeout_sec / 60, monitor_timeout_sec % 60);
 }
 
+void layout_call_log_create(CALL_LOG_TYPE type, int call_duration, int ch)
+{
+        if (type == CALL_LOG_UNKNOW)
+        {
+                return;
+        }
+        char doorname[24] = {0};
+        if (ch >= 0 && ch <= 5)
+        {
+                strcpy(doorname, network_data_get()->door_device[ch].door_name);
+        }
+        else if (ch == 6)
+        {
+                strcpy(doorname, lang_str_get(COMMON_XLS_OBJ_ID_LOBBY));
+        }
+        else if (ch == 7)
+        {
+                strcpy(doorname, lang_str_get(COMMON_XLS_OBJ_ID_GUARD));
+        }
+        else
+        {
+                sprintf(doorname, "50%d", ch - 8 + 1);
+        }
+        time_t time_val;
+        time_val = time(NULL);
+        time_val -= call_duration;
+        struct tm *tm_val = localtime(&time_val);
+        tm_val->tm_year += 1900;
+        tm_val->tm_mon += 1;
+        call_list_add(type, doorname, call_duration, tm_val);
+        layout_last_call_new_flag_set(true);
+}
+
 static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 {
 
@@ -396,6 +422,27 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
         }
         else
         {
+                int ch = monitor_channel_get();
+                int index = (ch >= 0 && ch <= 5) ? ch : (ch == 16 || ch == 17) ? ch - 10
+                                                                               : -1;
+                if (index != -1)
+                {
+                        MON_ENTER_FLAG flag = monitor_enter_flag_get();
+                        CALL_LOG_TYPE type = CALL_LOG_UNKNOW;
+                        if (flag == MON_ENTER_CALL_FLAG)
+                        {
+                                type = CALL_LOG_IN_AND_NO_ANSWER;
+                        }
+                        else if (flag == MON_ENTER_CALL_TALK_FLAG)
+                        {
+                                type = CALL_LOG_IN_AND_ANSWER;
+                        }
+                        else if ((flag == MON_ENTER_MANUAL_TALK_FLAG) || (flag == MON_ENTER_MANUAL_DOOR_FLAG))
+                        {
+                                type = CALL_LOG_CALL_OUT;
+                        }
+                        layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
+                }
                 layout_monitor_goto_layout_process();
         }
 }
@@ -691,10 +738,18 @@ static void monitor_obj_talk_click(lv_event_t *e)
 {
         if (is_monitor_door_camera_talk == false)
         {
+                int ch = monitor_channel_get();
+                int index = (ch >= 0 && ch <= 5) ? ch : (ch == 16 || ch == 17) ? ch - 10
+                                                                               : -1;
+                if (index != -1)
+                {
+
+                        call_timestamp[index] = user_timestamp_get();
+                }
+
                 sat_linphone_audio_play_stop();
                 is_monitor_door_camera_talk = true;
 
-                call_duration = 0;
                 monitor_timeout_sec = user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 2 * 60
                                                                                                                          : 3 * 60;
                 monitor_enter_flag_set(monitor_enter_flag_get() == MON_ENTER_CALL_FLAG ? MON_ENTER_CALL_TALK_FLAG : MON_ENTER_MANUAL_TALK_FLAG);
@@ -717,6 +772,7 @@ static void monitor_obj_talk_click(lv_event_t *e)
                 }
         }
 }
+
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -724,6 +780,31 @@ static void monitor_obj_talk_click(lv_event_t *e)
  ***********************************************/
 static void monitor_obj_handup_click(lv_event_t *e)
 {
+        int ch = monitor_channel_get();
+        int index = (ch >= 0 && ch <= 5) ? ch : (ch == 16 || ch == 17) ? ch - 10
+                                                                       : -1;
+        if (index != -1)
+        {
+                MON_ENTER_FLAG flag = monitor_enter_flag_get();
+                CALL_LOG_TYPE type = CALL_LOG_UNKNOW;
+                if (flag == MON_ENTER_CALL_FLAG)
+                {
+                        type = CALL_LOG_IN_AND_NO_ANSWER;
+                }
+                else if (flag == MON_ENTER_CALL_TALK_FLAG)
+                {
+                        type = CALL_LOG_IN_AND_ANSWER;
+                }
+                else if ((flag == MON_ENTER_MANUAL_TALK_FLAG) || (flag == MON_ENTER_MANUAL_DOOR_FLAG))
+                {
+                        type = CALL_LOG_CALL_OUT;
+                }
+                SAT_DEBUG("type is %d", type);
+                SAT_DEBUG("call_timestamp[%d] is %llu", index, call_timestamp[index]);
+                SAT_DEBUG("user_timestamp_get is %llu", user_timestamp_get());
+                layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
+        }
+
         layout_monitor_goto_layout_process();
 }
 static void monitor_obj_handup_display(void)
@@ -779,7 +860,9 @@ static pthread_mutex_t door_lock_mutex = PTHREAD_MUTEX_INITIALIZER;
  ***********************************************/
 static void *monitor_unlock_ctrl_task(void *arg)
 {
-        door_lock_info *info = (door_lock_info *)arg;
+        door_lock_info *info = (door_lock_info *)malloc(sizeof(door_lock_info));
+        memcpy(info, arg, sizeof(door_lock_info));
+
         if ((info->ch == MON_CH_DOOR1) && (info->mode == 2))
         {
                 door1_lock1_pin_ctrl(info->en);
@@ -826,7 +909,7 @@ static void *monitor_unlock_ctrl_task(void *arg)
         {
                 commax_https_lobbyphone_open_the_door(commax_transport_ip_get(), "29752", 1000);
         }
-
+        free(info);
         pthread_mutex_unlock(&door_lock_mutex);
         return NULL;
 }
@@ -1158,11 +1241,9 @@ static void monitor_snapshot_state_callback(bool snapshot_ing)
         if (snapshot_ing == false)
         {
                 lv_sat_timer_create(layout_monitor_snap_timeout_timer, 500, NULL);
-                SAT_DEBUG("jpeg record finish\n");
         }
         else
         {
-                SAT_DEBUG("jpeg record start\n");
                 is_monitor_snapshot_ing = true;
                 if (record_jpeg_mode_get() == REC_MODE_TUYA_CALL) // 如果没设置自动记录，涂鸦抓拍不需要改变图标
                 {
@@ -1209,7 +1290,20 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 
         lv_timer_del(ptimer);
 }
+static void door_call_enent_tuya_report_timer(lv_timer_t *ptimer)
+{
+        bool jpeg_recoed = jpeg_record_state_get();
+        if (jpeg_recoed == false)
+        {
+                char buffer[512];
+                int ch = monitor_channel_get();
+                ch = is_channel_ipc_camera(ch) == 0 ? ch : is_channel_ipc_camera(ch) == 2 ? ch - 10
+                                                                                          : -1;
 
+                tuya_api_call_event(ch, buffer, 512);
+        }
+        lv_timer_del(ptimer);
+}
 static void layout_monitor_streams_running_register_callback(int arg1, int arg2)
 {
         is_monitor_snapshot_ing = false;
@@ -1217,7 +1311,8 @@ static void layout_monitor_streams_running_register_callback(int arg1, int arg2)
 
         if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
         {
-                lv_sat_timer_create(monitor_call_record_delay_task, 1500, NULL);
+                lv_sat_timer_create(monitor_call_record_delay_task, 1000, NULL);
+                lv_sat_timer_create(door_call_enent_tuya_report_timer, 4000, NULL);
         }
 }
 
@@ -1256,18 +1351,6 @@ static void home_use_mobile_app_obj_display(void)
 static void monitor_app_use_delay_display_task(lv_timer_t *ptimer)
 {
         home_use_mobile_app_obj_display();
-}
-
-/************************************************************
-** 函数说明:监控的各种任务
-** 作者: xiaoxiao
-** 日期: 2023-05-17 11:02:00
-** 参数说明:
-** 注意事项:
-************************************************************/
-static void layout_monitor_timer_task(lv_timer_t *ptimer)
-{
-        call_duration++; // 记录call时间
 }
 
 /***********************************************
@@ -1976,14 +2059,30 @@ static void layout_monitor_door_ch_btn_create(void)
         int sec_y = 0;
         // 门口机通道按键创建
         linphone_incomming_vaild_channel_get(true, node, &total);
+
+        char ch_name[24];
         for (int i = 0; i < total; i++)
         {
+                memset(ch_name, 0, sizeof(ch_name));
+                int ch = node[i].channel;
+                if (is_channel_ipc_camera(ch) == 0x00)
+                {
+                        strcpy(ch_name, network_data_get()->door_device[ch].door_name);
+                }
+                else if (ch == 16)
+                {
+                        strcpy(ch_name, lang_str_get(COMMON_XLS_OBJ_ID_LOBBY));
+                }
+                else if (ch == 17)
+                {
+                        strcpy(ch_name, lang_str_get(COMMON_XLS_OBJ_ID_GUARD));
+                }
                 lv_obj_t *obj_answer = lv_common_img_text_btn_create(list, node[i].call_id, sec_x, sec_y, 253, 80,
                                                                      layout_monitor_door_call_btn_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                      110, 21, 93, 35, 1,
-                                                                     network_data_get()->door_device[node[i].channel].door_name, 0, 0, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                     ch_name, 0, 0, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                      0, 0, 253, 80, 0,
                                                                      (const char *)resource_ui_src_get("btn_call_extension.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
@@ -2005,14 +2104,14 @@ static void layout_monitor_door_ch_btn_create(void)
         linphone_incomming_vaild_channel_get(false, node, &total);
         for (int i = 0; i < total; i++)
         {
-                char sip_user[4] = {0};
-                sprintf(sip_user, "50%d", node[i].channel);
+                memset(ch_name, 0, sizeof(ch_name));
+                sprintf(ch_name, "50%d", node[i].channel);
                 lv_obj_t *obj = lv_common_img_text_btn_create(list, node[i].call_id, sec_x, sec_y, 253, 80,
                                                               layout_monitor_intercom_call_btn_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                               110, 21, 93, 35, 1,
-                                                              sip_user, 0, 0, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                              ch_name, 0, 0, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                               0, 0, 253, 80, 0,
                                                               (const char *)resource_ui_src_get("btn_call_extension.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
@@ -2102,7 +2201,6 @@ static void sat_layout_enter(monitor)
         is_monitor_door_camera_talk = false;
         is_monitor_snapshot_ing = true;
         is_monitor_record_video_ing = true;
-        call_duration = 0;
         monitor_timeout_sec_reset(30);
 
         int ch = monitor_channel_get();
@@ -2505,13 +2603,12 @@ static void sat_layout_enter(monitor)
         /*tuya事件注册*/
         tuya_event_cmd_register(layout_monitor_tuya_event_handle);
 
-        lv_sat_timer_create(layout_monitor_timer_task, 1000, NULL);
-
         if (monitor_enter_flag_get() == MON_ENTER_CALL_TALK_FLAG)
         {
                 monitor_obj_talk_click(NULL);
         }
 }
+
 static void sat_layout_quit(monitor)
 {
         standby_timer_restart(true);
@@ -2526,51 +2623,6 @@ static void sat_layout_quit(monitor)
         record_video_stop();
         lv_obj_remove_event_cb(sat_cur_layout_screen_get(), layout_monitor_full_screen_display);
         lv_obj_pressed_func = lv_layout_touch_callback;
-        MON_ENTER_FLAG flag = monitor_enter_flag_get();
-        char doorname[24] = {0};
-        strncpy(doorname, network_data_get()->door_device[monitor_channel_get()].door_name, sizeof(doorname));
-        CALL_LOG_TYPE type;
-
-        if (flag == MON_ENTER_CALL_FLAG)
-        {
-                type = IN_AND_NO_ANSWER;
-                time_t time_val;
-                time_val = time(NULL);
-                time_val -= call_duration;
-                struct tm *tm_val = localtime(&time_val);
-                call_list_add(type, doorname, call_duration, tm_val);
-                layout_last_call_new_flag_set(true);
-        }
-        else if (flag == MON_ENTER_MANUAL_TALK_FLAG)
-        {
-                type = CALL_OUT;
-                time_t time_val;
-                time_val = time(NULL);
-                time_val -= call_duration;
-                struct tm *tm_val = localtime(&time_val);
-                call_list_add(type, doorname, call_duration, tm_val);
-                layout_last_call_new_flag_set(true);
-        }
-        else if (flag == MON_ENTER_CALL_TALK_FLAG)
-        {
-                type = IN_AND_ANSWER;
-                time_t time_val;
-                time_val = time(NULL);
-                time_val -= call_duration;
-                struct tm *tm_val = localtime(&time_val);
-                call_list_add(type, doorname, call_duration, tm_val);
-                layout_last_call_new_flag_set(true);
-        }
-        else if (flag == MON_ENTER_TUYA_TALK_FLAG)
-        {
-                type = IN_AND_ANSWER;
-                time_t time_val;
-                time_val = time(NULL);
-                time_val -= call_duration;
-                struct tm *tm_val = localtime(&time_val);
-                call_list_add(type, doorname, call_duration, tm_val);
-                layout_last_call_new_flag_set(true);
-        }
 
         standby_timer_restart(true);
 
@@ -2623,7 +2675,8 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
                 return false;
         }
         *end = 0;
-        strncpy(call_obj_name, start, sizeof(call_obj_name));
+        call_timestamp[7] = user_timestamp_get();
+
         if (user_data_get()->audio.ring_mute == false)
         {
                 ring_common_door_play(user_data_get()->audio.common_entrance_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
@@ -2654,8 +2707,6 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
                 {
                         layout_monitor_door_ch_btn_create();
                 }
-                monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
-                sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
 
         return true;
@@ -2679,7 +2730,8 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
                 return false;
         }
         *end = 0;
-        strncpy(call_obj_name, start, sizeof(call_obj_name));
+        call_timestamp[6] = user_timestamp_get();
+
         if (user_data_get()->audio.ring_mute == false)
         {
                 ring_common_door_play(user_data_get()->audio.common_entrance_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
@@ -2710,8 +2762,6 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
                 {
                         layout_monitor_door_ch_btn_create();
                 }
-                monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
-                sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
 
         return true;
@@ -2728,7 +2778,7 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
         }
         sscanf(str + 4, "%ld", &call_id);
 
-        char index = monitor_index_get_by_user(arg);
+        int index = monitor_index_get_by_user(arg);
         if ((user_data_get()->system_mode & 0x1f) == 0x01) // 防止没注册的门口机呼叫
         {
                 if ((monitor_valid_channel_check(index - 1)) == false)
@@ -2739,10 +2789,10 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
         }
         if (index < 0)
         {
-
                 printf("[%s:%d] get channel failed(%s)\n", __func__, __LINE__, arg);
                 return false;
         }
+        call_timestamp[index - 1] = user_timestamp_get();
         /*获取别名*/
         char *s = strchr(arg, '"');
         if (s == NULL)
@@ -2758,7 +2808,6 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
                 return false;
         }
         *e = 0;
-
         /*获取固定命名通道*/
         char fulll_name[64] = {0};
         char doorname[17] = {0};
@@ -2812,8 +2861,13 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
 
 static bool monitor_intercom_extern_call(const char *arg)
 {
-
         long call_id = 0;
+        char *str = strstr(arg, " id:");
+        if (str == NULL)
+        {
+                return false;
+        }
+        sscanf(str + 4, "%ld", &call_id);
         int index = extern_index_get_by_user(arg);
         if (index < 0)
         {
@@ -2821,12 +2875,9 @@ static bool monitor_intercom_extern_call(const char *arg)
                 printf("[%s:%d] get extention id failed(%s)\n", __func__, __LINE__, arg);
                 return false;
         }
-        char *str = strstr(arg, " id:");
-        if (str == NULL)
-        {
-                return false;
-        }
-        sscanf(str + 4, "%ld", &call_id);
+
+        call_timestamp[index - 1 + 8] = user_timestamp_get();
+        SAT_DEBUG("extern index is %d\n", index);
         if (sat_cur_layout_get() == sat_playout_get(monitor))
         {
                 linphone_incomming_info *node = linphone_incomming_unused_node_get(false);
@@ -2889,11 +2940,11 @@ bool monitor_doorcamera_call_inside_func(char *arg)
         }
         if (strstr(arg, "guard") != NULL) /*sip:guard代表警卫室*/
         {
-                return guard_call_process(arg, true);
+                return guard_call_process(arg, false);
         }
         else if (strstr(arg, "lobby") != NULL) /*sip:lobby代表大厅机*/
         {
-                return lobby_call_process(arg, true);
+                return lobby_call_process(arg, false);
         }
         else if (strstr(arg, "sip:20") != NULL) /*sip:2xxx代表门口机*/
         {
@@ -2919,23 +2970,74 @@ static bool monitor_doorcamera_end_process(char *arg)
         }
         sscanf(str + 4, "%ld", &call_id);
 
+        int index = 0;
+        if (strstr(arg, "sip:20") != NULL)
+        {
+                index = monitor_index_get_by_user(arg);
+                if (index < 0)
+                {
+                        printf("[%s:%d] get channel failed(%s)\n", __func__, __LINE__, arg);
+                        return false;
+                }
+                index -= 1;
+        }
+        else if ((strstr(arg, "user:\"50") != NULL) || (strstr(arg, "sip:50") != NULL))
+        {
+                index = extern_index_get_by_user(arg);
+                if (index < 0)
+                {
+                        printf("[%s:%d] get channel failed(%s)\n", __func__, __LINE__, arg);
+                        return false;
+                }
+                index = index - 1 + 8;
+        }
+        else if (strstr(arg, "lobby") != NULL) /*lobby代表大厅设备*/
+        {
+
+                index = 6;
+        }
+        else if (strstr(arg, "guard") || strstr(arg, network_data_get()->guard_number)) /*guard代表*/
+        {
+
+                index = 7;
+        }
+
+        CALL_LOG_TYPE type = CALL_LOG_UNKNOW;
         /*判断id是否是存在incomming中的,如果不是暂存的，那么就是当前监控的*/
 
         if ((node = linphone_incomming_used_node_get_by_call_id(call_id)) != NULL)
         {
                 linphone_incomming_node_release(node);
                 layout_monitor_door_ch_btn_create();
+                type = CALL_LOG_IN_AND_NO_ANSWER;
+
+                layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
         }
-        else if (monitor_index_get_by_user(arg) == monitor_channel_get() + 1)
+        else
         {
+                MON_ENTER_FLAG flag = monitor_enter_flag_get();
+
+                if (flag == MON_ENTER_CALL_FLAG)
+                {
+                        type = CALL_LOG_IN_AND_NO_ANSWER;
+                }
+                else if (flag == MON_ENTER_CALL_TALK_FLAG)
+                {
+                        type = CALL_LOG_IN_AND_ANSWER;
+                }
+                else if ((flag == MON_ENTER_MANUAL_TALK_FLAG) || (flag == MON_ENTER_MANUAL_DOOR_FLAG))
+                {
+                        type = CALL_LOG_CALL_OUT;
+                }
+                layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
                 layout_monitor_goto_layout_process();
         }
+
         return true;
 }
 
 static bool monitor_talk_call_end_callback(char *arg)
 {
-        SAT_DEBUG("arg is %s", arg);
         /*sip:2xxx代表门口机*/
         if (strstr(arg, "sip:20") != NULL)
         {
@@ -2949,12 +3051,12 @@ static bool monitor_talk_call_end_callback(char *arg)
         else if (strstr(arg, "lobby") != NULL) /*lobby代表大厅设备*/
         {
 
-                layout_monitor_goto_layout_process();
+                return monitor_doorcamera_end_process(arg);
         }
         else if (strstr(arg, "guard") || strstr(arg, network_data_get()->guard_number)) /*guard代表*/
         {
 
-                layout_monitor_goto_layout_process();
+                return monitor_doorcamera_end_process(arg);
         }
         return true;
 }
@@ -3043,6 +3145,8 @@ static bool tuya_event_cmd_ch_channge(int channel)
                                 sat_linphone_incomming_refresh(node_group[i].call_id);
                                 linphone_incomming_node_release(node);
                                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
+                                extern unsigned long long call_timestamp[15];
+                                call_timestamp[ch] = user_timestamp_get();
                                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                         }
                 }
@@ -3101,7 +3205,6 @@ static bool truye_event_cmd_audio_start(void)
                 sat_linphone_audio_play_stop();
                 is_monitor_door_camera_talk = true;
 
-                call_duration = 0;
                 monitor_timeout_sec = user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 2 * 60
                                                                                                                          : 3 * 60;
                 monitor_enter_flag_set(MON_ENTER_TUYA_TALK_FLAG);
@@ -3177,7 +3280,6 @@ static bool tuya_event_cmd_video_start(void)
 ************************************************************/
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg)
 {
-        SAT_DEBUG("receive tuya cmd is %d", cmd);
         switch ((cmd))
         {
         case TUYA_EVENT_CMD_VIDEO_START:

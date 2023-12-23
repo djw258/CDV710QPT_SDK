@@ -162,23 +162,26 @@ static void home_obj_top_icon_display(void)
          ** 说明: tuya连接状态
          ***********************************************/
         {
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_tuya_connect_icon);
+                if ((user_data_get()->system_mode & 0x1f) == 0x01)
                 {
-                        if (obj != NULL)
+                        obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_tuya_connect_icon);
                         {
-                                lv_obj_set_x(obj, pos_x);
-                                pos_x -= 56;
-                                if (tuya_api_online_check())
+                                if (obj != NULL)
                                 {
-                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_home_clood_connect.png"), LV_PART_MAIN);
-                                }
-                                else if (tuya_api_network_status() == 0x02)
-                                {
-                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_home_clood_connectable.png"), LV_PART_MAIN);
-                                }
-                                else
-                                {
-                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_home_clood_disconnect.png"), LV_PART_MAIN);
+                                        lv_obj_set_x(obj, pos_x);
+                                        pos_x -= 56;
+                                        if (tuya_api_online_check())
+                                        {
+                                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_home_clood_connect.png"), LV_PART_MAIN);
+                                        }
+                                        else if (tuya_api_network_status() == 0x02)
+                                        {
+                                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_home_clood_connectable.png"), LV_PART_MAIN);
+                                        }
+                                        else
+                                        {
+                                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_home_clood_disconnect.png"), LV_PART_MAIN);
+                                        }
                                 }
                         }
                 }
@@ -982,7 +985,7 @@ static void layout_home_buzzer_call_delay_close_task(lv_timer_t *ptimer)
 {
         user_data_get()->alarm.buzzer_alarm = false;
         user_data_save(true, true);
-        lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_buzzer_call);
         if (obj != NULL)
         {
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
@@ -1061,20 +1064,6 @@ static void layout_home_buzzer_call_ui_create(void)
         }
 }
 
-static void intercom_talk_buzzer_call_delay_close_task(lv_timer_t *ptimer)
-{
-        standby_timer_restart(true);
-        user_data_get()->alarm.buzzer_alarm = false;
-        user_data_save(true, true);
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_buzzer_call);
-        if (obj != NULL)
-        {
-                lv_obj_del(obj);
-                obj->user_data = NULL;
-        }
-        lv_timer_del(ptimer);
-}
-
 /************************************************************
 ** 函数说明: 蜂鸣器警报触发函数
 ** 作者: xiaoxiao
@@ -1082,6 +1071,7 @@ static void intercom_talk_buzzer_call_delay_close_task(lv_timer_t *ptimer)
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
+
 void layout_home_buzzer_alarm_trigger_callback(void)
 {
         standby_timer_close();
@@ -1103,8 +1093,9 @@ void layout_home_buzzer_alarm_trigger_callback(void)
                         if (obj->user_data)
                         {
                                 lv_timer_del((lv_timer_t *)obj->user_data);
+                                obj->user_data = NULL;
                         }
-                        obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, 6000, NULL);
+                        obj->user_data = lv_sat_timer_create(layout_home_buzzer_call_delay_close_task, 6000, obj);
                 }
         }
         else
@@ -1535,6 +1526,7 @@ static void sat_layout_enter(home)
                 {
                         ring_buzzer_play(user_data_get()->audio.buzzer_tone);
                 }
+
                 int time = user_timestamp_get() - buzzer_call_timestamp_get();
                 lv_sat_timer_create(layout_home_buzzer_call_delay_close_task, time > 6000 ? 6000 : time, NULL);
         }
@@ -1543,6 +1535,7 @@ static void sat_layout_enter(home)
 
 static void sat_layout_quit(home)
 {
+
         buzzer_call_callback_register(buzzer_alarm_trigger_default);
         sat_linphone_media_thumb_destroy();
 

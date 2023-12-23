@@ -34,6 +34,8 @@ static void emergency_setting_confirm_obj_click(lv_event_t *ev)
         {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
         }
+        // char buffer[512];
+        // tuya_api_alarm_event(0, buffer, 512);
         sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 

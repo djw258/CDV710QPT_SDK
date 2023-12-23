@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "layout_monitor.h"
+#include "tuya/tuya_api.h"
 enum
 {
         layout_alarm_obj_id_bg,
@@ -123,6 +124,7 @@ static void layout_alarm_monitor_open(void)
         {
         }
 }
+
 static void layout_alarm_ring_stop(lv_timer_t *ptimer)
 {
         sat_linphone_audio_play_stop();
@@ -646,9 +648,15 @@ static void layout_alarm_buzzer_alarm_call_callback(void)
         }
 }
 
-static void layout_alarm_touch_callback(lv_event_t *e)
+static void layout_alarm_tuya_event_report(lv_timer_t *ptimer)
 {
-        standby_timer_restart(false);
+        bool jpeg_recoed = jpeg_record_state_get();
+        if (jpeg_recoed == false)
+        {
+                char buffer[512];
+                tuya_api_alarm_event(user_data_get()->alarm.emergency_mode == 0 ? 0 : 1, buffer, 512);
+        }
+        lv_timer_del(ptimer);
 }
 
 /************************************************************
@@ -660,6 +668,7 @@ static void layout_alarm_touch_callback(lv_event_t *e)
 ************************************************************/
 static void sat_layout_enter(alarm)
 {
+
         alarm_ring_close_timer = NULL;
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();
@@ -908,8 +917,7 @@ static void sat_layout_enter(alarm)
                 }
         }
         buzzer_call_callback_register(layout_alarm_buzzer_alarm_call_callback);
-        lv_obj_pressed_func = layout_alarm_touch_callback;
-        lv_obj_pressed_func = lv_layout_touch_callback;
+        lv_sat_timer_create(layout_alarm_tuya_event_report, 5 * 1000, NULL);
 }
 
 static void sat_layout_quit(alarm)
@@ -917,7 +925,7 @@ static void sat_layout_quit(alarm)
         buzzer_call_callback_register(buzzer_alarm_trigger_default);
         alarm_ring_idel_timer = NULL;
         alarm_power_out_ctrl(false);
-        lv_obj_pressed_func = lv_layout_touch_callback;
+
         ring_play_event_cmd_register(NULL);
         user_linphone_call_streams_running_receive_register(NULL);
         if (user_data_get()->alarm.security_alarm_enable)

@@ -171,7 +171,6 @@ static void intercom_id_obj_click(lv_event_t *e)
 
 static void layout_intercom_call_delay_ringplay(lv_timer_t *t)
 {
-        SAT_DEBUG("========");
         if (user_data_get()->audio.ring_mute == false)
         {
                 send_call_play(1, 0xfffff);
@@ -180,15 +179,8 @@ static void layout_intercom_call_delay_ringplay(lv_timer_t *t)
 
 static bool intercom_linphone_outgoing_callback(char *arg)
 {
-        SAT_DEBUG("====arg is %s======", arg);
-        // intercom_call_username_setting(arg);
-        // intercom_call_status_setting(1);
-        // if (user_data_get()->audio.ring_mute == false)
-        // {
-        //         ring_intercom_play(user_data_get()->audio.extenion_tone, 0xffff);
-        // }
-        // sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
-        if (extern_index_get_by_user(arg) == -1)
+        int index = extern_index_get_by_user(arg);
+        if (index == -1)
         {
                 char *start = strstr(arg, network_data_get()->guard_number); /*获取别名*/
                 if (start == NULL)
@@ -197,22 +189,24 @@ static bool intercom_linphone_outgoing_callback(char *arg)
                         return false;
                 }
 
-                intercom_call_username_setting(network_data_get()->guard_number);
+                // intercom_call_username_setting(network_data_get()->guard_number);
+                intercom_call_username_setting(lang_str_get(COMMON_XLS_OBJ_ID_LOBBY));
         }
         else
         {
                 return false;
         }
         lv_timer_set_repeat_count(lv_timer_create(layout_intercom_call_delay_ringplay, 200, NULL), 1);
-
+        extern unsigned long long call_timestamp[15];
+        call_timestamp[7] = user_timestamp_get();
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
 }
 
 static bool intercom_linphone_outgoing_arly_media_register(char *arg)
 {
-        SAT_DEBUG("====arg is %s======", arg);
-        if (extern_index_get_by_user(arg) == -1)
+        int index = extern_index_get_by_user(arg);
+        if (index == -1)
         {
                 char *start = strstr(arg, "guard"); /*获取别名*/
                 if (start == NULL)
@@ -227,7 +221,7 @@ static bool intercom_linphone_outgoing_arly_media_register(char *arg)
                         return false;
                 }
                 *end = 0;
-                intercom_call_username_setting(start);
+                intercom_call_username_setting(network_data_get()->guard_number);
         }
         else
         {
@@ -237,6 +231,8 @@ static bool intercom_linphone_outgoing_arly_media_register(char *arg)
         {
                 send_call_play(1, 0xfffff);
         }
+        extern unsigned long long call_timestamp[15];
+        call_timestamp[index - 1 + 8] = user_timestamp_get();
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
 }
@@ -309,7 +305,7 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
         for (int i = total - 1; i >= 0; i--)
         {
                 call_list_get(i, &type, doorname, &duration, &tm);
-                if (strstr(doorname, "Door") == NULL)
+                if (strstr(doorname, "50"))
                 {
                         sprintf(obj_name, "%s %s", lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), doorname);
                 }
@@ -317,7 +313,6 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
                 {
                         strcpy(obj_name, doorname);
                 }
-
                 char tm_buffer[64] = {0};
                 char du_buffer[64];
                 sprintf(du_buffer, "%02d:%02d", duration / 60, duration % 60);
@@ -339,8 +334,8 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
                                                                       50, 25, 300, 43, 0,
                                                                       obj_name, 0XFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                       0, 15, 80, 48, 1,
-                                                                      type == IN_AND_NO_ANSWER ? (char *)resource_ui_src_get("ic_list_call_absence.png") : type == CALL_OUT ? (char *)resource_ui_src_get("ic_list_call_transmit.png")
-                                                                                                                                                                            : (char *)resource_ui_src_get("ic_list_call_receive.png"),
+                                                                      type == CALL_LOG_IN_AND_NO_ANSWER ? (char *)resource_ui_src_get("ic_list_call_absence.png") : type == CALL_LOG_CALL_OUT ? (char *)resource_ui_src_get("ic_list_call_transmit.png")
+                                                                                                                                                                                              : (char *)resource_ui_src_get("ic_list_call_receive.png"),
                                                                       LV_OPA_COVER, 0x00a8ff, LV_ALIGN_LEFT_MID);
                         lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 }

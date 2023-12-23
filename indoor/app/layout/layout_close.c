@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "onvif.h"
+#include "tuya/tuya_api.h"
 bool frame_display_timeout_check(void);
 static void motion_timer_check_task(lv_timer_t *ptimer);
 static bool layout_close_motion_dectection_callback(void);
@@ -246,6 +247,19 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
         layout_motion_restart_motion_detection();
     }
 }
+static void motion_event_tuya_report_timer(lv_timer_t *ptimer)
+{
+    bool jpeg_recoed = jpeg_record_state_get();
+    if (jpeg_recoed == false)
+    {
+        char buffer[512];
+        int ch = monitor_channel_get();
+        ch = is_channel_ipc_camera(ch) == 0 ? ch : is_channel_ipc_camera(ch) == 1 ? ch - 2
+                                                                                  : -1;
+        tuya_api_motion_event(ch, buffer, 512);
+    }
+    lv_timer_del(ptimer);
+}
 
 static bool layout_close_motion_dectection_callback(void)
 {
@@ -253,6 +267,7 @@ static bool layout_close_motion_dectection_callback(void)
     {
         return false;
     }
+    lv_sat_timer_create(motion_event_tuya_report_timer, 3000, NULL);
     is_trigger_motion = true;
     monitor_obj_timeout_label_display();
     if (user_data_get()->motion.lcd_en == true)

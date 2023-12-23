@@ -285,7 +285,7 @@ bool buzzer_call_timestamp_set(unsigned long long timestamp)
         buzzer_call_timestamp = timestamp;
         return true;
 }
-static void intercom_talk_buzzer_call_delay_close_task(lv_timer_t *ptimer)
+static void default_buzzer_call_delay_close_task(lv_timer_t *ptimer)
 {
         user_data_get()->alarm.buzzer_alarm = false;
         user_data_save(true, true);
@@ -326,7 +326,7 @@ void buzzer_alarm_trigger_default(void)
                         {
                                 lv_timer_del((lv_timer_t *)obj->user_data);
                         }
-                        obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, 6000, NULL);
+                        obj->user_data = lv_sat_timer_create(default_buzzer_call_delay_close_task, 6000, NULL);
                 }
         }
         else
