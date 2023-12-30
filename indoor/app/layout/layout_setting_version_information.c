@@ -142,7 +142,8 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
 
 static void sat_layout_enter(setting_version_information)
 {
-        sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);
+        sat_ipcamera_initialization_parameters(&network_data_get()->door_device[0], DEVICE_MAX);
+
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
@@ -260,10 +261,11 @@ static void sat_layout_enter(setting_version_information)
         //   if (network_data_get()->door_device_count > 0)
         {
                 lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_list);
-                lv_common_style_set_common(list, setting_version_information_obj_id_list, 48, 304, 928, 440, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+                lv_common_style_set_common(list, setting_version_information_obj_id_list, 48, 304, 928, 296, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
 
                 for (int i = 0; i < DEVICE_MAX; i++)
                 {
+
                         memset(version_buf, 0, sizeof(version_buf));
                         if (network_data_get()->door_device[i].rtsp[0].rtsp_url[0] == 0)
                         {

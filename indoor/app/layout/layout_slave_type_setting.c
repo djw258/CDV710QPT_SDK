@@ -199,7 +199,7 @@ static void setting_extension_number_list_click(lv_event_t *ev)
                         item_img_obj = lv_obj_get_child_form_id(n_item, 1);
 
                         lv_obj_set_style_bg_img_src(item_img_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-                                }
+                }
         }
 }
 

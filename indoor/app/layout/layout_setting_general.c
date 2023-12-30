@@ -807,7 +807,7 @@ static lv_obj_t *setting_sub_list_create(void)
         {
 
                 // 此处请重新判断
-                if ((((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7) || (i == 8))) || (i == 10))
+                if ((((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7) || (i == 8))))
                 {
                         continue;
                 }

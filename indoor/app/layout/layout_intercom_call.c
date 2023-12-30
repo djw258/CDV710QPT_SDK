@@ -190,7 +190,7 @@ static bool intercom_linphone_outgoing_callback(char *arg)
                 }
 
                 // intercom_call_username_setting(network_data_get()->guard_number);
-                intercom_call_username_setting(lang_str_get(COMMON_XLS_OBJ_ID_LOBBY));
+                intercom_call_username_setting(lang_str_get(COMMON_XLS_OBJ_ID_GUARD));
         }
         else
         {
@@ -208,20 +208,6 @@ static bool intercom_linphone_outgoing_arly_media_register(char *arg)
         int index = extern_index_get_by_user(arg);
         if (index == -1)
         {
-                char *start = strstr(arg, "guard"); /*获取别名*/
-                if (start == NULL)
-                {
-                        printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
-                        return false;
-                }
-                char *end = strchr(arg, '"');
-                if (end == NULL)
-                {
-                        printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
-                        return false;
-                }
-                *end = 0;
-                intercom_call_username_setting(network_data_get()->guard_number);
         }
         else
         {

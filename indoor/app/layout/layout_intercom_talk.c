@@ -585,6 +585,7 @@ static bool intercom_talk_call_answer_callback(char *arg)
         {
 
                 monitor_enter_flag_set(MON_ENTER_CALL_TALK_FLAG);
+                monitor_channel_set(MON_CH_GUARD);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
         sat_linphone_audio_play_stop();

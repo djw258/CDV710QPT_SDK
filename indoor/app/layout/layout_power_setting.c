@@ -36,59 +36,6 @@ static void power_setting_run_btn_client(lv_event_t *ev)
 	}
 }
 
-static int convert_a_string_to_an_integer_number(const char *str, int len)
-{
-	int val = 0;
-	for (int i = 0; i < len; i++)
-	{
-		if ((str[i] >= '0') && (str[i] <= '9'))
-		{
-			val = val * 16 + (str[i] - '0');
-		}
-		else if ((str[i] >= 'A') && (str[i] <= 'F'))
-		{
-			val = val * 16 + ((str[i] - 'A') + 10);
-		}
-		else if ((str[i] >= 'a') && (str[i] <= 'f'))
-		{
-			val = val * 16 + ((str[i] - 'a') + 10);
-		}
-	}
-	return val;
-}
-
-static bool mac_mapping_ip_get(char *ip)
-{
-	char mac[32] = {0};
-
-	sat_ip_mac_addres_get("eth0", NULL, mac, NULL);
-	/*获取mac的xx:xx:xx:xx:xx:xx 低字节*/
-	char *str = mac;
-	for (int i = 0; i < 3; i++)
-	{
-		str = strchr(str, ':');
-		if (str == NULL)
-		{
-			SAT_DEBUG("char *str = strchar(mac, ':');%d", i);
-			return false;
-		}
-		str++;
-	}
-	if (strlen(str) != 8)
-	{
-		SAT_DEBUG("char *str = %s", str);
-		return false;
-	}
-
-	int ip_part[3] = {0};
-	ip_part[0] = convert_a_string_to_an_integer_number(str, 2);
-	ip_part[1] = convert_a_string_to_an_integer_number(str + 3, 2);
-	ip_part[2] = convert_a_string_to_an_integer_number(str + 6, 2);
-
-	sprintf(ip, "%d.%d.%d.%d", 10, ip_part[0], ip_part[1], ip_part[2]);
-	return true;
-}
-
 static void layout_power_setting_confirm(lv_event_t *ev)
 {
 	user_data_get()->is_device_init = true;
@@ -104,14 +51,18 @@ static void layout_power_setting_concel(lv_event_t *ev)
 
 static bool layout_power_setting_default_data_changge_check(void)
 {
-	// 获取MAC映射的ip
-	char ip[32] = {0};
-	mac_mapping_ip_get(ip);
 
 	user_network_info default_network_data = {0};
 	memcpy(&default_network_data, network_defauld_data_get(), sizeof(user_network_info));
 	// 拷贝启动以后才自动赋值的变量
-	strcpy(default_network_data.network.ipaddr, ip);
+	if (network_data_get()->network.ipaddr[0] != 0)
+	{
+		char ip[32] = {0};
+		sat_ip_mac_addres_get("eth0", ip, NULL, NULL);
+		strcpy(default_network_data.network.ipaddr, ip);
+	}
+
+	default_network_data.network.udhcp = network_data_get()->network.udhcp;
 
 	user_data_info default_user_data = {0};
 	memcpy(&default_user_data, user_default_data_get(), sizeof(user_data_info));
@@ -121,7 +72,7 @@ static bool layout_power_setting_default_data_changge_check(void)
 	memcpy(default_user_data.compile_time, user_data_get()->compile_time, sizeof(user_data_get()->compile_time));
 	memcpy(default_user_data.alarm.alarm_gpio_value_group, user_data_get()->alarm.alarm_gpio_value_group, sizeof(user_data_get()->alarm.alarm_gpio_value_group));
 
-	if ((memcmp(network_data_get(), &default_network_data, sizeof(user_network_info))) || (memcmp(user_data_get(), &default_user_data, sizeof(user_data_info))))
+	if ((memcmp(network_data_get(), &default_network_data, sizeof(struct ipcamera_network))) || (memcmp(user_data_get(), &default_user_data, sizeof(user_data_info))))
 	{
 		return true;
 	}

@@ -102,9 +102,7 @@ static void layout_away_alarm_release_det_timer(lv_timer_t *ptimer)
         {
             if (layout_away_count_data_get()->away_release_time[i]++ == user_data_get()->alarm.away_release_time)
             {
-                struct tm tm;
-                user_time_read(&tm);
-                alarm_list_add(security_emergency, i, &tm);
+                layout_common_call_log(security_emergency, i);
                 user_data_get()->alarm.alarm_trigger_enable[i] = true;
                 if (sat_cur_layout_get() != sat_playout_get(alarm))
                 {
@@ -157,9 +155,7 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
                 user_data_get()->alarm.alarm_trigger[arg1] = true;
                 if (user_data_get()->alarm.alarm_enable_always[0][arg1] || user_data_get()->alarm.alarm_enable_always[1][arg1])
                 {
-                    struct tm tm;
-                    user_time_read(&tm);
-                    alarm_list_add(security_emergency, arg1, &tm);
+                    layout_common_call_log(security_emergency, arg1);
                     if (sat_cur_layout_get() != sat_playout_get(alarm))
                     {
                         layout_alarm_alarm_channel_set(arg1);

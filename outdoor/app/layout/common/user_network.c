@@ -3150,6 +3150,11 @@ static bool automatic_ip_setting(void)
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
         if ((user_data_get()->network.udhcp == false) || (ipaddr_udhcp_server_get_wait() == false))
         {
+                if (user_data_get()->network.udhcp == true)
+                {
+                        user_data_get()->network.udhcp = false;
+                        user_data_save();
+                }
                 sat_kill_task_process("udhcpc");
                 /*手动设置的IP信息*/
                 if (user_data_get()->network.ip[0] != '\0')

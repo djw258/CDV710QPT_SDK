@@ -1106,6 +1106,7 @@ void layout_home_buzzer_alarm_trigger_callback(void)
 
 static void sat_layout_enter(home)
 {
+        tuya_api_network_detect_enable(true);
 
         /***********************************************
          ** 作者: leo.liu
@@ -1505,7 +1506,7 @@ static void sat_layout_enter(home)
                                          NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("ic_hime_clood_connect.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                         resource_ui_src_get("ic_home_clood_connect.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
         lv_timer_ready(lv_sat_timer_create(home_obj_top_icon_display_timer, 1000, NULL));
 
@@ -1516,7 +1517,7 @@ static void sat_layout_enter(home)
         if ((user_data_get()->system_mode & 0x0f) != 0x01)
         {
 
-                lv_timer_set_repeat_count(lv_sat_timer_create(home_slave_sync_time_request_timer, 100, NULL), 3);
+                lv_timer_set_repeat_count(lv_sat_timer_create(home_slave_sync_time_request_timer, 1000, NULL), 3);
         }
 
         if (user_data_get()->alarm.buzzer_alarm)
@@ -1535,7 +1536,7 @@ static void sat_layout_enter(home)
 
 static void sat_layout_quit(home)
 {
-
+        tuya_api_network_detect_enable(false);
         buzzer_call_callback_register(buzzer_alarm_trigger_default);
         sat_linphone_media_thumb_destroy();
 

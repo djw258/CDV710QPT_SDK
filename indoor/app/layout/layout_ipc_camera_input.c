@@ -400,10 +400,10 @@ static void layout_ipc_camera_input_space_btn_ctrl(void)
                 //         lv_btnmatrix_clear_btn_ctrl(obj, 40, LV_BTNMATRIX_CTRL_DISABLED);
                 // }
                 lv_common_img_btn_create(sat_cur_layout_screen_get(), ipc_camera_password_keyboard_space_hidden, 220, 525, 585, 69,
-                                         NULL, true, LV_OPA_60, 0, LV_OPA_60, 0,
+                                         NULL, true, LV_OPA_COVER, 0x292929, LV_OPA_COVER, 0x292929,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                                         resource_ui_src_get("keyboard_space.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
 }
 

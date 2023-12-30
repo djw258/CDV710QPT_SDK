@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <time.h>
 #define IPCAMERA_NUM_MAX 8
-#define IPCAMERA_PROFILE_MAX 4
+#define IPCAMERA_PROFILE_MAX 8
 typedef struct
 {
         char profile_token[32];

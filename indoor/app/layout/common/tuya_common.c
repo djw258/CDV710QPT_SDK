@@ -13,8 +13,10 @@ int tuya_monitor_channel_get(void)
 }
 static bool tuya_event_cmd_video_start(void)
 {
+
         if (sat_cur_layout_get() != sat_playout_get(monitor))
         {
+                tuya_api_monitor_talk_status_reset();
                 if ((tuya_monitor_channel < 8) /* && (network_data_get()->door_device_count > 0) */)
                 {
                         monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
@@ -107,7 +109,8 @@ bool layout_monitor_report_vaild_channel(void)
         else if ((ch >= 16) && (ch <= 17))
         {
                 ch = ch - 3;
-                media_type = 2;
+                if (ch == 17)
+                        media_type = 2;
         }
         else if ((ch < 0) || (ch > 6))
         {

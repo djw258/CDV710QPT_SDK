@@ -10,4 +10,12 @@ bool commax_sip_asterisk_server_init(const char *from_sip_conf, const char *to_s
 bool commax_https_server_lobbyphone_change_password(const char *server_ip, const char *port, char *lo_dong, char *lo_ho, char *pwd, char *reslut_msg, int msg_max, int timeout);
 /*大厅机开锁*/
 bool commax_https_lobbyphone_open_the_door(const char *ip, const char *port, int timeout);
+/************************************************************
+** 函数说明:
+** 作者: xiaoxiao
+** 日期：2023-12-27 09:40:40
+** 参数说明: event;1代表境安全紧、,2,燃气紧急,等等（暂时只需要上报安全紧急);event_state:1紧急发生、2紧急停止 3紧急返回
+** 注意事项：
+************************************************************/
+bool commax_emergency_event_report(const char *ip, int port, const char *asterisk_register_usernmae, struct tm *tm, int event, int event_state, int timeout);
 #endif

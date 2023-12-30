@@ -1,6 +1,7 @@
 #include "layout_define.h"
 #include "layout_monitor.h"
 #include "tuya/tuya_api.h"
+#include "common/commax_websocket.h"
 enum
 {
         layout_alarm_obj_id_bg,
@@ -203,9 +204,7 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
 
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
                         user_data_save(true, true);
-                        struct tm tm;
-                        user_time_read(&tm);
-                        alarm_list_add(security_emergency, arg1, &tm);
+                        layout_common_call_log(security_emergency, arg1);
                 }
         }
 }

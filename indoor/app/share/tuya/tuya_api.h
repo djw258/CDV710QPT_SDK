@@ -182,5 +182,13 @@ char *tuya_network_dev_get(void);
 **   参数说明:
 ***/
 bool tuya_network_dev_set(char *dev);
+/***
+**	 日期:2022-06-07 15:58:20
+**	 作者: leo.liu
+**	 函数作用：通话状态复位i
+**	 参数说明:2(字符串类型):
+**		设备端上报到app:
+***/
+bool tuya_api_monitor_talk_status_reset(void);
 
 #endif

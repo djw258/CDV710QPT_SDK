@@ -2,6 +2,7 @@
 #include "layout_define.h"
 #include "ring_common.h"
 #include "user_gpio.h"
+#include "common/commax_websocket.h"
 #define RESOURCE_FILE_PATH_MAX 128
 
 /*
@@ -297,9 +298,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                         user_data_get()->alarm.emergency_mode = 1;
                         user_data_get()->alarm.alarm_ring_play = true;
                         user_data_save(true, true);
-                        struct tm tm;
-                        user_time_read(&tm);
-                        alarm_list_add(security_emergency, arg1, &tm);
+                        layout_common_call_log(security_emergency, arg1);
                         sat_linphone_handup(0xFFFF);
                         sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
@@ -354,9 +353,7 @@ bool alarm_trigger_check(void)
                 if ((alarm_occur) && (sat_cur_layout_get() != sat_playout_get(alarm) || (user_data_get()->alarm.alarm_trigger[layout_alarm_alarm_channel_get()] == false)))
                 {
                         user_data_save(true, true);
-                        struct tm tm;
-                        user_time_read(&tm);
-                        alarm_list_add(i == 7 ? emergency_occur : security_emergency, i, &tm);
+                        layout_common_call_log(i == 7 ? emergency_occur : security_emergency, i);
                         layout_alarm_alarm_channel_set(i);
                         sat_linphone_handup(0xFFFF);
                         sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);
@@ -735,7 +732,19 @@ bool is_alarm_trigger(void)
 {
         for (int i = 0; i < 8; i++)
         {
-                if (user_data_get()->alarm.alarm_trigger[i])
+                if (i != 7)
+                {
+                        if (user_data_get()->alarm.alarm_trigger[i])
+                        {
+                                if (user_data_get()->alarm.away_alarm_enable || user_data_get()->alarm.security_alarm_enable || ((user_data_get()->alarm.alarm_enable[i] == 1) && user_data_get()->alarm.alarm_enable_always[0][i]) || ((user_data_get()->alarm.alarm_enable[i] == 2) && user_data_get()->alarm.alarm_enable_always[1][i]))
+
+                                        return true;
+                                user_data_get()->alarm.alarm_trigger[i] = false;
+                                user_data_save(true, true);
+                                return false;
+                        }
+                }
+                else if (user_data_get()->alarm.alarm_trigger[i])
                 {
                         return true;
                 }
@@ -777,4 +786,25 @@ bool is_eth0_inserted(void)
         // 关闭管道，如果未找到"eth0"，则返回0
         pclose(fp);
         return 0;
+}
+
+/************************************************************
+** 函数说明:警报记录
+** 作者: xiaoxiao
+** 日期：2023-12-27 21:19:30
+** 参数说明:
+** 注意事项：
+************************************************************/
+bool layout_common_call_log(int type, int ch)
+{
+        bool result = true;
+        struct tm tm;
+        user_time_read(&tm);
+        alarm_list_add(type, ch, &tm);
+        if ((user_data_get()->system_mode & 0x0f) == 0x01)
+        {
+                int event = (user_data_get()->alarm.away_alarm_enable || user_data_get()->alarm.security_alarm_enable) ? 3 : 1;
+                result = commax_emergency_event_report(network_data_get()->local_server, 80, network_data_get()->sip_user, &tm, event, (type - 1 % 3) + 1, 1000);
+        }
+        return result;
 }

@@ -61,11 +61,7 @@ static void operating_structure_save_btn_click(lv_event_t *e)
                 user_data_get()->system_mode = 0x01;
                 // memset(user_data_get()->mastar_wallpad_ip,0,sizeof(user_data_get()->mastar_wallpad_ip));
         }
-        char number[8] = {0};
-        memset(number, 0, sizeof(number));
-        strncpy(number, network_data_get()->sip_user, 8);
-        memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
-        strcpy(network_data_get()->sip_user, number);
+
         network_data_save();
         user_data_save(false, false);
         backlight_enable(false);

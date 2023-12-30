@@ -214,6 +214,7 @@ static lv_obj_t *ipc_camera_registered_list_create(void)
 
 static void layout_ipc_cameara_register_online_check_timer(lv_timer_t *timer)
 {
+        lv_timer_set_period(timer, 10000);
         struct ipcamera_info *ipc_device = layout_ipc_cmeara_is_doorcamera_get() == false ? network_data_get()->cctv_device : network_data_get()->door_device;
         bool *result = (bool *)timer->user_data;
 

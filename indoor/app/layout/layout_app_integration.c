@@ -128,6 +128,7 @@ static void layout_setting_app_integration_connect_status_timer(lv_timer_t *time
 
 static void sat_layout_enter(setting_app_integration)
 {
+  tuya_api_network_detect_enable(true);
   /***********************************************
    ** 作者: leo.liu
    ** 日期: 2023-2-2 13:46:56
@@ -194,6 +195,7 @@ static void sat_layout_enter(setting_app_integration)
 }
 static void sat_layout_quit(setting_app_integration)
 {
+  tuya_api_network_detect_enable(false);
 }
 
 sat_layout_create(setting_app_integration);

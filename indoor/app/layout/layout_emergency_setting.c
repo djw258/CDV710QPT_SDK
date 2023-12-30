@@ -22,11 +22,9 @@ static void emergency_setting_confirm_obj_click(lv_event_t *ev)
         if (user_data_get()->alarm.away_auto_record)
                 record_jpeg_start(REC_MODE_AUTO);
 
-        struct tm tm;
-        user_time_read(&tm);
         layout_alarm_alarm_channel_set(7);
         user_data_get()->alarm.alarm_trigger[7] = true;
-        alarm_list_add(emergency_occur, 7, &tm);
+        layout_common_call_log(emergency_occur, 7);
         user_data_get()->alarm.is_alarm_return = false;
         user_data_get()->alarm.alarm_ring_play = true;
         user_data_save(true, true);
