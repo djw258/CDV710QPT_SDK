@@ -414,7 +414,7 @@ static bool onvif_username_token_check(const char *admin, const char *from_token
         return true;
 }
 
-static bool tcp_device_serverce_xml_bad_request(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_bad_request(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(BAD_REQUEST_PATH);
         if (html_size <= 0)
@@ -438,7 +438,7 @@ static bool tcp_device_serverce_xml_bad_request(int tcp_socket_fd)
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
@@ -447,7 +447,7 @@ static bool tcp_device_serverce_xml_bad_request(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const char *string)
+static bool tcp_device_serverce_xml_200_ok_requeset(int *tcp_socket_fd, const char *string)
 {
         int html_size = sat_file_size_get(S200_OK_REQUEST_PATH);
         if (html_size <= 0)
@@ -506,7 +506,7 @@ static bool tcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const cha
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
@@ -514,7 +514,7 @@ static bool tcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const cha
         return true;
 }
 
-static bool tcp_device_serverce_xml_get_information(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_get_information(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_INFORMATION_PATH);
         if (html_size <= 0)
@@ -538,7 +538,7 @@ static bool tcp_device_serverce_xml_get_information(int tcp_socket_fd)
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
@@ -547,7 +547,7 @@ static bool tcp_device_serverce_xml_get_information(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_servrce_xml_get_capabilities(int tcp_socket_fd)
+static bool tcp_device_servrce_xml_get_capabilities(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_CAPABILITIES_PATH);
         if (html_size <= 0)
@@ -608,7 +608,7 @@ static bool tcp_device_servrce_xml_get_capabilities(int tcp_socket_fd)
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
@@ -616,7 +616,7 @@ static bool tcp_device_servrce_xml_get_capabilities(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_servrce_xml_get_scopes(int tcp_socket_fd)
+static bool tcp_device_servrce_xml_get_scopes(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_SCOPES_PATH);
         if (html_size <= 0)
@@ -688,7 +688,7 @@ static bool tcp_device_servrce_xml_get_scopes(int tcp_socket_fd)
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
@@ -696,13 +696,17 @@ static bool tcp_device_servrce_xml_get_scopes(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_servrce_xml_get_register(int tcp_socket_fd, const char *xml)
+static bool tcp_device_servrce_xml_get_register(int *tcp_socket_fd, const char *xml)
 {
         char sip_uri[128] = {0};
         if (discover_devices_data_parsing(xml, "Register", sip_uri, sizeof(sip_uri)) == false)
         {
                 return false;
         }
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
+        sat_socket_close(*tcp_socket_fd);
+        *tcp_socket_fd = -1;
+
         bool is_reboot = false;
         if (strcmp(user_data_get()->device.number, sip_uri))
         {
@@ -730,7 +734,6 @@ static bool tcp_device_servrce_xml_get_register(int tcp_socket_fd, const char *x
                 SAT_DEBUG("NUMBER:%s,domain:%s", user_data_get()->device.number, user_data_get()->server_ip);
                 is_reboot = true;
         }
-        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
         if (is_reboot == true)
         {
                 user_data_save();
@@ -741,7 +744,7 @@ static bool tcp_device_servrce_xml_get_register(int tcp_socket_fd, const char *x
         return true;
 }
 
-static bool tcp_device_servrce_xml_get_delete(int tcp_socket_fd, const char *xml)
+static bool tcp_device_servrce_xml_get_delete(int *tcp_socket_fd, const char *xml)
 {
         char sip_uri[128] = {0};
         if (discover_devices_data_parsing(xml, "Delete", sip_uri, sizeof(sip_uri)) == false)
@@ -749,6 +752,8 @@ static bool tcp_device_servrce_xml_get_delete(int tcp_socket_fd, const char *xml
                 return false;
         }
         tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "delete");
+        sat_socket_close(*tcp_socket_fd);
+        *tcp_socket_fd = -1;
 
         memset(user_data_get()->device.number, 0, sizeof(user_data_get()->device.number));
         memset(user_data_get()->server_ip, 0, sizeof(user_data_get()->server_ip));
@@ -758,13 +763,13 @@ static bool tcp_device_servrce_xml_get_delete(int tcp_socket_fd, const char *xml
         return true;
 }
 
-static bool tcp_device_servrce_xml_get_device_name(int tcp_socket_fd, const char *xml)
+static bool tcp_device_servrce_xml_get_device_name(int *tcp_socket_fd, const char *xml)
 {
         tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
         return true;
 }
 
-static bool tcp_device_servrce_xml_set_device_name(int tcp_socket_fd, const char *xml)
+static bool tcp_device_servrce_xml_set_device_name(int *tcp_socket_fd, const char *xml)
 {
         char sip_uri[128] = {0};
         if (discover_devices_data_parsing(xml, "SetName", sip_uri, sizeof(sip_uri)) == false)
@@ -778,13 +783,15 @@ static bool tcp_device_servrce_xml_set_device_name(int tcp_socket_fd, const char
         return true;
 }
 
-static bool tcp_device_servrce_xml_get_version_name(int tcp_socket_fd, const char *xml)
+static bool tcp_device_servrce_xml_get_version_name(int *tcp_socket_fd, const char *xml)
 {
+        char mac[64] = {0};
+        sat_ip_mac_addres_get("eth0", NULL, mac, NULL);
         char version[128] = {0};
         struct tm tm;
         if (platform_build_date_get(&tm) == true)
         {
-                sprintf(version, "%04d-%02d-%02d(%02d:%02d:%02d)%s", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, SYSTEM_VERSION);
+                sprintf(version, "%04d-%02d-%02d(%02d:%02d:%02d)%s-MAC:%s", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, SYSTEM_VERSION, mac);
                 tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, version);
         }
         else
@@ -794,7 +801,7 @@ static bool tcp_device_servrce_xml_get_version_name(int tcp_socket_fd, const cha
 
         return true;
 }
-static bool tcp_device_servrce_xml_channge_device_password(int tcp_socket_fd, const char *xml)
+static bool tcp_device_servrce_xml_channge_device_password(int *tcp_socket_fd, const char *xml)
 {
         char sip_uri[128] = {0};
         if (discover_devices_data_parsing(xml, "ChangePassword", sip_uri, sizeof(sip_uri)) == false)
@@ -805,12 +812,15 @@ static bool tcp_device_servrce_xml_channge_device_password(int tcp_socket_fd, co
         user_data_save();
         SAT_DEBUG("change password:%s", sip_uri);
         tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
+        sat_socket_close(*tcp_socket_fd);
+        *tcp_socket_fd = -1;
+
         led_ctrl_blink(3);
         system("reboot");
         return true;
 }
 
-static bool tcp_device_serverce_xml_get_dns(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_get_dns(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_DNS_PATH);
         if (html_size <= 0)
@@ -863,14 +873,14 @@ static bool tcp_device_serverce_xml_get_dns(int tcp_socket_fd)
         strcpy(xml_fmt, xml_buffer);
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
         free(html_buffer);
         free(html_fmt);
         free(xml_buffer);
         return true;
 }
 
-static bool tcp_device_serverce_xml_get_networkinterface(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_get_networkinterface(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_NETWORKINTERFACE_PATH);
         if (html_size <= 0)
@@ -934,7 +944,7 @@ static bool tcp_device_serverce_xml_get_networkinterface(int tcp_socket_fd)
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
@@ -942,7 +952,7 @@ static bool tcp_device_serverce_xml_get_networkinterface(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_serverce_xml_get_includecapability(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_get_includecapability(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_INCLUDECAPABILITY_PATH);
         if (html_size <= 0)
@@ -1004,7 +1014,7 @@ static bool tcp_device_serverce_xml_get_includecapability(int tcp_socket_fd)
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
@@ -1012,7 +1022,7 @@ static bool tcp_device_serverce_xml_get_includecapability(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_serverce_xml_get_systemdataandtime(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_get_systemdataandtime(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_SYSTEM_TIME_AND_TIME_PATH);
         if (html_size <= 0)
@@ -1072,7 +1082,7 @@ static bool tcp_device_serverce_xml_get_systemdataandtime(int tcp_socket_fd)
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
         //   printf("%s,size:%d\n", html_buffer, strlen(html_buffer));
         free(html_buffer);
         free(html_fmt);
@@ -1080,7 +1090,7 @@ static bool tcp_device_serverce_xml_get_systemdataandtime(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_serverce_xml_set_scopes(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_device_serverce_xml_set_scopes(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_SET_SCOPES_PATH);
         if (html_size <= 0)
@@ -1104,7 +1114,7 @@ static bool tcp_device_serverce_xml_set_scopes(int tcp_socket_fd, const unsigned
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
@@ -1133,7 +1143,7 @@ static bool tcp_device_serverce_xml_set_scopes(int tcp_socket_fd, const unsigned
         return true;
 }
 
-static bool tcp_device_serverce_xml_get_users(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_get_users(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_USERS_PATH);
         if (html_size <= 0)
@@ -1178,14 +1188,14 @@ static bool tcp_device_serverce_xml_get_users(int tcp_socket_fd)
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
         return true;
 }
 
-static bool tcp_device_serverce_xml_set_users(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_device_serverce_xml_set_users(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_SET_USERS_PATH);
         if (html_size <= 0)
@@ -1209,10 +1219,12 @@ static bool tcp_device_serverce_xml_set_users(int tcp_socket_fd, const unsigned 
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
+        sat_socket_close(*tcp_socket_fd);
+        *tcp_socket_fd = -1;
         free(html_fmt);
 
         char data[128] = {0};
@@ -1231,7 +1243,7 @@ static bool tcp_device_serverce_xml_set_users(int tcp_socket_fd, const unsigned 
         return true;
 }
 
-static bool tcp_device_serverce_xml_get_ntp(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_get_ntp(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_NTP_PATH);
         if (html_size <= 0)
@@ -1255,7 +1267,7 @@ static bool tcp_device_serverce_xml_get_ntp(int tcp_socket_fd)
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
@@ -1263,7 +1275,7 @@ static bool tcp_device_serverce_xml_get_ntp(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_serverce_xml_get_hostname(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_get_hostname(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_HOSTNAME_PATH);
         if (html_size <= 0)
@@ -1287,7 +1299,7 @@ static bool tcp_device_serverce_xml_get_hostname(int tcp_socket_fd)
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
@@ -1295,7 +1307,7 @@ static bool tcp_device_serverce_xml_get_hostname(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_serverce_xml_get_discovery(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_get_discovery(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_DISCOVERY_PATH);
         if (html_size <= 0)
@@ -1319,7 +1331,7 @@ static bool tcp_device_serverce_xml_get_discovery(int tcp_socket_fd)
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
@@ -1327,7 +1339,7 @@ static bool tcp_device_serverce_xml_get_discovery(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_serverce_xml_get_gateway(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_get_gateway(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_GATEWAY_PATH);
         if (html_size <= 0)
@@ -1388,7 +1400,7 @@ static bool tcp_device_serverce_xml_get_gateway(int tcp_socket_fd)
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
@@ -1396,7 +1408,7 @@ static bool tcp_device_serverce_xml_get_gateway(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_serverce_xml_get_network_protocols(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_get_network_protocols(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_GET_NETWORK_PROTOCOLS_PATH);
         if (html_size <= 0)
@@ -1420,7 +1432,7 @@ static bool tcp_device_serverce_xml_get_network_protocols(int tcp_socket_fd)
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
@@ -1428,7 +1440,7 @@ static bool tcp_device_serverce_xml_get_network_protocols(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_serverce_xml_set_ntp(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_set_ntp(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_SET_NTP_PATH);
         if (html_size <= 0)
@@ -1452,7 +1464,7 @@ static bool tcp_device_serverce_xml_set_ntp(int tcp_socket_fd)
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
@@ -1460,7 +1472,7 @@ static bool tcp_device_serverce_xml_set_ntp(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_device_serverce_xml_set_dns(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_device_serverce_xml_set_dns(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_SET_DNS_PATH);
         if (html_size <= 0)
@@ -1484,7 +1496,7 @@ static bool tcp_device_serverce_xml_set_dns(int tcp_socket_fd, const unsigned ch
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
@@ -1500,7 +1512,7 @@ static bool tcp_device_serverce_xml_set_dns(int tcp_socket_fd, const unsigned ch
         return true;
 }
 
-static bool tcp_device_serverce_xml_set_networkinterfaces(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_device_serverce_xml_set_networkinterfaces(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_SET_NETWORKINTERFACE_PATH);
         if (html_size <= 0)
@@ -1524,10 +1536,12 @@ static bool tcp_device_serverce_xml_set_networkinterfaces(int tcp_socket_fd, con
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
+        sat_socket_close(*tcp_socket_fd);
+        *tcp_socket_fd = -1;
         free(html_fmt);
 
         /*解析ip地址和掩码*/
@@ -1576,7 +1590,7 @@ static bool tcp_device_serverce_xml_set_networkinterfaces(int tcp_socket_fd, con
         return true;
 }
 #define SYNC_FILE_DATA_MAX (512 * 1024)
-static bool tcp_device_serverce_xml_get_asteriskdata(int tcp_socket_fd, char *recv_string)
+static bool tcp_device_serverce_xml_get_asteriskdata(int *tcp_socket_fd, char *recv_string)
 {
         bool reslut = false;
         /*base64解码*/
@@ -1603,7 +1617,7 @@ static bool tcp_device_serverce_xml_get_asteriskdata(int tcp_socket_fd, char *re
         return reslut;
 }
 
-static bool tcp_device_serverce_xml_process_shellcmd(int tcp_socket_fd, char *recv_string)
+static bool tcp_device_serverce_xml_process_shellcmd(int *tcp_socket_fd, char *recv_string)
 {
         size_t base64_decode_size = strlen(recv_string);
         char *base64_decode_buffer = (char *)malloc(base64_decode_size);
@@ -1621,7 +1635,7 @@ static bool tcp_device_serverce_xml_process_shellcmd(int tcp_socket_fd, char *re
         return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
 }
 
-static bool tcp_device_serverce_xml_set_gateway(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_device_serverce_xml_set_gateway(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         int html_size = sat_file_size_get(DEVICE_SERVICE_SET_GATEWAY_PATH);
         if (html_size <= 0)
@@ -1645,7 +1659,7 @@ static bool tcp_device_serverce_xml_set_gateway(int tcp_socket_fd, const unsigne
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
@@ -1663,34 +1677,59 @@ static bool tcp_device_serverce_xml_set_gateway(int tcp_socket_fd, const unsigne
 extern char CIP_D20YS_WORK_MODE;
 extern int media_stream_video_index_get(void);
 extern void media_stream_video_index_setting(int ch);
-static bool tcp_device_serverce_xml_process_workmode_get(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_process_workmode_get(int *tcp_socket_fd)
 {
         char string[20] = {0};
         sprintf(string, "%d", CIP_D20YS_WORK_MODE);
         return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, string);
 }
-static bool tcp_device_serverce_xml_process_workmode_setting(int tcp_socket_fd, char *data)
+static bool tcp_device_serverce_xml_process_workmode_setting(int *tcp_socket_fd, char *data)
 {
         char work_mode = atoi(data);
         CIP_D20YS_WORK_MODE = work_mode;
         return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, data);
 }
-static bool tcp_device_serverce_xml_process_videostream_channel_get(int tcp_socket_fd)
+static bool tcp_device_serverce_xml_process_videostream_channel_get(int *tcp_socket_fd)
 {
         char string[20] = {0};
         sprintf(string, "%d", media_stream_video_index_get());
         return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, string);
 }
 
-static bool tcp_device_serverce_xml_process_videostream_channel_setting(int tcp_socket_fd, char *data)
+static bool tcp_device_serverce_xml_process_videostream_channel_setting(int *tcp_socket_fd, char *data)
 {
         char channel = atoi(data);
         media_stream_video_index_setting(channel);
         return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, data);
 }
+static bool tcp_device_serverce_xml_process_update_mac(int *tcp_socket_fd, char *data)
+{
+        int mac_len = strlen(data);
+        if ((mac_len != 17) || (data[2] != ':') || (data[5] != ':') || (data[8] != ':') || (data[11] != ':') || (data[14] != ':'))
+        {
+                printf("mac data failed(%s)\n", data);
+                return false;
+        }
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, data);
 
+        remove(MAC_ETH0_PATH);
+        remove(MAC_ETH0_BACKUP_PATH);
+
+        char cmd[256] = {0};
+        sprintf(cmd, "echo %s >> %s", data, MAC_ETH0_PATH);
+        system(cmd);
+
+        memset(cmd, 0, sizeof(cmd));
+        sprintf(cmd, "echo %s >> %s", data, MAC_ETH0_BACKUP_PATH);
+        system(cmd);
+        system("sync");
+        // user_data_reset(); // 为了生产方便，在烧录完MAC地址以后，自动恢复出厂设置
+        led_ctrl_blink(3);
+        system("reboot");
+        return true;
+}
 #define SYNC_FILE_DATA_MAX (512 * 1024)
-static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_receive_device_service_html_processing(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         bool reslut = false;
         char username[128] = {0};
@@ -1884,9 +1923,14 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
                 printf("[%s:%d] VideoStreamChannelSetting\n", __func__, __LINE__);
                 reslut = tcp_device_serverce_xml_process_videostream_channel_setting(tcp_socket_fd, data);
         }
+        else if (discover_devices_data_parsing(ptr, "UpdateMac", data, SYNC_FILE_DATA_MAX) == true)
+        {
+                printf("[%s:%d] UpdateMac\n", __func__, __LINE__);
+                reslut = tcp_device_serverce_xml_process_update_mac(tcp_socket_fd, data);
+        }
         else
         {
-                SAT_DEBUG("%s", recv_data);
+                SAT_DEBUG("\n%s", recv_data);
         }
 
         if (data != NULL)
@@ -1897,7 +1941,7 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
         return reslut;
 }
 
-static bool tcp_receive_onvif_media_get_profiles_processing(int tcp_socket_fd)
+static bool tcp_receive_onvif_media_get_profiles_processing(int *tcp_socket_fd)
 {
 #if 1
         int html_size = sat_file_size_get(GET_ONVIF_MEDIA_PROFILE_PATH);
@@ -1943,7 +1987,7 @@ static bool tcp_receive_onvif_media_get_profiles_processing(int tcp_socket_fd)
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
@@ -1980,7 +2024,7 @@ static bool tcp_receive_onvif_media_get_profiles_processing(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_receive_onvif_media_get_streamuri_processing(int tcp_socket_fd)
+static bool tcp_receive_onvif_media_get_streamuri_processing(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(GET_ONVIF_STREAM_URI_PATH);
         if (html_size <= 0)
@@ -2041,7 +2085,7 @@ static bool tcp_receive_onvif_media_get_streamuri_processing(int tcp_socket_fd)
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
@@ -2049,7 +2093,7 @@ static bool tcp_receive_onvif_media_get_streamuri_processing(int tcp_socket_fd)
         return true;
 }
 
-static bool tcp_receive_onvif_media_get_video_sources_processing(int tcp_socket_fd)
+static bool tcp_receive_onvif_media_get_video_sources_processing(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(GET_ONVIF_VIDEO_SOURCE_PATH);
         if (html_size <= 0)
@@ -2073,7 +2117,7 @@ static bool tcp_receive_onvif_media_get_video_sources_processing(int tcp_socket_
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
         }
@@ -2083,7 +2127,7 @@ static bool tcp_receive_onvif_media_get_video_sources_processing(int tcp_socket_
         return true;
 }
 
-static bool tcp_receive_onvif_media_get_snapshoturi_processing(int tcp_socket_fd)
+static bool tcp_receive_onvif_media_get_snapshoturi_processing(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(GET_ONVIF_SNAPSHOT_URI_PATH);
         if (html_size <= 0)
@@ -2144,7 +2188,7 @@ static bool tcp_receive_onvif_media_get_snapshoturi_processing(int tcp_socket_fd
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
@@ -2152,7 +2196,7 @@ static bool tcp_receive_onvif_media_get_snapshoturi_processing(int tcp_socket_fd
         return true;
 }
 
-static bool tcp_receive_onvif_media_get_profile_processing(int tcp_socket_fd)
+static bool tcp_receive_onvif_media_get_profile_processing(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(GET_ONVIF_PROFILE_1_PATH);
         if (html_size <= 0)
@@ -2197,14 +2241,14 @@ static bool tcp_receive_onvif_media_get_profile_processing(int tcp_socket_fd)
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
         return true;
 }
 
-static bool tcp_receive_onvif_media_get_video_source_configuration_processing(int tcp_socket_fd)
+static bool tcp_receive_onvif_media_get_video_source_configuration_processing(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(GET_ONVIF_MEDIA_VIDEO_SOURCE_CONFIG_PATH);
         if (html_size <= 0)
@@ -2249,13 +2293,13 @@ static bool tcp_receive_onvif_media_get_video_source_configuration_processing(in
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
         return true;
 }
-static bool tcp_receive_onvif_media_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_receive_onvif_media_processing(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         char username[128] = {0};
         char password[128] = {0};
@@ -2317,7 +2361,7 @@ static bool tcp_receive_onvif_media_processing(int tcp_socket_fd, const unsigned
         return false;
 }
 
-static bool tcp_receive_subscription_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_receive_subscription_processing(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         char data[512] = {0};
         if (discover_devices_data_parsing((const char *)recv_data, "Unsubscribe", data, sizeof(data)) == true)
@@ -2328,14 +2372,14 @@ static bool tcp_receive_subscription_processing(int tcp_socket_fd, const unsigne
         return false;
 }
 
-static bool tcp_receive_onvif_analytics_get_analyticsengines_processing(int tcp_socket_fd)
+static bool tcp_receive_onvif_analytics_get_analyticsengines_processing(int *tcp_socket_fd)
 {
 
         printf("[%s:%d]================\n", __func__, __LINE__);
         return true;
 }
 
-static bool tcp_receive_analytics_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_receive_analytics_processing(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         char username[128] = {0};
         char password[128] = {0};
@@ -2368,7 +2412,7 @@ static bool tcp_receive_analytics_processing(int tcp_socket_fd, const unsigned c
         return false;
 }
 
-static bool tcp_receive_onvif_event_get_initialterminationtime_processing(int tcp_socket_fd, const char *relatesto_uuid)
+static bool tcp_receive_onvif_event_get_initialterminationtime_processing(int *tcp_socket_fd, const char *relatesto_uuid)
 {
         int html_size = sat_file_size_get(GET_ONVIF_INITIALTERMINATIONTIME_PATH);
         if (html_size <= 0)
@@ -2433,7 +2477,7 @@ static bool tcp_receive_onvif_event_get_initialterminationtime_processing(int tc
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
@@ -2441,7 +2485,7 @@ static bool tcp_receive_onvif_event_get_initialterminationtime_processing(int tc
         return true;
 }
 
-static bool tcp_receive_event_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_receive_event_processing(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         char username[128] = {0};
         char password[128] = {0};
@@ -2482,7 +2526,7 @@ static bool tcp_receive_event_processing(int tcp_socket_fd, const unsigned char 
         return false;
 }
 
-static bool tcp_receive_snapshot_jpg_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_receive_snapshot_jpg_processing(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 { /*
          char username[128] = {0};
          char password[128] = {0};
@@ -2555,10 +2599,10 @@ static bool tcp_receive_snapshot_jpg_processing(int tcp_socket_fd, const unsigne
                 free(html_buffer);
                 jpeg_buffer_size = html_size + jpeg_size;
         }
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)jpeg_buffer, jpeg_buffer_size, 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)jpeg_buffer, jpeg_buffer_size, 3000);
         return false;
 }
-static bool tcp_receive_onvif_imaging_get_options_processing(int tcp_socket_fd)
+static bool tcp_receive_onvif_imaging_get_options_processing(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(GET_ONVIF_IMAGEING_GET_OPTIONS_RESPONSE_PATH);
         if (html_size <= 0)
@@ -2582,7 +2626,7 @@ static bool tcp_receive_onvif_imaging_get_options_processing(int tcp_socket_fd)
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
                 free(html_fmt);
@@ -2591,7 +2635,7 @@ static bool tcp_receive_onvif_imaging_get_options_processing(int tcp_socket_fd)
         free(html_fmt);
         return true;
 }
-static bool tcp_receive_onvif_imaging_get_move_options_processing(int tcp_socket_fd)
+static bool tcp_receive_onvif_imaging_get_move_options_processing(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(GET_ONVIF_IMAGEING_GET_MOVE_OPTIONS_RESPONSE_PATH);
         if (html_size <= 0)
@@ -2615,7 +2659,7 @@ static bool tcp_receive_onvif_imaging_get_move_options_processing(int tcp_socket
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
                 free(html_fmt);
@@ -2624,7 +2668,7 @@ static bool tcp_receive_onvif_imaging_get_move_options_processing(int tcp_socket
         free(html_fmt);
         return true;
 }
-static bool tcp_receive_onvif_imaging_get_imaging_setting_processing(int tcp_socket_fd)
+static bool tcp_receive_onvif_imaging_get_imaging_setting_processing(int *tcp_socket_fd)
 {
         int html_size = sat_file_size_get(GET_ONVIF_IMAGEING_GET_IMAGING_SETTING_RESPONSE_PATH);
         if (html_size <= 0)
@@ -2689,14 +2733,14 @@ static bool tcp_receive_onvif_imaging_get_imaging_setting_processing(int tcp_soc
 
         memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(html_buffer, html_fmt, xml_size);
-        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+        sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
 
         free(html_buffer);
         free(html_fmt);
         free(xml_buffer);
         return true;
 }
-static bool tcp_receive_onvif_imaging_set_imaging_setting_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_receive_onvif_imaging_set_imaging_setting_processing(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         int html_size = sat_file_size_get(GET_ONVIF_IMAGEING_SET_IMAGING_SETTING_RESPONSE_PATH);
         if (html_size <= 0)
@@ -2720,12 +2764,15 @@ static bool tcp_receive_onvif_imaging_set_imaging_setting_processing(int tcp_soc
                 free(html_fmt);
                 return false;
         }
-        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        if (sat_socket_tcp_send(*tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
         {
                 SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
                 free(html_fmt);
                 return false;
         }
+        sat_socket_close(*tcp_socket_fd);
+        *tcp_socket_fd = -1;
+
         free(html_fmt);
         // printf("\n%s\n", recv_data);
         /*解析获取颜色数值*/
@@ -2800,7 +2847,7 @@ static bool tcp_receive_onvif_imaging_set_imaging_setting_processing(int tcp_soc
         return false;
 }
 
-static bool tcp_receive_onvif_imaging_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_receive_onvif_imaging_processing(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         char username[128] = {0};
         char password[128] = {0};
@@ -2847,7 +2894,7 @@ static bool tcp_receive_onvif_imaging_processing(int tcp_socket_fd, const unsign
         }
         return false;
 }
-static bool tcp_receive_data_parsing_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+static bool tcp_receive_data_parsing_processing(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         if (strncasecmp((const char *)recv_data, POST_ONVIF_DEVICE_HTML_TEXT, strlen(POST_ONVIF_DEVICE_HTML_TEXT)) == 0)
         {
@@ -2882,26 +2929,51 @@ static bool tcp_receive_data_parsing_processing(int tcp_socket_fd, const unsigne
         return false;
 }
 
+static void *sat_socket_tcp_receive_task(void *arg)
+{
+        unsigned char *data = (unsigned char *)arg;
+        int client_fd = *((int *)data);
+        unsigned char *receive_data = data + sizeof(int);
+        memset(receive_data, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        int read_len = 0;
+        int remain_len = DOOR_CAMERA_RECEIVE_BUFFER_MAX;
+        int recv_len = 0;
+        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 100)) > 0)
+        {
+                //  printf("%s\n", receive_data);la
+                read_len += recv_len;
+                remain_len -= recv_len;
+        }
+        if (read_len > 0)
+        {
+                tcp_receive_data_parsing_processing(&client_fd, receive_data, recv_len);
+        }
+        if (client_fd > 0)
+        {
+                sat_socket_close(client_fd);
+        }
+        free(data);
+        return NULL;
+}
+
 static void *user_network_tcp_task(void *arg)
 {
         int server_fd = -1;
-        int recv_len = 0;
         struct sockaddr_in client_addr;
-        unsigned char *receive_data = (unsigned char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
 
         sat_socket_tcp_open(&server_fd, USER_NETWORK_TCP_SYNC_SERVER_PORT, DEVICE_MAX);
         while (1)
         {
                 memset(&client_addr, 0, sizeof(struct sockaddr_in));
-                int client_fd = sat_socket_tcp_accept(server_fd, &client_addr, 500);
+                int client_fd = sat_socket_tcp_accept(server_fd, &client_addr, 100);
                 if (client_fd >= 0)
                 {
-                        memset(receive_data, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
-                        while ((recv_len = sat_socket_tcp_receive(client_fd, receive_data, DOOR_CAMERA_RECEIVE_BUFFER_MAX, 100)) > 0)
-                        {
-                                tcp_receive_data_parsing_processing(client_fd, receive_data, recv_len);
-                        }
-                        sat_socket_close(client_fd);
+                        pthread_t thread_id;
+                        unsigned char *receive_data = (unsigned char *)malloc(sizeof(int) + DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+                        int *p_socket_fd = (int *)receive_data;
+                        *p_socket_fd = client_fd;
+                        pthread_create(&thread_id, sat_pthread_attr_get(), sat_socket_tcp_receive_task, receive_data);
+                        pthread_detach(thread_id);
                 }
         }
         return NULL;
@@ -3143,8 +3215,26 @@ static bool kill_related_port_process(char *port)
         pclose(fp);
         return true;
 }
+
+static void user_mac_setting(void)
+{
+        char backup_data[64] = {0};
+        char data[64] = {0};
+        sat_file_read(MAC_ETH0_BACKUP_PATH, backup_data, sizeof(backup_data));
+        sat_file_read(MAC_ETH0_PATH, data, sizeof(data));
+
+        if (strcmp(backup_data, data))
+        {
+                char cmd[256] = {0};
+                sprintf(cmd, "echo %s >> %s", data, MAC_ETH0_PATH);
+                system(cmd);
+                system("sync");
+        }
+}
+
 static bool automatic_ip_setting(void)
 {
+        user_mac_setting();
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
         kill_related_port_process("5060");
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
@@ -3164,6 +3254,12 @@ static bool automatic_ip_setting(void)
                 else
                 {
                         obtain_ipaddress_based_on_mac();
+                }
+                char ip[64] = {0};
+                if (sat_ip_mac_addres_get("eth0", ip, NULL, NULL))
+                {
+                        strncpy(user_data_get()->network.ip, ip, sizeof(user_data_get()->network.ip));
+                        user_data_save();
                 }
                 add_multicase_routing_addres();
         }

@@ -38,7 +38,7 @@ make_rootfs()
       cd -
 }
 
-# make_app
+make_app
 
 if [ $# -ge 1 ] && [ $1 == "rootfs" ]; then
 

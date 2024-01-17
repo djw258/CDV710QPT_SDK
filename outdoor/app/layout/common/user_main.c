@@ -38,6 +38,8 @@
 #include "anyka/ak_vi.h"
 #include "anyka/ak_vpss.h"
 #include "anyka/ak_ats.h"
+#include <signal.h>
+#include <sys/wait.h>
 #if 0
 #include <stdio.h>
 #include <stdlib.h>
@@ -123,6 +125,8 @@ int main(int argc, char **argv)
 ** bit4: 后面模式
 *****************************************************************/
 char CIP_D20YS_WORK_MODE = 0x00;
+/*视频流状态*/
+static bool video_capture_status = false;
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 10:7:35
@@ -162,9 +166,9 @@ static void linux_kerner_init(void)
         ** 说明: 暂时处理上电打开功放
         ***********************************************/
         // system("ifconfig eth0 txqueuelen 10000");
-        system("echo 10485760 > /proc/sys/net/core/wmem_default");
-        system("echo 10485760 > /proc/sys/net/core/wmem_max");
-        system("echo 10485760 > /proc/sys/net/core/rmem_max");
+        system("echo 4194304 > /proc/sys/net/core/wmem_default");
+        system("echo 4194304 > /proc/sys/net/core/wmem_max");
+        system("echo 4194304 > /proc/sys/net/core/rmem_max");
 
         /***********************************************
         ** 作者: leo.liu
@@ -256,24 +260,34 @@ static void key_call_process(unsigned int code, unsigned int state)
 
 static void sys_timer_callback(void)
 {
-        static unsigned long long pre_timestamp = 0;
+        static unsigned long long register_timestamp = 0;
+        static unsigned long long led_ctrl_timestamp = 0;
         unsigned long long timestamp = user_timestamp_get();
 
         /* 警报状态的情况下，通话需要播放警报铃声*/
 
         /*每500ms跑一次*/
-        if ((timestamp - pre_timestamp) < SIP_CALL_QURY_TIMER)
+        if ((timestamp - register_timestamp) > SIP_CALL_QURY_TIMER)
         {
-                return;
+                register_timestamp = timestamp;
+                /*每隔500ms发送一次在线询问*/
+                //   sat_linphone_calls_cmd_send();
+                if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
+                {
+                        char domain[32] = {0};
+                        sprintf(domain, "%s:5066", user_data_get()->server_ip);
+                        sat_linphone_register(user_data_get()->device.name, user_data_get()->device.number, NULL, domain);
+                }
         }
-        pre_timestamp = timestamp;
-        /*每隔500ms发送一次在线询问*/
-        //   sat_linphone_calls_cmd_send();
-        if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
+
+        if ((video_capture_status == true) && (((timestamp - led_ctrl_timestamp) > SIP_CALL_QURY_TIMER * 2) || (led_ctrl_level_read() == GPIO_LEVEL_LOW)))
         {
-                char domain[32] = {0};
-                sprintf(domain, "%s:5066", user_data_get()->server_ip);
-                sat_linphone_register(user_data_get()->device.name, user_data_get()->device.number, NULL, domain);
+                led_ctrl_timestamp = timestamp;
+                led_ctrl_enable((ir_feed_read() == GPIO_LEVEL_LOW) ? false : true);
+        }
+        else if ((video_capture_status == false) && (led_ctrl_level_read() == GPIO_LEVEL_HIGH))
+        {
+                led_ctrl_enable(false);
         }
 }
 
@@ -291,7 +305,7 @@ static void *media_server_task(void *arg)
 /*视频流状态显示*/
 static void video_stream_status_callback(bool en)
 {
-        led_ctrl_enable(((en == false) || (ir_feed_read() == GPIO_LEVEL_LOW)) ? false : true);
+        // led_ctrl_enable(((en == false) || (ir_feed_read() == GPIO_LEVEL_LOW)) ? false : true);
 
         if (en == true)
         {
@@ -300,6 +314,7 @@ static void video_stream_status_callback(bool en)
                 ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_CONTRAST, user_data_get()->contrast);
                 ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_SHARP, user_data_get()->sharpness);
         }
+        video_capture_status = en;
         return;
 }
 
@@ -320,26 +335,39 @@ static void call_ring_event_callback(void)
 }
 /* ring play:arg1:0,start,1:finish*/
 /*LinphoneCallState*/
-static int linphone_core_status = 0;
+
+#if 0
+// static int linphone_core_status = 0x01;
 static void call_ring_play_status_callback(int state)
 {
         /*铃声结束，警报模式，并且是通话状态*/
         if ((state == 1) && (CIP_D20YS_WORK_MODE & 0x01) && (linphone_core_status == 6))
         {
-                sat_linphone_audio_play_volume_set(20);
+                usleep(1000 * 1000);
+                sat_linphone_audio_play_volume_set(0);
                 sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm.wav", 1);
         }
 }
 static void linphone_call_status_callback(int state)
 {
-        linphone_core_status = state;
-        /*警报模式，并且按下通话*/
-        if ((CIP_D20YS_WORK_MODE & 0x01) && (linphone_core_status == 6))
+        if ((state == 6) || (state == 0) || (state == 13))
         {
-                sat_linphone_audio_play_volume_set(20);
-                sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm.wav", 1);
+                linphone_core_status = state;
+                /*警报模式，并且按下通话*/
+                if ((CIP_D20YS_WORK_MODE & 0x01) && (linphone_core_status == 6))
+                {
+                        usleep(1000 * 1000);
+                        sat_linphone_audio_play_volume_set(0);
+                        sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm.wav", 1);
+                }
+                else if (linphone_core_status == 13)
+                {
+                        sat_linphone_audio_play_stop();
+                }
         }
+
 }
+#endif
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
@@ -351,6 +379,7 @@ static void linphone_call_status_callback(int state)
 int main(int argc, char *argv[])
 {
         signal(SIGPIPE, SIG_IGN);
+        //   signal(SIGCHLD, sigchld_func);
         remove("/tmp/.linphonerc");
         printf("*****************************************************\n");
         printf("*****        project: CDV810QPT(outdoor)        *****\n");
@@ -361,8 +390,8 @@ int main(int argc, char *argv[])
         sdk_run_config config = {0};
         ak_sdk_init(&config);
 
-        //  ak_its_start(8765);
-        // ak_ats_start(8765);
+        //    ak_its_start(8765);
+        //  ak_ats_start(8765);
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-5 11:38:19
@@ -396,9 +425,9 @@ int main(int argc, char *argv[])
         /*播放呼叫铃声*/
         call_ring_event_fun_register(call_ring_event_callback);
         /*铃声播放状态*/
-        call_ring_play_status_func_register(call_ring_play_status_callback);
+        // call_ring_play_status_func_register(call_ring_play_status_callback);
         /*linphone 状态改变处理函数*/
-        linphone_call_status_event_func_register(linphone_call_status_callback);
+        // linphone_call_status_event_func_register(linphone_call_status_callback);
 
         if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
         {

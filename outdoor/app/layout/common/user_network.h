@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include "user_data.h"
 
-#define SYSTEM_VERSION "Ver:0.0.0.1"
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 17:13:48

@@ -42,7 +42,17 @@ void led_ctrl_enable(bool en)
 {
         gpio_level_set(LED_CTRL_GPIO_PIN, en == true ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW);
 }
-
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-11-9 10:15:48
+** 说明: 读取gpio 电平
+***********************************************/
+GPIO_LEVEL led_ctrl_level_read(void)
+{
+        GPIO_LEVEL level;
+        gpio_level_read(LED_CTRL_GPIO_PIN, &level);
+        return level;
+}
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48

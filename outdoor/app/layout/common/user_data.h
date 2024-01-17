@@ -31,6 +31,8 @@ typedef struct
         int contrast;
         int sharpness;
 } user_data_info;
+
+#define SYSTEM_VERSION "Ver:0.0.0.1"
 /***
 ** 日期: 2022-05-05 08:47
 ** 作者: leo.liu
