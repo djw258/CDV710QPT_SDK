@@ -78,6 +78,7 @@ static void logo_sip_server_register(void)
 
 static void sip_register_timer(lv_timer_t *t)
 {
+        lv_timer_set_period(t, 5000);
         // OPERATE_RET ret = tuya_ipc_get_mqtt_status();
         // int num = tuya_api_client_num();
         // SAT_DEBUG("======tuya status is %d\n", ret);
@@ -275,6 +276,7 @@ bool buzzer_call_trigger_check(void)
 }
 
 unsigned long long buzzer_call_timestamp = 0;
+int buzzer_call_duration = 6000;
 unsigned long long buzzer_call_timestamp_get()
 {
         return buzzer_call_timestamp;
@@ -283,6 +285,12 @@ unsigned long long buzzer_call_timestamp_get()
 bool buzzer_call_timestamp_set(unsigned long long timestamp)
 {
         buzzer_call_timestamp = timestamp;
+        return true;
+}
+
+bool buzzer_call_duration_set(int duration)
+{
+        buzzer_call_duration = duration;
         return true;
 }
 static void default_buzzer_call_delay_close_task(lv_timer_t *ptimer)
@@ -326,7 +334,7 @@ void buzzer_alarm_trigger_default(void)
                         {
                                 lv_timer_del((lv_timer_t *)obj->user_data);
                         }
-                        obj->user_data = lv_sat_timer_create(default_buzzer_call_delay_close_task, 6000, NULL);
+                        obj->user_data = lv_sat_timer_create(default_buzzer_call_delay_close_task, buzzer_call_duration, NULL);
                 }
         }
         else
@@ -460,6 +468,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         }
 
                         user_data_get()->alarm.away_alarm_enable = info->alarm.away_alarm_enable;
+
                         user_data_get()->alarm.security_auto_record = info->alarm.security_auto_record;
                         user_data_get()->alarm.away_auto_record = info->alarm.away_auto_record;
                         user_data_get()->alarm.away_setting_time = info->alarm.away_setting_time;
@@ -471,11 +480,14 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         for (int i = 0; i < 8; i++) // 警报触发取消同步
                         {
 
+                                printf("user_data_get()->alarm.alarm_trigger_enable[%d] = %d\n", i, user_data_get()->alarm.alarm_trigger_enable[i]);
+
                                 if (((user_data_get()->alarm.alarm_trigger[i]) != (info->alarm.alarm_trigger[i])) || ((user_data_get()->alarm.alarm_trigger_enable[i]) != (info->alarm.alarm_trigger_enable[i])))
                                 {
-                                        memcpy(&user_data_get()->alarm.alarm_trigger, &info->alarm.alarm_trigger, sizeof(user_data_get()->alarm.alarm_trigger));
-                                        memcpy(&user_data_get()->alarm.alarm_trigger_enable, &info->alarm.alarm_trigger_enable, sizeof(user_data_get()->alarm.alarm_trigger_enable));
                                         user_data_get()->alarm.alarm_trigger[i] = info->alarm.alarm_trigger[i];
+                                        user_data_get()->alarm.alarm_trigger_enable[i] = info->alarm.alarm_trigger_enable[i];
+                                        // printf("user_data_get()->alarm.alarm_trigger[%d] = %d\n", i, user_data_get()->alarm.alarm_trigger[i]);
+                                        SAT_DEBUG("user_data_get()->alarm.alarm_trigger_enable[%d] = %d\n", i, user_data_get()->alarm.alarm_trigger_enable[i]);
                                         sync_data_alarm_trigger_check();
                                 }
                         }
@@ -491,6 +503,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         }
                         if (user_data_get()->alarm.security_alarm_enable != info->alarm.security_alarm_enable) // 离家设防同步
                         {
+
                                 user_data_get()->alarm.security_alarm_enable = info->alarm.security_alarm_enable;
                                 security_mode_sync_callback();
                         }
@@ -507,6 +520,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         strncpy(network_data_get()->network.gateway, info->network.gateway, sizeof(network_data_get()->network.gateway));
                         strncpy(network_data_get()->network.dns, info->network.dns, sizeof(network_data_get()->network.dns));
                         strncpy(network_data_get()->guard_number, info->guard_number, sizeof(network_data_get()->guard_number));
+                        strncpy(network_data_get()->sip_user, info->sip_user, sizeof(network_data_get()->sip_user));
                 }
                 else if ((flag == 0x02) && (max == sizeof(asterisk_register_info) * 20))
                 {
@@ -796,7 +810,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         }
 
         /*注册到sip server*/
-        lv_timer_ready(lv_timer_create(sip_register_timer, 5000, NULL));
+        lv_timer_create(sip_register_timer, 1000, NULL);
 
         /**********************************************
          ** 作者: leo.liu
@@ -1122,6 +1136,22 @@ void time_correction_timer(lv_timer_t *t)
         system("hwclock -w");
 }
 
+void commax_pis_information_report_timer(lv_timer_t *t)
+{
+        char dong[5] = {0};
+        char ho[5] = {0};
+        strncpy(dong, network_data_get()->sip_user, 4);
+        strncpy(ho, &network_data_get()->sip_user[4], 4);
+        while (dong[0] == '0')
+        {
+                memmove(&dong[0], &dong[1], 4);
+        }
+        while (ho[0] == '0')
+        {
+                memmove(&ho[0], &ho[1], 4);
+        }
+        commax_pis_information_report(network_data_get()->local_server, 80, dong, ho, "CIP_70QPT", 2, VERSION_NO, 1000);
+}
 static void sat_layout_quit(logo)
 {
         /**
@@ -1129,6 +1159,8 @@ static void sat_layout_quit(logo)
          * 函数作用：每隔4.8分种让时间减少20豪秒(定时器时间也依赖系统时间，所以得减去相应的时间误差；公式：48/（24*60）*3 *1000 = 200)
          **/
         lv_timer_create(time_correction_timer, 60 * 480000 - 200, NULL);
+
+        lv_timer_ready(lv_timer_create(commax_pis_information_report_timer, 30 * 60 * 1000, NULL));
 }
 
 sat_layout_create(logo);

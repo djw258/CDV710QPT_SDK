@@ -1,0 +1,261 @@
+
+注：将rtwpriv工具 push到板子可方便执行路径下（如：system/bin）
+   
+rtwpriv wlan0 mp_txpower patha=80,pathb=44
+
+rtwpriv wlan0 mp_ctx stop
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 167
+rtwpriv wlan0 mp_bandwidth 40M=1,shortGI=0
+rtwpriv wlan0 mp_ant_tx b
+rtwpriv wlan0 mp_rate 135
+rtwpriv wlan0 mp_txpower patha=63,pathb=61
+rtwpriv wlan0 mp_ctx background,pkt
+
+
+echo 0 > /sys/class/rfkill/rfkill1/state
+echo 1 > /sys/class/rfkill/rfkill1/state
+chmod 777 *
+rtlbtmp
+enable uart5:/dev/ttyHS6
+bt_mp_SetParam 18,0
+bt_mp_Exec 40
+bt_mp_SetParam 18,0x38,0x3F,0x3F,0x38.0x38
+bt_mp_Exec 51
+bt_mp_Exec 31
+bt_mp_SetParam 1,0x00;2,0x00;3,0x07;4.0x00;6,0x7F;7.0x00;11,0x000000123456
+bt_mp_Exec 30
+####################################################
+
+ifconfig wlan0 up       //// WiFi读卡；输入ifconfig确认wlan0起来再发定频指令
+
+rtwpriv wlan0 mp_pwrctldm stop
+1、执行测试指令
+
+调制波指令：
+root
+quectel123
+/etc/init.d/wlan start
+ifconfig wlan0 up 
+
+2.4G（例子）11B：
+
+
+rtwpriv wlan0 mp_ctx stop
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 1
+rtwpriv wlan0 mp_bandwidth 40M=0,shortGI=0
+rtwpriv wlan0 mp_ant_tx a
+rtwpriv wlan0 mp_rate 22
+rtwpriv wlan0 mp_get_txpower 0
+rtwpriv wlan0 mp_ctx background,pkt
+rtwpriv wlan0 mp_pwrctldm start
+
+暂停：
+
+rtwpriv wlan0 mp_ctx stop
+
+2.4G（例子）54M：
+
+
+rtwpriv wlan0 mp_ctx stop
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 1
+rtwpriv wlan0 mp_bandwidth 40M=0,shortGI=0
+rtwpriv wlan0 mp_ant_tx a
+rtwpriv wlan0 mp_rate 108
+rtwpriv wlan0 mp_get_txpower 0
+rtwpriv wlan0 mp_ctx background,pkt
+rtwpriv wlan0 mp_pwrctldm start
+
+暂停：
+
+rtwpriv wlan0 mp_ctx stop
+
+2.4G（例子）11n20M：
+
+
+rtwpriv wlan0 mp_ctx stop
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 1
+rtwpriv wlan0 mp_bandwidth 40M=0,shortGI=0
+rtwpriv wlan0 mp_ant_tx a
+rtwpriv wlan0 mp_rate 135
+rtwpriv wlan0 mp_get_txpower 0
+rtwpriv wlan0 mp_ctx background,pkt
+rtwpriv wlan0 mp_pwrctldm start
+
+暂停：
+
+rtwpriv wlan0 mp_ctx stop
+
+2.4G（例子）11n40M：
+
+
+rtwpriv wlan0 mp_ctx stop
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 11
+rtwpriv wlan0 mp_bandwidth 40M=1,shortGI=0
+rtwpriv wlan0 mp_ant_tx a
+rtwpriv wlan0 mp_rate 135
+rtwpriv wlan0 mp_get_txpower 0
+rtwpriv wlan0 mp_ctx background,pkt
+rtwpriv wlan0 mp_pwrctldm start
+
+暂停：
+
+rtwpriv wlan0 mp_ctx stop
+
+
+
+5G（例子）11A：
+
+
+rtwpriv wlan0 mp_ctx stop
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 36
+rtwpriv wlan0 mp_bandwidth 40M=0,shortGI=0
+rtwpriv wlan0 mp_ant_tx a
+rtwpriv wlan0 mp_rate 108
+rtwpriv wlan0 mp_get_txpower 0
+rtwpriv wlan0 mp_ctx background,pkt
+rtwpriv wlan0 mp_pwrctldm start
+
+暂停：
+
+rtwpriv wlan0 mp_ctx stop
+
+
+5G（例子）11n20m：
+
+
+rtwpriv wlan0 mp_ctx stop
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 36
+rtwpriv wlan0 mp_bandwidth 40M=0,shortGI=0
+rtwpriv wlan0 mp_ant_tx a
+rtwpriv wlan0 mp_rate 135
+rtwpriv wlan0 mp_get_txpower 0
+rtwpriv wlan0 mp_ctx background,pkt
+rtwpriv wlan0 mp_pwrctldm start
+
+暂停：
+
+rtwpriv wlan0 mp_ctx stop
+
+
+5G（例子）11n40M：
+
+rtwpriv wlan0 mp_ctx stop
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 159
+rtwpriv wlan0 mp_bandwidth 40M=1,shortGI=0
+rtwpriv wlan0 mp_ant_tx a
+rtwpriv wlan0 mp_rate 135
+rtwpriv wlan0 mp_get_txpower 0
+rtwpriv wlan0 mp_ctx background,pkt
+rtwpriv wlan0 mp_pwrctldm start
+
+暂停：
+
+rtwpriv wlan0 mp_ctx stop
+
+5G（例子）11ac80M：
+
+rtwpriv wlan0 mp_ctx stop
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 42
+rtwpriv wlan0 mp_bandwidth 40M=2,shortGI=0
+rtwpriv wlan0 mp_ant_tx a
+rtwpriv wlan0 mp_rate 169
+rtwpriv wlan0 mp_get_txpower 0
+rtwpriv wlan0 mp_ctx background,pkt
+rtwpriv wlan0 mp_pwrctldm start
+
+暂停：
+
+rtwpriv wlan0 mp_ctx stop
+
+
+
+
+手动定义功率：
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 1
+rtwpriv wlan0 mp_bandwidth 40M=0,shortGI=0
+rtwpriv wlan0 mp_ant_tx a
+rtwpriv wlan0 mp_rate 108
+rtwpriv wlan0 mp_txpower patha=44,pathb=44
+rtwpriv wlan0 mp_ctx background,pkt
+
+
+暂停：
+
+rtwpriv wlan0 mp_ctx stop
+
+####################################################
+
+
+指令设置简介：
+
+rtwpriv wlan0 mp_channel 1 （信道设置，当前为1信道）
+
+rtwpriv wlan0 mp_bandwidth 40M=0,shortGI=0 （带宽设置40M=0：20M ， 40M=1：40M ，80M=2 ）
+rtwpriv wlan0 mp_txpower patha=44,pathb=50  //功率大小，填写上面读出的index值，参考"定频软件参数设定
+
+rtwpriv wlan0 mp_ant_tx a   (设置天线 a / b ）
+
+rtwpriv wlan0 mp_rate 2 （模式设置,1M=2,11M=22,6M=12,54M=108,MCS0=128,MCS7=135，ACmcs0=160,ACmcs9=168，ACmcs0=160,ACmcs9=169 )
+rtwpriv wlan0 mp_get_txpower 0   (设置天线 a=txpower 0  / 天线 b=txpower 1 ）
+####################################################
+
+
+2、单载波指令
+
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 1
+rtwpriv wlan0 mp_bandwidth 40M=0,shortGI=0
+rtwpriv wlan0 mp_ant_tx a
+rtwpriv wlan0 mp_txpower patha=10,pathb=10
+rtwpriv wlan0 mp_rate 108
+rtwpriv wlan0 mp_ctx background,stone
+
+暂停：
+
+rtwpriv wlan0 mp_ctx stop
+
+
+
+
+####################################################
+
+3、接收灵敏度指令
+
+3.1)板子设置好执行指令：
+
+rtwpriv wlan0 mp_stop
+rtwpriv wlan0 mp_start
+rtwpriv wlan0 mp_channel 5
+rtwpriv wlan0 mp_bandwidth 40M=0,shortGI=0 
+rtwpriv wlan0 mp_ant_rx a
+rtwpriv wlan0 mp_arx start              //开始收包
+
+
+
+3.2)仪器发送数据包
+
+rtwpriv wlan0 mp_arx phy
+sleep 1s
+rtwpriv wlan0 mp_reset_stats
+
+3.3)执行打印接收结果指令：
+
+rtwpriv wlan0 mp_arx phy   //查看物理层收包情况，表示模块收到的包。
+
+rtwpriv wlan0 mp_reset_stats //接收数据复位
+
+
+rtwpriv wlan0 mp_stop   //停止工具
+
+
+

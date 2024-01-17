@@ -209,7 +209,7 @@ bool frame_display_lightmode_check(void)
 	{
 		end += 24 * 60;
 	}
-	if ((cur < end) && (cur > start))
+	if ((cur < end) && (cur >= start))
 	{
 		return true;
 	}
@@ -864,18 +864,17 @@ static void frame_show_playback_start(void)
 		type = FILE_TYPE_VIDEO;
 	}
 	media_file_total_get(type, &total, &new_total);
-	if (total <= 0)
+	if (total > 0)
 	{
-		return frame_show_restart();
+		const file_info *info = media_file_info_get(type, total - 1);
+		char frame_show_frame_path[128] = {0};
+		memset(frame_show_frame_path, 0, sizeof(frame_show_frame_path));
+		sprintf(frame_show_frame_path, "%s%s", type == FILE_TYPE_FLASH_PHOTO ? FLASH_PHOTO_PATH : SD_MEDIA_PATH, info->file_name);
+		frame_show_media_thumb_display(frame_show_frame_path);
+		char file_path[128];
+		sprintf(file_path, "%s/%s", info->file_name, info->ch);
+		frame_show_playback_name_display(file_path);
 	}
-	const file_info *info = media_file_info_get(type, total - 1);
-	char frame_show_frame_path[128] = {0};
-	memset(frame_show_frame_path, 0, sizeof(frame_show_frame_path));
-	sprintf(frame_show_frame_path, "%s%s", type == FILE_TYPE_FLASH_PHOTO ? FLASH_PHOTO_PATH : SD_MEDIA_PATH, info->file_name);
-	frame_show_media_thumb_display(frame_show_frame_path);
-	char file_path[128];
-	sprintf(file_path, "%s/%s", info->file_name, info->ch);
-	frame_show_playback_name_display(file_path);
 	lv_sat_timer_create(frame_show_refresh_wait_task, 1000, NULL);
 }
 

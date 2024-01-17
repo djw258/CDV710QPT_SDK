@@ -106,7 +106,7 @@ bool layout_monitor_report_vaild_channel(void)
                 ch = ch - 1;
                 media_type = 1;
         }
-        else if ((ch >= 16) && (ch <= 17))
+        else if ((ch == 16) || (ch == 17))
         {
                 ch = ch - 3;
                 if (ch == 17)

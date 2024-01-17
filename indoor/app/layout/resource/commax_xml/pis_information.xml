@@ -1,0 +1,6 @@
+GET /ip_update.php?site=CMN&mac=%s&prd=%s&type=%d&ver=%s&dong=%s&ho=%s
+HTTP/1.0
+User-Agent: Mozilla/2.0 (Win95; I)
+Pragma: no-cache
+Host: %s
+Accept: */*

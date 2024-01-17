@@ -463,6 +463,13 @@ static void sat_layout_enter(setting_user_wifi)
         ** 说明: 设置按钮创建
         ***********************************************/
         {
+
+                unsigned char ip_addr[64] = {0};
+                if (wifi_device_hwadders_get(ip_addr) == false)
+                {
+                        printf("get wifi hw addres failed \n");
+                        memset(ip_addr, 0, sizeof(ip_addr));
+                }
                 lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_cont, user_wifi_display_mode ? 48 : 354, 80, user_wifi_display_mode ? 928 : 622, 88,
                                                                                    setting_user_wifi_setting_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
@@ -475,7 +482,7 @@ static void sat_layout_enter(setting_user_wifi)
                                                                                    NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                    user_wifi_display_mode ? 840 : 540, 20, 80, 48, 2,
                                                                                    resource_ui_src_get("btn_switch_on.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
-
+                lv_label_set_text_fmt(lv_obj_get_child_form_id(parent, 1), "Wi-Fi MAC:%s", ip_addr);
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, 2);
                 wifi_setting_user_wifi_enable_display(obj);
         }

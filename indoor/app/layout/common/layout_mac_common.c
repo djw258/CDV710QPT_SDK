@@ -23,9 +23,9 @@ static bool indoor_mac_txt_exist_check(void)
   {
     while ((pdirent = readdir(d_info)) != NULL)
     {
-      if ((pdirent->d_type & DT_REG) && (strstr(pdirent->d_name, ".txt")) && (strlen(pdirent->d_name) == 23))
+      if ((pdirent->d_type & DT_REG) && (strstr(pdirent->d_name, ".txt")) && (strlen(pdirent->d_name) == 24))
       {
-        sscanf(pdirent->d_name, "%04d-%02d-%02d-CIP70QPT.txt", &tm.tm_year, &tm.tm_mon, &tm.tm_mday);
+        sscanf(pdirent->d_name, "%04d-%02d-%02d-CIP-70QPT.txt", &tm.tm_year, &tm.tm_mon, &tm.tm_mday);
         if ((tm.tm_year > 2021) && (tm.tm_year < 2099) && (tm.tm_mon > 0) && (tm.tm_mon < 13) && (tm.tm_mday > 0) && (tm.tm_mday < 32))
         {
           strncpy(indoor_mac_fimd_file, pdirent->d_name, sizeof(indoor_mac_fimd_file));
@@ -54,9 +54,9 @@ bool outdoor_mac_txt_exist_check(void)
   {
     while ((pdirent = readdir(d_info)) != NULL)
     {
-      if ((pdirent->d_type & DT_REG) && (strstr(pdirent->d_name, ".txt")) && (strlen(pdirent->d_name) == 23))
+      if ((pdirent->d_type & DT_REG) && (strstr(pdirent->d_name, ".txt")) && (strlen(pdirent->d_name) == 24))
       {
-        sscanf(pdirent->d_name, "%04d-%02d-%02d-CIPD20YS.txt", &tm.tm_year, &tm.tm_mon, &tm.tm_mday);
+        sscanf(pdirent->d_name, "%04d-%02d-%02d-CIP-D20YS.txt", &tm.tm_year, &tm.tm_mon, &tm.tm_mday);
         if ((tm.tm_year > 2021) && (tm.tm_year < 2099) && (tm.tm_mon > 0) && (tm.tm_mon < 13) && (tm.tm_mday > 0) && (tm.tm_mday < 32))
         {
           strncpy(outdoor_mac_fimd_file, pdirent->d_name, sizeof(outdoor_mac_fimd_file));

@@ -63,7 +63,7 @@ static void outdoor_mac_register_check(bool result)
     setting_msgdialog_msg_del(ipc_camera_search_obj_id_msg_bg);
   }
   masgbox = setting_msgdialog_msg_bg_create(ipc_camera_search_obj_id_msg_bg, ipc_camera_search_msg_obj_id_msg, 282, 123, 460, 323);
-  setting_msgdialog_msg_create(masgbox, 0, result ? "Outdoor mac register success" : "Outdoor mac register failed", 20, 40, 420, 180, false);
+  setting_msgdialog_msg_create(masgbox, 0, result ? "Outdoor mac register success" : "Outdoor mac register failed", 20, 100, 420, 180, false);
   setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, 1, 2, outdoor_mac_register_confirm, outdoor_mac_register_concel);
 }
 
@@ -163,9 +163,24 @@ static void layout_outdoor_mac_register_online_check_timer(lv_timer_t *timer)
   }
 }
 
+/***********************************************
+ ** 作者: leo.liu
+ ** 日期: 2023-2-2 13:42:25
+ ** 说明: SD卡状态变化处理
+ ***********************************************/
+static void layout_outdoor_mac_register_sd_state_change_callback(void)
+{
+
+  sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+}
+
 static void sat_layout_enter(outdoor_mac_register)
 {
   standby_timer_close();
+
+  /*sd卡状态处理 */
+  sd_state_channge_callback_register(layout_outdoor_mac_register_sd_state_change_callback);
+
   /***********************************************
   ** 作者: leo.liu
   ** 日期: 2023-2-2 13:46:56
@@ -265,6 +280,7 @@ static void sat_layout_enter(outdoor_mac_register)
 }
 static void sat_layout_quit(outdoor_mac_register)
 {
+  sd_state_channge_callback_register(sd_state_change_default_callback);
   standby_timer_restart(true);
 }
 

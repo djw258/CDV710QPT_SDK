@@ -154,7 +154,19 @@ static void setting_password_modiy_confirm_click(lv_event_t *ev)
                         user_data_save(true, true);
                         if (!reset_unit)
                         {
-                                commax_https_server_lobbyphone_change_password(network_data_get()->local_server, "443", "1234", "5678", buffer, NULL, 0, 500);
+                                char dong[5] = {0};
+                                char ho[5] = {0};
+                                strncpy(dong, network_data_get()->sip_user, 4);
+                                strncpy(ho, &network_data_get()->sip_user[4], 4);
+                                while (dong[0] == '0')
+                                {
+                                        memmove(&dong[0], &dong[1], 4);
+                                }
+                                while (ho[0] == '0')
+                                {
+                                        memmove(&ho[0], &ho[1], 4);
+                                }
+                                commax_https_server_lobbyphone_change_password(network_data_get()->local_server, "443", dong, ho, buffer, NULL, 0, 500);
                         }
                         sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }

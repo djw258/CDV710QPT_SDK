@@ -14,8 +14,16 @@ bool commax_https_lobbyphone_open_the_door(const char *ip, const char *port, int
 ** 函数说明:
 ** 作者: xiaoxiao
 ** 日期：2023-12-27 09:40:40
-** 参数说明: event;1代表境安全紧、,2,燃气紧急,等等（暂时只需要上报安全紧急);event_state:1紧急发生、2紧急停止 3紧急返回
+** 参数说明: event;1代表境安全紧、,2,燃气紧急,等等（暂时只需要上报安全紧急);event_state:1紧急发生、2紧急取消
 ** 注意事项：
 ************************************************************/
-bool commax_emergency_event_report(const char *ip, int port, const char *asterisk_register_usernmae, struct tm *tm, int event, int event_state, int timeout);
+bool commax_emergency_event_report(const char *ip, int port, char *lo_dong, char *lo_ho, struct tm *tm, int event, int event_state, int timeout);
+/************************************************************
+** 函数说明: 上传pis信息
+** 作者: xiaoxiao
+** 日期：2024-01-09 08:18:32
+** 参数说明:
+** 注意事项：
+************************************************************/
+bool commax_pis_information_report(const char *ip, int port, char *lo_dong, char *lo_ho, char *prd, int type, char *ver, int timeout);
 #endif

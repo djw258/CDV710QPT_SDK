@@ -335,7 +335,6 @@ bool alarm_trigger_check(void)
                                 if ((user_data_get()->alarm.alarm_trigger_enable[i] && user_data_get()->alarm.away_alarm_enable) || user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.alarm_enable_always[0][i] || user_data_get()->alarm.alarm_enable_always[1][i])
                                 {
                                         alarm_occur = true;
-                                        user_data_get()->alarm.alarm_trigger_enable[i] = false;
                                         user_data_get()->alarm.emergency_mode = 1;
                                 }
                         }
@@ -349,6 +348,10 @@ bool alarm_trigger_check(void)
                 {
                         alarm_occur = true;
                         user_data_get()->alarm.emergency_mode = 0;
+                }
+                if (sat_cur_layout_get() == sat_playout_get(alarm) && (user_data_get()->alarm.alarm_trigger[layout_alarm_alarm_channel_get()] == false) && (i == layout_alarm_alarm_channel_get()))
+                {
+                        layout_common_call_log(i == 7 ? emergency_return : security_emergency_return, i);
                 }
                 if ((alarm_occur) && (sat_cur_layout_get() != sat_playout_get(alarm) || (user_data_get()->alarm.alarm_trigger[layout_alarm_alarm_channel_get()] == false)))
                 {
@@ -804,7 +807,19 @@ bool layout_common_call_log(int type, int ch)
         if ((user_data_get()->system_mode & 0x0f) == 0x01)
         {
                 int event = (user_data_get()->alarm.away_alarm_enable || user_data_get()->alarm.security_alarm_enable) ? 3 : 1;
-                result = commax_emergency_event_report(network_data_get()->local_server, 80, network_data_get()->sip_user, &tm, event, (type - 1 % 3) + 1, 1000);
+                char dong[5] = {0};
+                char ho[5] = {0};
+                strncpy(dong, network_data_get()->sip_user, 4);
+                strncpy(ho, &network_data_get()->sip_user[4], 4);
+                while (dong[0] == '0')
+                {
+                        memmove(&dong[0], &dong[1], 4);
+                }
+                while (ho[0] == '0')
+                {
+                        memmove(&ho[0], &ho[1], 4);
+                }
+                result = commax_emergency_event_report(network_data_get()->local_server, 80, dong, ho, &tm, event, (type % 3) + 1, 1000);
         }
         return result;
 }

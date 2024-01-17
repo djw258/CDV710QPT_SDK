@@ -312,6 +312,10 @@ static void layout_security_confirm_btn_obj_click(lv_event_t *ev)
             unsigned char list = layout_security_sensor_enable_flag();
             user_data_get()->alarm.security_alarm_enable_list |= list;
             user_data_save(true, true);
+            if ((user_data_get()->system_mode & 0x0f) != 0x01)
+            {
+                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+            }
             sat_layout_goto(security, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
     }
@@ -455,7 +459,7 @@ static void layout_security_cctv_record_enable_init_display(void)
         {
             lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
         }
-        }
+    }
     else
     {
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
@@ -517,6 +521,10 @@ static void layout_security_auto_record_click(lv_event_t *ev)
         user_data_get()->alarm.security_auto_record = true;
         user_data_save(true, true);
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
+    }
+    if ((user_data_get()->system_mode & 0x0f) != 0x01)
+    {
+        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
 }
 

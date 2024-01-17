@@ -208,6 +208,13 @@ void away_mode_alarm_trigger_timer_create(void)
     }
 }
 
+/************************************************************
+** 函数说明: 离家模式设防setting time倒计时定时器任务
+** 作者: xiaoxiao
+** 日期：2023-11-02 18:13:36
+** 参数说明:
+** 注意事项：
+************************************************************/
 static void layout_away_count_timer(lv_timer_t *ptimer)
 {
     if (layout_away_count_data_get()->away_count_sec != 0)

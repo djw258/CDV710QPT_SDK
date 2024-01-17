@@ -21,7 +21,6 @@ static void emergency_setting_confirm_obj_click(lv_event_t *ev)
         user_data_get()->alarm.emergency_mode = 0;
         if (user_data_get()->alarm.away_auto_record)
                 record_jpeg_start(REC_MODE_AUTO);
-
         layout_alarm_alarm_channel_set(7);
         user_data_get()->alarm.alarm_trigger[7] = true;
         layout_common_call_log(emergency_occur, 7);

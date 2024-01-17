@@ -220,6 +220,11 @@ static void ipc_camera_display_ipcamera_state_func(unsigned int type, unsigned i
                         // SAT_DEBUG("%s", buffer);
                         sat_linphone_ipcamera_start(buffer);
                         lv_common_video_mode_enable(true);
+                        int ch = monitor_channel_get();
+                        if (is_channel_ipc_camera(monitor_channel_get()) == false)
+                        {
+                                sat_ipcamera_device_channel_setting(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, network_data_get()->door_device[ch].auther_flag, 0, 1000);
+                        }
                 }
         }
 }

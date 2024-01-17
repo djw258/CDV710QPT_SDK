@@ -4,7 +4,6 @@
 
 typedef enum
 {
-    emergency_unknow = 0,
     emergency_occur,
     emergency_stop,
     emergency_return,

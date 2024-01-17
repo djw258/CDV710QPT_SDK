@@ -80,7 +80,7 @@ static void setting_sound_ring_msgbox_list_click(lv_event_t *ev)
         {
                 return;
         }
-        if (strncmp(item_img_obj->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        if (1 /*strncmp(item_img_obj->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png")))*/)
         {
                 layout_setting_sound_select_id_get();
                 int id = layout_setting_sound_select_id_get();
@@ -98,7 +98,7 @@ static void setting_sound_ring_msgbox_list_click(lv_event_t *ev)
                 }
                 else if (id == setting_sound_obj_id_security_office_cont)
                 {
-                        ring_guard_play(item->id + 1);
+                        ring_guard_play(item->id + 1, 1);
                 }
                 else if (id == setting_sound_obj_id_extension_cont)
                 {

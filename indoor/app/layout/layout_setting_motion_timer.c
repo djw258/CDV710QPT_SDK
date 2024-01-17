@@ -64,42 +64,6 @@ static void setting_motion_timer_schedule_setting_display(void)
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
         }
 }
-static void setting_motion_timer_cont_display(void)
-{
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_motion_timer_obj_id_timer_cont);
-        if (user_data_get()->motion.timer_en == true)
-        {
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        }
-        else
-        {
-                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        }
-}
-static void setting_motion_timer_schedule_setting_obj_click(lv_event_t *e)
-{
-        user_data_get()->motion.timer_en = user_data_get()->motion.timer_en == true ? false : true;
-        user_data_save(true, true);
-
-        setting_motion_timer_schedule_setting_display();
-        setting_motion_timer_cont_display();
-}
-static void setting_moiton_timer_roller_click(lv_event_t *e)
-{
-
-        if (e->code == LV_EVENT_VALUE_CHANGED)
-        {
-                modify = true;
-        }
-}
-
-static void setting_motion_timer_time_refresh(lv_timer_t *ptimer)
-{
-        lv_obj_t *label = (lv_obj_t *)ptimer->user_data;
-        struct tm tm;
-        user_time_read(&tm);
-        lv_label_set_text_fmt(label, "%04d-%02d-%02d  %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-}
 
 /************************************************************
 ** 函数说明: 移动侦测时间初始化
@@ -122,16 +86,72 @@ static void setting_motion_time_param_init(void)
         lv_obj_t *hour_end = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_motion_timer_obj_id_timer_cont), setting_motion_timer_obj_id_end_hour_roller);
         lv_obj_t *minute_end = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_motion_timer_obj_id_timer_cont), setting_motion_timer_obj_id_end_min_roller);
 
-        lv_roller_set_selected(year_start, user_data_get()->motion.start.tm_year - 2023, false);
-        lv_roller_set_selected(month_start, user_data_get()->motion.start.tm_mon - 1, false);
-        lv_roller_set_selected(day_start, user_data_get()->motion.start.tm_mday - 1, false);
-        lv_roller_set_selected(hour_start, user_data_get()->motion.start.tm_hour - 0, false);
-        lv_roller_set_selected(minute_start, user_data_get()->motion.start.tm_min - 0, false);
-        lv_roller_set_selected(year_end, user_data_get()->motion.end.tm_year - 2023, false);
-        lv_roller_set_selected(month_end, user_data_get()->motion.end.tm_mon - 1, false);
-        lv_roller_set_selected(day_end, user_data_get()->motion.end.tm_mday - 1, false);
-        lv_roller_set_selected(hour_end, user_data_get()->motion.end.tm_hour - 0, false);
-        lv_roller_set_selected(minute_end, user_data_get()->motion.end.tm_min - 0, false);
+        if (user_data_get()->motion.timer_en)
+        {
+                lv_roller_set_selected(year_start, user_data_get()->motion.start.tm_year - 2023, false);
+                lv_roller_set_selected(month_start, user_data_get()->motion.start.tm_mon - 1, false);
+                lv_roller_set_selected(day_start, user_data_get()->motion.start.tm_mday - 1, false);
+                lv_roller_set_selected(hour_start, user_data_get()->motion.start.tm_hour - 0, false);
+                lv_roller_set_selected(minute_start, user_data_get()->motion.start.tm_min - 0, false);
+                lv_roller_set_selected(year_end, user_data_get()->motion.end.tm_year - 2023, false);
+                lv_roller_set_selected(month_end, user_data_get()->motion.end.tm_mon - 1, false);
+                lv_roller_set_selected(day_end, user_data_get()->motion.end.tm_mday - 1, false);
+                lv_roller_set_selected(hour_end, user_data_get()->motion.end.tm_hour - 0, false);
+                lv_roller_set_selected(minute_end, user_data_get()->motion.end.tm_min - 0, false);
+        }
+        else
+        {
+                struct tm tm;
+                user_time_read(&tm);
+                lv_roller_set_selected(year_start, tm.tm_year - 2023, false);
+                lv_roller_set_selected(month_start, tm.tm_mon - 1, false);
+                lv_roller_set_selected(day_start, tm.tm_mday - 1, false);
+                lv_roller_set_selected(hour_start, tm.tm_hour - 0, false);
+                lv_roller_set_selected(minute_start, tm.tm_min - 0, false);
+                lv_roller_set_selected(year_end, tm.tm_year - 2023, false);
+                lv_roller_set_selected(month_end, tm.tm_mon - 1, false);
+                lv_roller_set_selected(day_end, tm.tm_mday - 1, false);
+                lv_roller_set_selected(hour_end, tm.tm_hour - 0, false);
+                lv_roller_set_selected(minute_end, tm.tm_min - 0, false);
+        }
+}
+
+static void setting_motion_timer_cont_display(void)
+{
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_motion_timer_obj_id_timer_cont);
+        if (user_data_get()->motion.timer_en == true)
+        {
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+}
+static void setting_motion_timer_schedule_setting_obj_click(lv_event_t *e)
+{
+        setting_motion_time_param_init();
+        user_data_get()->motion.timer_en = user_data_get()->motion.timer_en == true ? false : true;
+        user_data_save(true, true);
+
+        setting_motion_timer_schedule_setting_display();
+        setting_motion_timer_cont_display();
+}
+static void setting_moiton_timer_roller_click(lv_event_t *e)
+{
+
+        if (e->code == LV_EVENT_VALUE_CHANGED)
+        {
+                modify = true;
+        }
+}
+
+static void setting_motion_timer_time_refresh(lv_timer_t *ptimer)
+{
+        lv_obj_t *label = (lv_obj_t *)ptimer->user_data;
+        struct tm tm;
+        user_time_read(&tm);
+        lv_label_set_text_fmt(label, "%04d-%02d-%02d  %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 }
 
 static void layout_setting_motion_time_save_time(void)

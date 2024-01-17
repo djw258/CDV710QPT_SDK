@@ -84,6 +84,7 @@ bool ring_intercom_play(int index, int count)
 ************************************************************/
 bool ring_alarm_play(void)
 {
+        return true;
         sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm/alarm.mp3", 1);
         sat_linphone_audio_play_volume_set(100);
         return true;
@@ -140,7 +141,7 @@ bool ring_common_door_play(int index, int count)
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-bool ring_guard_play(int index)
+bool ring_guard_play(int index, int count)
 {
         if (user_data_get()->audio.guard_station_volume == 0)
         {
@@ -149,7 +150,7 @@ bool ring_guard_play(int index)
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "security_office/security_office_%d.mp3", index);
-        sat_linphone_audio_play_start(cmd, 1);
+        sat_linphone_audio_play_start(cmd, count);
 
         sat_linphone_audio_play_volume_set(user_data_get()->audio.guard_station_volume);
         return true;

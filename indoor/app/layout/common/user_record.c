@@ -16,34 +16,36 @@
 #include "string.h"
 #include "pthread.h"
 #include "common/sat_user_common.h"
-
+#include "language.h"
 typedef struct user_record_info
 {
         int record_mode;
+        int ch;
         char *data;
         int size;
 } user_record_info;
 
-static void *tuya_event_report(void *arg)
+static void *tuya_event_report_func(void *arg)
 {
         user_record_info *info = (user_record_info *)arg;
-        if (info->record_mode & REC_MODE_TUYA_CALL)
+        if (info->record_mode & 0x01)
         {
-                tuya_api_call_event(monitor_channel_get() + 1, (const char *)info->data, info->size);
+                tuya_api_call_event(info->ch, (const char *)info->data, info->size);
         }
-        if (info->record_mode & REC_MODE_TUYA_ALARM)
+        if (info->record_mode & 0x02)
         {
-                tuya_api_alarm_event(monitor_channel_get() + 1, (const char *)info->data, info->size);
+                tuya_api_alarm_event(info->ch, (const char *)info->data, info->size);
         }
-        if (info->record_mode & REC_MODE_TUYA_MOTION)
+        if (info->record_mode & 0x04)
         {
-                tuya_api_motion_event(monitor_channel_get() + 1, (const char *)info->data, info->size);
+                tuya_api_motion_event(info->ch, (const char *)info->data, info->size);
         }
         if (info->data != NULL)
         {
                 free((char *)info->data);
                 info->data = NULL;
         }
+
         return NULL;
 }
 
@@ -70,6 +72,35 @@ bool jpeg_record_state_set(bool state)
 {
         jpeg_record_is_success = state;
         return true;
+}
+
+/************************************************************
+** 函数说明: 涂鸦事件上报
+** 作者: xiaoxiao
+** 日期：2024-01-17 15:44:58
+** 参数说明:
+** 注意事项：
+************************************************************/
+void tuya_event_report(int event, int ch, unsigned char *data, int size)
+{
+        static user_record_info info;
+
+        if (info.data != NULL)
+        {
+                free((char *)info.data);
+                info.data = NULL;
+        }
+
+        info.data = (char *)malloc(size);
+
+        memcpy(info.data, data, size);
+        info.size = size;
+        info.ch = ch;
+        info.record_mode = event;
+
+        pthread_t task_id;
+        pthread_create(&task_id, sat_pthread_attr_get(), tuya_event_report_func, (void *)&info);
+        pthread_detach(task_id);
 }
 /***
  *
@@ -99,11 +130,11 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 }
                 else if (ch == MON_CH_LOBBY)
                 {
-                        sprintf(name, "%s", "Lobby");
+                        sprintf(name, "%s", lang_str_get(HOME_XLS_LANG_ID_COMMON_ENTRANCE));
                 }
                 else if (ch == MON_CH_GUARD)
                 {
-                        sprintf(name, "%s", "Guard");
+                        sprintf(name, "%s", lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION));
                 }
                 else
                 {
@@ -124,24 +155,27 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 media_file_bad_check(file_path);
         }
 
-        static user_record_info info;
-        if ((mode & REC_MODE_TUYA_CALL) || (mode & REC_MODE_TUYA_ALARM) || (mode & REC_MODE_TUYA_MOTION))
+        if (((mode & REC_MODE_TUYA_CALL) || (mode & REC_MODE_TUYA_ALARM) || (mode & REC_MODE_TUYA_MOTION)) && ((user_data_get()->system_mode & 0x0f) == 0x01))
         {
-                info.record_mode = mode;
-                if (info.data != NULL)
+                int record_mode = 0;
+                int ch = -1;
+                if (mode & REC_MODE_TUYA_CALL)
                 {
-                        free((char *)info.data);
-                        info.data = NULL;
+                        record_mode = 0x01;
+                        ch = monitor_channel_get();
                 }
-
-                info.data = (char *)malloc(size);
-
-                memcpy(info.data, data, size);
-                info.size = size;
-
-                pthread_t task_id;
-                pthread_create(&task_id, sat_pthread_attr_get(), tuya_event_report, (void *)&info);
-                pthread_detach(task_id);
+                if (mode & REC_MODE_TUYA_ALARM)
+                {
+                        record_mode |= 0x02;
+                        extern int layout_alarm_alarm_channel_get(void);
+                        ch = layout_alarm_alarm_channel_get();
+                }
+                if (mode & REC_MODE_TUYA_MOTION)
+                {
+                        record_mode |= 0x04;
+                        ch = monitor_channel_get();
+                }
+                tuya_event_report(record_mode, ch, data, size);
         }
 
         system("sync");

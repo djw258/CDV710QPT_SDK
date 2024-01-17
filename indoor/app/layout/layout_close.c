@@ -182,6 +182,11 @@ static void layout_motion_monitor_open(void)
     monitor_channel_set(user_data_get()->motion.select_camera);
     monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
     monitor_open(true, true);
+    int ch = monitor_channel_get();
+    if (is_channel_ipc_camera(monitor_channel_get()) == false)
+    {
+        sat_ipcamera_device_channel_setting(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, network_data_get()->door_device[ch].auther_flag, 0, 1000);
+    }
 }
 
 /***
@@ -231,63 +236,6 @@ static void monitor_obj_timeout_label_display(void)
     }
     lv_label_set_text_fmt(obj, "%02d:%02d", motion_timeout_sec / 60, motion_timeout_sec % 60);
 }
-
-static void motion_obj_timeout_timer(lv_timer_t *ptimer)
-{
-    if (motion_timeout_sec > 0)
-    {
-        motion_timeout_sec--;
-        monitor_obj_timeout_label_display();
-    }
-    else if (motion_timeout_sec == 0)
-    {
-        record_video_stop();
-        motion_timeout_sec = 10;
-        lv_timer_del(ptimer);
-        layout_motion_restart_motion_detection();
-    }
-}
-static void motion_event_tuya_report_timer(lv_timer_t *ptimer)
-{
-    bool jpeg_recoed = jpeg_record_state_get();
-    if (jpeg_recoed == false)
-    {
-        char buffer[512];
-        int ch = monitor_channel_get();
-        ch = is_channel_ipc_camera(ch) == 0 ? ch : is_channel_ipc_camera(ch) == 1 ? ch - 2
-                                                                                  : -1;
-        tuya_api_motion_event(ch, buffer, 512);
-    }
-    lv_timer_del(ptimer);
-}
-
-static bool layout_close_motion_dectection_callback(void)
-{
-    if (is_motion_snapshot_ing || is_motion_record_video_ing)
-    {
-        return false;
-    }
-    lv_sat_timer_create(motion_event_tuya_report_timer, 3000, NULL);
-    is_trigger_motion = true;
-    monitor_obj_timeout_label_display();
-    if (user_data_get()->motion.lcd_en == true)
-    {
-        backlight_enable(true);
-    }
-
-    if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)) && (user_data_get()->motion.saving_fmt == 0))
-    {
-        record_video_start(false, REC_MODE_MOTION);
-        record_jpeg_start(REC_MODE_TUYA_MOTION);
-    }
-    else
-    {
-        record_jpeg_start(REC_MODE_MOTION | REC_MODE_TUYA_MOTION);
-    }
-    lv_sat_timer_create(motion_obj_timeout_timer, 1000, NULL);
-    return true;
-}
-
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -315,6 +263,65 @@ static void monitior_obj_channel_info_obj_display(void)
         lv_obj_set_x(obj, 37);
         lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
     }
+}
+
+static void motion_obj_timeout_timer(lv_timer_t *ptimer)
+{
+    if (motion_timeout_sec > 0)
+    {
+        motion_timeout_sec--;
+        monitior_obj_channel_info_obj_display();
+        monitor_obj_timeout_label_display();
+    }
+    else if (motion_timeout_sec == 0)
+    {
+        record_video_stop();
+        motion_timeout_sec = 10;
+        lv_timer_del(ptimer);
+        layout_motion_restart_motion_detection();
+    }
+}
+static void motion_event_tuya_report_timer(lv_timer_t *ptimer)
+{
+    bool jpeg_recoed = jpeg_record_state_get();
+    if (jpeg_recoed == false)
+    {
+        unsigned char buffer[512];
+        int ch = monitor_channel_get();
+        ch = is_channel_ipc_camera(ch) == 0 ? ch : is_channel_ipc_camera(ch) == 1 ? ch - 2
+                                                                                  : -1;
+        tuya_event_report(0x04, ch, buffer, 512);
+    }
+    lv_timer_del(ptimer);
+}
+
+static bool layout_close_motion_dectection_callback(void)
+{
+    if (is_motion_snapshot_ing || is_motion_record_video_ing)
+    {
+        return false;
+    }
+    jpeg_record_state_set(false);
+    lv_sat_timer_create(motion_event_tuya_report_timer, 5000, NULL);
+    is_trigger_motion = true;
+    monitior_obj_channel_info_obj_display();
+    monitor_obj_timeout_label_display();
+    if (user_data_get()->motion.lcd_en == true)
+    {
+        backlight_enable(true);
+    }
+
+    if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)) && (user_data_get()->motion.saving_fmt == 0))
+    {
+        record_video_start(false, REC_MODE_MOTION);
+        record_jpeg_start(REC_MODE_TUYA_MOTION);
+    }
+    else
+    {
+        record_jpeg_start(REC_MODE_MOTION | REC_MODE_TUYA_MOTION);
+    }
+    lv_sat_timer_create(motion_obj_timeout_timer, 1000, NULL);
+    return true;
 }
 
 static void layout_motion_rec_icon_hidden(bool en)
@@ -512,9 +519,23 @@ static void layout_close_buzzer_alarm_trigger_default(void)
 
 bool layout_frame_show_ch_vaile_check(void)
 {
-    if (user_data_get()->display.frame_list & 0x07)
+    if (user_data_get()->display.frame_list & 0x03)
     {
         return true;
+    }
+    if (user_data_get()->display.frame_list & 0x04)
+    {
+        int total = 0;
+        file_type type = FILE_TYPE_FLASH_PHOTO;
+        if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+        {
+            type = FILE_TYPE_VIDEO;
+        }
+        media_file_total_get(type, &total, NULL);
+        if (total > 0)
+        {
+            return true;
+        }
     }
     if (user_data_get()->display.frame_list & 0x08)
     {
@@ -588,9 +609,8 @@ static void sat_layout_enter(close)
         {
             sat_layout_goto(frame_show, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
-        else if ((user_data_get()->system_mode & 0x0f) != 0x01)
+        else
         {
-
             lv_timer_reset(lv_sat_timer_create(frame_show_param_checktimer, 1000, NULL));
         }
     }

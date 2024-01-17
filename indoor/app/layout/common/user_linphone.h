@@ -18,6 +18,10 @@ typedef bool (*user_linphone_func)(char *args);
 #define LinphoneCallBusyStr "LinphoneCallBusy"
 #define LinphoneCallErrorStr "LinphoneCallError"
 #define LinphoneCallOutgoingEarlyMediaStr "LinphoneCallOutgoingEarlyMedia"
+#define LinphoneRegisterSuccessStr "LinphoneRegisterSuccess"
+#define LinphoneRegisterClearStr "LinphoneRegisterClear"
+#define LinphoneRegisterFailStr "LinphoneRegisterFail"
+#define LinphoneCallOutgoingRingingStr "LinphoneCallOutgoingRinging"
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 9:59:5
@@ -44,10 +48,11 @@ void user_linphone_call_incoming_received_register(user_linphone_func callback);
 ** 说明: 流建立后的处理函数
 ***********************************************/
 void user_linphone_call_streams_running_receive_register(user_linphone_func callback);
+
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 10:46:3
-** 说明: 流停止后的处理函数
+** 说明: 流中断的处理函数
 ***********************************************/
 void user_linphone_call_streams_stopping_receive_register(user_linphone_func callback);
 /***********************************************
@@ -98,5 +103,29 @@ void user_linphone_call_error_register(user_linphone_func callback);
 ** 说明: 呼叫前期媒体建立
 ***********************************************/
 void user_linphone_call_outgoing_early_media_register(user_linphone_func callback);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 注册成功
+***********************************************/
+void user_linphone_register_success_register(user_linphone_func callback);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 注册注销
+***********************************************/
+void user_linphone_register_clear_register(user_linphone_func callback);
 
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 注册失败
+***********************************************/
+void user_linphone_register_fail_register(user_linphone_func callback);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 呼叫应答成功
+***********************************************/
+void user_linphone_Call_outgoing_Ringing(user_linphone_func callback);
 #endif

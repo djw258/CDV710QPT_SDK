@@ -45,6 +45,7 @@ typedef enum
 
 static int checkbox_s_num = 0;      // call记录被选中的个数
 static int enter_intercom_mode = 0; // 进入intercom_call界面的途径（0：通过点击call机按键；1：通过点击呼叫记录的按键）
+
 void enter_intercomm_call_mode_set(int mode)
 {
         enter_intercom_mode = mode;
@@ -169,14 +170,6 @@ static void intercom_id_obj_click(lv_event_t *e)
         }
 }
 
-static void layout_intercom_call_delay_ringplay(lv_timer_t *t)
-{
-        if (user_data_get()->audio.ring_mute == false)
-        {
-                send_call_play(1, 0xfffff);
-        }
-}
-
 static bool intercom_linphone_outgoing_callback(char *arg)
 {
         int index = extern_index_get_by_user(arg);
@@ -190,17 +183,20 @@ static bool intercom_linphone_outgoing_callback(char *arg)
                 }
 
                 // intercom_call_username_setting(network_data_get()->guard_number);
-                intercom_call_username_setting(lang_str_get(COMMON_XLS_OBJ_ID_GUARD));
+                intercom_call_username_setting(lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION));
         }
         else
         {
                 return false;
         }
-        lv_timer_set_repeat_count(lv_timer_create(layout_intercom_call_delay_ringplay, 200, NULL), 1);
+
+        if (user_data_get()->audio.ring_mute == false)
+        {
+                send_call_play(1, 0xfffff);
+        }
         extern unsigned long long call_timestamp[15];
         call_timestamp[7] = user_timestamp_get();
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
-        return true;
 }
 
 static bool intercom_linphone_outgoing_arly_media_register(char *arg)
@@ -295,9 +291,17 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
                 {
                         sprintf(obj_name, "%s %s", lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), doorname);
                 }
+                else if (strcmp(doorname, "LOBBY") == 0)
+                {
+                        strcpy(obj_name, lang_str_get(HOME_XLS_LANG_ID_COMMON_ENTRANCE));
+                }
+                else if (strcmp(doorname, "GUARD") == 0)
+                {
+                        strcpy(obj_name, lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION));
+                }
                 else
                 {
-                        strcpy(obj_name, doorname);
+                        strncpy(obj_name, doorname, sizeof(obj_name));
                 }
                 char tm_buffer[64] = {0};
                 char du_buffer[64];
@@ -654,6 +658,12 @@ static void intercom_call_log_obj_del_all_click(lv_event_t *ev)
         }
 }
 
+static bool layout_intercom_talk_call_failed_callback(char *arg)
+{
+
+        return false;
+}
+
 static void sat_layout_enter(intercom_call)
 {
 
@@ -840,15 +850,15 @@ static void sat_layout_enter(intercom_call)
                 }
                 lv_tabview_set_act(tabview, enter_intercom_mode, LV_ANIM_OFF);
         }
-
-        user_linphone_call_outgoing_call_register(intercom_linphone_outgoing_callback);
-
+        user_linphone_call_error_register(layout_intercom_talk_call_failed_callback);
+        user_linphone_Call_outgoing_Ringing(intercom_linphone_outgoing_callback);
         user_linphone_call_outgoing_early_media_register(intercom_linphone_outgoing_arly_media_register);
         intercom_call_status_setting(1);
 }
 
 static void sat_layout_quit(intercom_call)
 {
+        user_linphone_Call_outgoing_Ringing(NULL);
         user_linphone_call_outgoing_call_register(NULL);
         user_linphone_call_outgoing_early_media_register(intercom_linphone_outgoing_arly_media_register);
         checkbox_s_num = 0;

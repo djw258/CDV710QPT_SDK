@@ -59,4 +59,12 @@ bool jpeg_record_state_get(void);
 ** 注意事项：
 ************************************************************/
 bool jpeg_record_state_set(bool state);
+/************************************************************
+** 函数说明: 涂鸦事件上报
+** 作者: xiaoxiao
+** 日期：2024-01-17 15:44:58
+** 参数说明:
+** 注意事项：
+************************************************************/
+void tuya_event_report(int event, int ch, unsigned char *data, int size);
 #endif

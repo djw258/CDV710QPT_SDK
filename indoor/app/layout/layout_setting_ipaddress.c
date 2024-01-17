@@ -288,6 +288,16 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                                 strncpy(network_data_get()->network.dns, dns, sizeof(network_data_get()->network.dns));
                                 strncpy(network_data_get()->network.gateway, gateway, sizeof(network_data_get()->network.gateway));
                                 network_data_get()->network.udhcp = false;
+                                for (int i = 0; i < DEVICE_MAX; i++)
+                                {
+                                        if (network_data_get()->door_device[i].sip_url[0] != 0)
+                                        {
+                                                char number[32] = {0};
+                                                sprintf(number, "sip:20%d@%s", i + 1, network_data_get()->network.ipaddr);
+                                                sat_ipcamera_device_register(number, layout_ipc_camera_edit_index_get(), 5000);
+                                                // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
+                                        }
+                                }
                         }
                         else
                         {
@@ -489,8 +499,7 @@ static void layout_setting_ipaddress_item_init_display()
                         sat_ip_mac_addres_get("eth0", ip, NULL, mask);
                         sat_default_gateway_get("eth0", gateway, sizeof(gateway));
                         sat_default_dns_get("eth0", dns, sizeof(dns));
-                        SAT_DEBUG("dns is %s\n", dns);
-                        SAT_DEBUG("gateway is %s\n", gateway);
+
                         lv_textarea_set_text(item1_txt, ip);
                         lv_textarea_set_text(item3_txt, mask);
                         lv_textarea_set_text(item4_txt, dns);

@@ -59,7 +59,7 @@ bool ring_common_door_play(int index, int count);
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-bool ring_guard_play(int index);
+bool ring_guard_play(int index, int count);
 
 /************************************************************
 ** 函数说明:播放发送音

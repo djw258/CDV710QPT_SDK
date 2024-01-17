@@ -670,7 +670,16 @@ static void setting_general_call_time_obj_click(lv_event_t *ev)
 
 static void setting_general_sensor_usage_setting_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(setting_sensor_usage, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        if (user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.away_alarm_enable)
+        {
+                lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_general_obj_id_msgbox_cont, setting_general_obj_id_msgbox_parent, 282, 143, 460, 283);
+                setting_msgdialog_msg_create(masgbox, setting_general_obj_id_msgbox_title, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_RUNNNG_TIPS), 0, 90, 460, 80, false);
+                setting_msgdialog_msg_confirm_btn_create(masgbox, setting_general_obj_id_msgbox_confirm, setting_general_msgbox_cancel_click);
+        }
+        else
+        {
+                sat_layout_goto(setting_sensor_usage, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        }
 }
 
 static void setting_general_download_mobile_obj_click(lv_event_t *ev)
@@ -702,7 +711,7 @@ static void setting_general_outdoor_mac_register_display(void)
                 return;
         }
 
-        lv_label_set_text(sub, "Outdoor register");
+        lv_label_set_text(sub, "Outdoor Mac Register");
 }
 lv_obj_t *setting_list_create(lv_obj_t *parent, int id)
 {

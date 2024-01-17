@@ -30,8 +30,8 @@
 #include "common/user_alarm_list.h"
 #include "common/user_call_list.h"
 #include "common/layout_mac_common.h"
-#define SYSTEM_VERSION "Ver:0.0.8.4"
-
+#define SYSTEM_VERSION "Ver:" VERSION_NO
+#define VERSION_NO "0.0.8.6"
 #define TUYA_PID "veyd1kjvzmot7iks" //"nhi8jlgj989p9l5b" // 7.0 "wrw4vog3vosbq4yd" // 10.1  "iet0idk0yw3fgren"
 
 #define ALM_HIGHT 1.8

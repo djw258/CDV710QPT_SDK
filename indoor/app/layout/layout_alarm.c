@@ -162,15 +162,13 @@ static void alarm_stop_obj_click(lv_event_t *ev)
         sat_linphone_audio_play_stop();
         lv_obj_t *passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_passwd_cont);
 
-        // struct tm tm;
-        // user_time_read(&tm);
         // if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
         // {
-        //         alarm_list_add(security_emergency_stop, 7, &tm);
+        //         layout_common_call_log(security_emergency_stop, 7);
         // }
         // else
         // {
-        //         alarm_list_add(emergency_stop, 7, &tm);
+        //         layout_common_call_log(emergency_stop, 7);
         // }
         lv_obj_clear_flag(passwd_cont, LV_OBJ_FLAG_HIDDEN);
 }
@@ -649,12 +647,14 @@ static void layout_alarm_buzzer_alarm_call_callback(void)
 
 static void layout_alarm_tuya_event_report(lv_timer_t *ptimer)
 {
+        unsigned long long timestamp = user_timestamp_get();
         bool jpeg_recoed = jpeg_record_state_get();
         if (jpeg_recoed == false)
         {
-                char buffer[512];
-                tuya_api_alarm_event(user_data_get()->alarm.emergency_mode == 0 ? 0 : 1, buffer, 512);
+                unsigned char buffer[512];
+                tuya_event_report(0x02, layout_alarm_alarm_channel_get(), buffer, 512);
         }
+        printf("tuya event report waste time is %llu", user_timestamp_get() - timestamp);
         lv_timer_del(ptimer);
 }
 
@@ -671,7 +671,12 @@ static void sat_layout_enter(alarm)
         alarm_ring_close_timer = NULL;
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();
-        if (user_data_get()->alarm.security_alarm_enable)
+        if (user_data_get()->alarm.away_alarm_enable)
+        {
+                extern void away_mode_alarm_trigger_callback(int arg1, int arg2);
+                alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报触发函数注册
+        }
+        else
         {
                 alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
         }
@@ -798,21 +803,6 @@ static void sat_layout_enter(alarm)
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
 
-        if (user_data_get()->alarm.buzzer_alarm)
-        {
-                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_buzzer_call_label);
-                if (obj != NULL)
-                {
-                        lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
-                }
-                if (obj->user_data)
-                {
-                        lv_timer_del((lv_timer_t *)obj->user_data);
-                }
-                int time = user_timestamp_get() - buzzer_call_timestamp_get();
-                obj->user_data = lv_sat_timer_create(layout_alarm_buzzer_call_delay_close_task, time > 6000 ? 6000 : time, obj);
-        }
-
         {
                 /************************************************************
                 ** 函数说明: 警报铃声任务
@@ -915,7 +905,25 @@ static void sat_layout_enter(alarm)
                                                  resource_ui_src_get("btn_close.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 }
         }
+        if (user_data_get()->alarm.buzzer_alarm)
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_buzzer_call_label);
+                if (obj != NULL)
+                {
+                        lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
+                }
+                if (obj->user_data)
+                {
+                        lv_timer_del((lv_timer_t *)obj->user_data);
+                }
+                int time = user_timestamp_get() - buzzer_call_timestamp_get();
+                if (time > 0 && time <= 6000)
+                {
+                        obj->user_data = lv_sat_timer_create(layout_alarm_buzzer_call_delay_close_task, time, obj);
+                }
+        }
         buzzer_call_callback_register(layout_alarm_buzzer_alarm_call_callback);
+        jpeg_record_state_set(false);
         lv_sat_timer_create(layout_alarm_tuya_event_report, 5 * 1000, NULL);
 }
 
@@ -927,10 +935,18 @@ static void sat_layout_quit(alarm)
 
         ring_play_event_cmd_register(NULL);
         user_linphone_call_streams_running_receive_register(NULL);
-        if (user_data_get()->alarm.security_alarm_enable)
+        if (user_data_get()->alarm.away_alarm_enable)
+        {
+
+                extern void away_mode_alarm_trigger_callback(int arg1, int arg2);
+
+                alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报触发函数注册
+        }
+        else
         {
                 alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
         }
+
         record_video_stop();
         monitor_close(0x02);
         standby_timer_restart(true);

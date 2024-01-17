@@ -102,6 +102,11 @@ static bool monitor_talk_call_end_callback(char *arg);
 
 void layout_monitor_goto_layout_process(void)
 {
+        int ch = monitor_channel_get();
+        if (is_channel_ipc_camera(monitor_channel_get()) == false)
+        {
+                sat_ipcamera_device_channel_setting(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, network_data_get()->door_device[ch].auther_flag, 0, 1000);
+        }
         monitor_close(is_channel_ipc_camera(monitor_channel_get()) == 0x01 ? 0x02 : 0x01);
         linphone_incomming_info *node = linphone_incomming_used_node_get(true);
         if (node == NULL)
@@ -109,6 +114,7 @@ void layout_monitor_goto_layout_process(void)
                 /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
                 if (tuya_api_client_num() > 0)
                 {
+
                         tuya_api_preview_quit();
                         tuya_api_monitor_handup();
                 }
@@ -236,13 +242,13 @@ static void monitior_obj_channel_info_obj_display(void)
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", lang_str_get(COMMON_XLS_OBJ_ID_LOBBY), tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", lang_str_get(HOME_XLS_LANG_ID_COMMON_ENTRANCE), tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
         else if (channel == 17)
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", lang_str_get(COMMON_XLS_OBJ_ID_GUARD), tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION), tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
 }
 /***********************************************
@@ -392,11 +398,11 @@ void layout_call_log_create(CALL_LOG_TYPE type, int call_duration, int ch)
         }
         else if (ch == 6)
         {
-                strcpy(doorname, lang_str_get(COMMON_XLS_OBJ_ID_LOBBY));
+                strcpy(doorname, "LOBBY");
         }
         else if (ch == 7)
         {
-                strcpy(doorname, lang_str_get(COMMON_XLS_OBJ_ID_GUARD));
+                strcpy(doorname, "GUARD");
         }
         else
         {
@@ -418,7 +424,8 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
         if (monitor_timeout_sec > 0)
         {
                 monitor_obj_timeout_label_display();
-                monitor_timeout_sec--;
+                monitior_obj_channel_info_obj_display();
+                // monitor_timeout_sec--;
         }
         else
         {
@@ -512,6 +519,7 @@ static void monitor_obj_volume_click(lv_event_t *e)
                 lv_obj_add_flag(switch_btn, LV_OBJ_FLAG_HIDDEN);
         }
 }
+
 static void monitor_obj_volume_display(void)
 {
         lv_obj_t *obj = monitor_buttom_child_obj_get(monitor_obj_id_volume_cont);
@@ -621,21 +629,21 @@ static void monitor_obj_display_click(lv_event_t *e)
 
 static void monitor_obj_dispaly_display(void)
 {
-        // lv_obj_t *obj = monitor_buttom_child_obj_get(monitor_obj_id_display_cont);
-        // if (obj == NULL)
-        // {
-        //         return;
-        // }
-        // int ch = monitor_channel_get();
+        lv_obj_t *obj = monitor_buttom_child_obj_get(monitor_obj_id_display_cont);
+        if (obj == NULL)
+        {
+                return;
+        }
+        int ch = monitor_channel_get();
 
-        // if (is_channel_ipc_camera(ch) == false)
-        // {
-        //         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        // }
-        // else
-        // {
-        //         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        // }
+        if (is_channel_ipc_camera(ch) != 2)
+        {
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
 }
 
 /***********************************************
@@ -681,7 +689,20 @@ static void layout_monitor_vol_bar_display(void)
         lv_obj_t *silder_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_vol_cont), monitor_vol_obj_id_slider_cont);
         lv_obj_t *slider_obj = lv_obj_get_child_form_id(silder_cont, 1);
         lv_obj_t *value_obj = lv_obj_get_child_form_id(silder_cont, 0);
-        int cur_volume = is_monitor_door_camera_talk == true ? user_data_get()->audio.entrance_voice : user_data_get()->audio.entrance_volume;
+        int cur_volume = 0;
+        int ch = monitor_channel_get();
+        if (is_channel_ipc_camera(ch) == 0)
+        {
+                cur_volume = is_monitor_door_camera_talk == true ? user_data_get()->audio.entrance_voice : user_data_get()->audio.entrance_volume;
+        }
+        else if (ch == 16)
+        {
+                cur_volume = is_monitor_door_camera_talk == true ? user_data_get()->audio.common_entrance_voice : user_data_get()->audio.common_entrance_volume;
+        }
+        else if (ch == 17)
+        {
+                cur_volume = is_monitor_door_camera_talk == true ? user_data_get()->audio.guard_station_voice : user_data_get()->audio.guard_station_volume;
+        }
         char value_str[32] = {0};
         sprintf(value_str, "%02d", cur_volume);
         lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
@@ -758,7 +779,21 @@ static void monitor_obj_talk_click(lv_event_t *e)
                         sat_linphone_alarm_backgound_sound(true);
                 }
                 sat_linphone_answer(-1, false);
-                sat_linphone_audio_talk_volume_set(user_data_get()->audio.entrance_voice);
+                int cur_volume = 0;
+                if (is_channel_ipc_camera(ch) == 0)
+                {
+                        cur_volume = user_data_get()->audio.entrance_voice;
+                }
+                else if (ch == 16)
+                {
+                        cur_volume = user_data_get()->audio.common_entrance_voice;
+                }
+                else if (ch == 17)
+                {
+                        cur_volume = user_data_get()->audio.guard_station_voice;
+                }
+
+                sat_linphone_audio_talk_volume_set(cur_volume);
                 monitor_obj_talk_display();
                 layout_monitor_switch_btn_display();
                 layout_monitor_channel_type_switch_btn_display();
@@ -891,7 +926,7 @@ static void *monitor_unlock_ctrl_task(void *arg)
                 for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
                 {
 
-                        sat_ipcamera_report_shellcmd(network_data_get()->door_device[info->ch].ipaddr, network_data_get()->door_device[info->ch].port, network_data_get()->door_device[info->ch].username, network_data_get()->door_device[info->ch].password, cmd[i], 1000);
+                        sat_ipcamera_report_shellcmd(network_data_get()->door_device[info->ch].ipaddr, network_data_get()->door_device[info->ch].port, network_data_get()->door_device[info->ch].username, network_data_get()->door_device[info->ch].password, cmd[i], 2000);
                 }
         }
         else if (info->ch != MON_CH_LOBBY && info->ch != MON_CH_GUARD)
@@ -906,16 +941,15 @@ static void *monitor_unlock_ctrl_task(void *arg)
                 {
                         cmd[2] = "echo 0 > /sys/class/gpio/gpio33/value";
                 }
-
                 for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
                 {
                         printf("cmd[%d] is %s\n", i, cmd[i]);
-                        sat_ipcamera_report_shellcmd(network_data_get()->door_device[info->ch].ipaddr, 80, "admiin", network_data_get()->door_device[info->ch].password, cmd[i], 1000);
+                        sat_ipcamera_report_shellcmd(network_data_get()->door_device[info->ch].ipaddr, 80, "admiin", network_data_get()->door_device[info->ch].password, cmd[i], 2000);
                 }
         }
         else if (info->ch == MON_CH_LOBBY)
         {
-                commax_https_lobbyphone_open_the_door(commax_transport_ip_get(), "29752", 1000);
+                commax_https_lobbyphone_open_the_door(commax_transport_ip_get(), "29752", 2000);
         }
         free(info);
         pthread_mutex_unlock(&door_lock_mutex);
@@ -1305,20 +1339,22 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 
         lv_timer_del(ptimer);
 }
+
 static void door_call_enent_tuya_report_timer(lv_timer_t *ptimer)
 {
         bool jpeg_recoed = jpeg_record_state_get();
         if (jpeg_recoed == false)
         {
-                char buffer[512];
+                unsigned char buffer[512];
                 int ch = monitor_channel_get();
                 ch = is_channel_ipc_camera(ch) == 0 ? ch : is_channel_ipc_camera(ch) == 2 ? ch - 10
                                                                                           : -1;
 
-                tuya_api_call_event(ch, buffer, 512);
+                tuya_event_report(0x01, ch, buffer, 512);
         }
         lv_timer_del(ptimer);
 }
+
 static void layout_monitor_streams_running_register_callback(int arg1, int arg2)
 {
         is_monitor_snapshot_ing = false;
@@ -1327,7 +1363,6 @@ static void layout_monitor_streams_running_register_callback(int arg1, int arg2)
         if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
         {
                 lv_sat_timer_create(monitor_call_record_delay_task, 1000, NULL);
-                lv_sat_timer_create(door_call_enent_tuya_report_timer, 4000, NULL);
         }
 }
 
@@ -1828,14 +1863,38 @@ static void layout_monitor_setting_volume_slider_change_cb(lv_event_t *e)
         {
                 int value = lv_slider_get_value(obj);
 
-                user_data_get()->audio.entrance_voice = value;
+                int ch = monitor_channel_get();
+                if (is_channel_ipc_camera(ch) == 0)
+                {
+                        user_data_get()->audio.entrance_voice = value;
+                }
+                else if (ch == 16)
+                {
+                        user_data_get()->audio.common_entrance_voice = value;
+                }
+                else if (ch == 17)
+                {
+                        user_data_get()->audio.guard_station_voice = value;
+                }
                 user_data_save(false, false);
                 sat_linphone_audio_talk_volume_set(value);
         }
         else
         {
                 int value = lv_slider_get_value(obj);
-                user_data_get()->audio.entrance_volume = value;
+                int ch = monitor_channel_get();
+                if (is_channel_ipc_camera(ch) == 0)
+                {
+                        user_data_get()->audio.entrance_volume = value;
+                }
+                else if (ch == 16)
+                {
+                        user_data_get()->audio.common_entrance_volume = value;
+                }
+                else if (ch == 17)
+                {
+                        user_data_get()->audio.guard_station_volume = value;
+                }
                 sat_linphone_audio_play_volume_set(value);
                 user_data_save(false, false);
         }
@@ -2141,11 +2200,11 @@ static void layout_monitor_door_ch_btn_create(void)
                 }
                 else if (ch == 16)
                 {
-                        strcpy(ch_name, lang_str_get(COMMON_XLS_OBJ_ID_LOBBY));
+                        strcpy(ch_name, lang_str_get(HOME_XLS_LANG_ID_COMMON_ENTRANCE));
                 }
                 else if (ch == 17)
                 {
-                        strcpy(ch_name, lang_str_get(COMMON_XLS_OBJ_ID_GUARD));
+                        strcpy(ch_name, lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION));
                 }
                 lv_obj_t *obj_answer = lv_common_img_text_btn_create(list, node[i].call_id, sec_x, sec_y, 253, 80,
                                                                      layout_monitor_door_call_btn_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
@@ -2645,7 +2704,16 @@ static void sat_layout_enter(monitor)
                         lv_timer_del((lv_timer_t *)obj->user_data);
                 }
                 int time = user_timestamp_get() - buzzer_call_timestamp_get();
-                obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, time > 6000 ? 6000 : time, obj);
+                if (time > 0 && time <= 6000)
+                {
+                        obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, time, obj);
+                }
+        }
+        // 呼叫事件延迟推送
+        if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
+        {
+                jpeg_record_state_set(false);
+                lv_sat_timer_create(door_call_enent_tuya_report_timer, 5000, NULL);
         }
 
         buzzer_call_callback_register(layout_monitor_buzzer_alarm_call_callback);
@@ -2746,7 +2814,7 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
 
         if (user_data_get()->audio.ring_mute == false)
         {
-                ring_common_door_play(user_data_get()->audio.common_entrance_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
+                ring_guard_play(user_data_get()->audio.securirty_office_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
         }
         /*如果是外部呼叫，则直接进入监控*/
         if (is_extern_call == true)
@@ -3253,7 +3321,6 @@ static bool tuya_event_cmd_motion_enable(int arg)
 ************************************************************/
 static bool truye_event_cmd_audio_start(void)
 {
-        tuya_api_preview_quit();
         tuya_api_door2_unlock_mode_report(user_data_get()->etc.door2_lock_num);
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
         if (obj == NULL)
@@ -3335,7 +3402,7 @@ static bool tuya_event_cmd_video_start(void)
                 {
                         sat_ipcamera_device_channel_setting(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, network_data_get()->door_device[ch].auther_flag, 1, 1000);
                 }
-
+                home_use_mobile_app_obj_display();
                 monitor_obj_talk_display();
                 layout_monitor_switch_btn_display();
         }

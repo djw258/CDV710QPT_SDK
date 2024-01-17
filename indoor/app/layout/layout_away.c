@@ -1157,20 +1157,24 @@ static void layout_away_func_setting_create()
         layout_away_save_visitor_photo();
     }
 
-    lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_bypass_call, 514, 72 * 3, 510, 72,
-                                                    away_bypass_call_enable_btn_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                    0, 17, 300, 43, layout_away_obj_id_bypass_call_title,
-                                                    lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_BYPASS_CALL), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                    0, 17, 120, 40, -1,
-                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                    0, 42, 576, 29, -1,
-                                                    NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
-                                                    370, 12, 80, 48, layout_away_bypass_call_img_id,
-                                                    (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-    layout_away_bypass_call_display();
-    lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record, 514, 72 * 4, 510, 72,
+    if (0)
+    {
+        lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_bypass_call, 514, 72 * 3, 510, 72,
+                                                        away_bypass_call_enable_btn_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                        0, 17, 300, 43, layout_away_obj_id_bypass_call_title,
+                                                        lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_BYPASS_CALL), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                        0, 17, 120, 40, -1,
+                                                        "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                        0, 42, 576, 29, -1,
+                                                        NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                        370, 12, 80, 48, layout_away_bypass_call_img_id,
+                                                        (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+        layout_away_bypass_call_display();
+    }
+
+    lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record, 514, 72 * 3, 510, 72,
                                                     away_cctv_record_enable_btn_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
