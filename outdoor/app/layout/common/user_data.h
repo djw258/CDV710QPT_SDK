@@ -23,7 +23,7 @@ typedef struct
 {
         user_network_info network;
         network_device_info device;
-
+        char ipaddr_backup[16];
         char server_ip[16];
 
         int brightness;
@@ -32,7 +32,7 @@ typedef struct
         int sharpness;
 } user_data_info;
 
-#define SYSTEM_VERSION "Ver:0.0.0.1"
+#define SYSTEM_VERSION "Ver:0.0.0.3"
 /***
 ** 日期: 2022-05-05 08:47
 ** 作者: leo.liu

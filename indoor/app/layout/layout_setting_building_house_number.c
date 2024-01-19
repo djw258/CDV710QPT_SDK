@@ -56,7 +56,6 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
                 strncpy(&network_data_get()->sip_user[4 - strlen(building_str)], building_str, strlen(building_str));
                 strncpy(&network_data_get()->sip_user[8 - strlen(household_str)], household_str, strlen(household_str));
 
-                memset(network_data_get()->door_device, 0, sizeof(struct ipcamera_info) * DEVICE_MAX);
                 network_data_save();
 
                 backlight_enable(false);

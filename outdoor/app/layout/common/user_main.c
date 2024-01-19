@@ -40,6 +40,7 @@
 #include "anyka/ak_ats.h"
 #include <signal.h>
 #include <sys/wait.h>
+#include "onvif/onvif.h"
 #if 0
 #include <stdio.h>
 #include <stdlib.h>
@@ -261,7 +262,7 @@ static void key_call_process(unsigned int code, unsigned int state)
 static void sys_timer_callback(void)
 {
         static unsigned long long register_timestamp = 0;
-        static unsigned long long led_ctrl_timestamp = 0;
+        // static unsigned long long led_ctrl_timestamp = 0;
         unsigned long long timestamp = user_timestamp_get();
 
         /* 警报状态的情况下，通话需要播放警报铃声*/
@@ -280,9 +281,9 @@ static void sys_timer_callback(void)
                 }
         }
 
-        if ((video_capture_status == true) && (((timestamp - led_ctrl_timestamp) > SIP_CALL_QURY_TIMER * 2) || (led_ctrl_level_read() == GPIO_LEVEL_LOW)))
+        if ((video_capture_status == true) && (/* ((timestamp - led_ctrl_timestamp) > SIP_CALL_QURY_TIMER * 5) ||  */ (led_ctrl_level_read() == GPIO_LEVEL_LOW)))
         {
-                led_ctrl_timestamp = timestamp;
+                // led_ctrl_timestamp = timestamp;
                 led_ctrl_enable((ir_feed_read() == GPIO_LEVEL_LOW) ? false : true);
         }
         else if ((video_capture_status == false) && (led_ctrl_level_read() == GPIO_LEVEL_HIGH))
@@ -368,6 +369,36 @@ static void linphone_call_status_callback(int state)
 
 }
 #endif
+
+/************************************************************
+** 函数说明: ip变化检测及上报
+** 作者: xiaoxiao
+** 日期：2024-01-18 16:30:52
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void client_ip_change_report(void)
+{
+        char ip[16] = {0};
+        if (sat_ip_mac_addres_get("eth0", ip, NULL, NULL) == true)
+        {
+                if (strncmp(user_data_get()->ipaddr_backup, ip, sizeof(user_data_get()->ipaddr_backup)))
+                {
+                        printf("ip is %s\n", ip);
+                        printf("backup ip is %s\n", user_data_get()->ipaddr_backup);
+                        strncpy(user_data_get()->ipaddr_backup, ip, sizeof(user_data_get()->ipaddr_backup));
+                        user_data_save();
+                        if (user_data_get()->server_ip[0])
+                        {
+                                char number[32] = {0};
+                                sprintf(number, "sip:%s@%s", user_data_get()->device.number, ip);
+                                ipc_camera_device_ip_change(number, user_data_get()->server_ip, 80, user_data_get()->device.name, user_data_get()->device.password, 2000);
+                        }
+
+                        // sat_ipcamera_device_update_server_ip(i, user_data_get()->network.ipaddr, 1000);
+                }
+        }
+}
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
@@ -436,6 +467,9 @@ int main(int argc, char *argv[])
                 sprintf(domain, "%s:5066", user_data_get()->server_ip);
                 sat_linphone_register(user_data_get()->device.name, user_data_get()->device.number, NULL, domain);
         }
+
+        client_ip_change_report();
+
         pthread_t thread_id;
         pthread_create(&thread_id, sat_pthread_attr_get(), media_server_task, NULL);
 

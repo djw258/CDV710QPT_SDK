@@ -233,30 +233,7 @@ static bool layout_setting_ipaddress_data_valid_check(void)
         return true;
 }
 
-bool modify_rtsp_url(const char *original_url, const char *new_ip_address, char *modified_url)
-{
-        // 查找原始URL中的IP地址部分
-        const char *ip_start = strstr(original_url, "://") + 3;
-        if (ip_start == NULL)
-        {
-                return false;
-        }
-        const char *ip_end = strchr(ip_start, ':');
-        if (ip_end == NULL)
-        {
-                ip_end = strchr(ip_start, '/');
-                if (ip_end == NULL)
-                {
-                        return false;
-                }
-        }
-        // 构建新的URL
-        strncpy(modified_url, original_url, ip_start - original_url);     // 复制 "rtsp://"
-        strcpy(modified_url + (ip_start - original_url), new_ip_address); // 添加新IP地址
-        strcat(modified_url, ip_end);
-        return true; // 添加端口号和路径
-}
-
+extern bool modify_rtsp_url_by_ip(const char *original_url, const char *new_ip_address, char *modified_url);
 static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
 {
         /*这个地方id寻找的控件与实际意义不符*/
@@ -294,7 +271,7 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                                         {
                                                 char number[32] = {0};
                                                 sprintf(number, "sip:20%d@%s", i + 1, network_data_get()->network.ipaddr);
-                                                sat_ipcamera_device_register(number, layout_ipc_camera_edit_index_get(), 5000);
+                                                sat_ipcamera_device_register(number, i, 5000);
                                                 // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
                                         }
                                 }
@@ -343,7 +320,7 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                                         for (int i = 0; i < network_data_get()->door_device[layout_ipc_camera_edit_index_get()].profile_token_num; i++)
                                         {
                                                 memset(newurl, 0, sizeof(newurl));
-                                                modify_rtsp_url(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
+                                                modify_rtsp_url_by_ip(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
                                                 if (layout_setting_ipaddress_info_get()->network.udhcp == true)
                                                 {
                                                         sat_ipcamera_device_delete(layout_ipc_camera_edit_index_get(), 1500);
@@ -364,7 +341,7 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
 
                                                 memset(newurl, 0, sizeof(newurl));
 
-                                                modify_rtsp_url(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
+                                                modify_rtsp_url_by_ip(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
                                                 if (layout_setting_ipaddress_info_get()->network.udhcp == true)
                                                 {
                                                         memset(&network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()], 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()]));

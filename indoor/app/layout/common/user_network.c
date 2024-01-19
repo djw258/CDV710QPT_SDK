@@ -488,6 +488,54 @@ static bool tcp_device_serverce_xml_process_syncsystemtime(int tcp_socket_fd, ch
         return reslut;
 }
 
+bool modify_rtsp_url_by_ip(const char *original_url, const char *new_ip_address, char *modified_url)
+{
+        // 查找原始URL中的IP地址部分
+        const char *ip_start = strstr(original_url, "://") + 3;
+        if (ip_start == NULL)
+        {
+                return false;
+        }
+        const char *ip_end = strchr(ip_start, ':');
+        if (ip_end == NULL)
+        {
+                ip_end = strchr(ip_start, '/');
+                if (ip_end == NULL)
+                {
+                        return false;
+                }
+        }
+        // 构建新的URL
+        strncpy(modified_url, original_url, ip_start - original_url);     // 复制 "rtsp://"
+        strcpy(modified_url + (ip_start - original_url), new_ip_address); // 添加新IP地址
+        strcat(modified_url, ip_end);
+        return true; // 添加端口号和路径
+}
+
+static bool tcp_device_serverce_xml_process_update_client_ip(int tcp_socket_fd, char *recv_string)
+{
+        int index = 0;
+        char ip[16] = {0};
+        sscanf(recv_string, "sip:20%d@%s", &index, ip);
+        if ((index < 0) || (index > 8))
+        {
+                return false;
+        }
+        index -= 1;
+        char newurl[128] = {0};
+        for (int i = 0; i < network_data_get()->door_device[index].profile_token_num; i++)
+        {
+                memset(newurl, 0, sizeof(newurl));
+                modify_rtsp_url_by_ip(network_data_get()->door_device[index].rtsp[i].rtsp_url, ip, newurl);
+
+                strncpy(network_data_get()->door_device[index].rtsp[i].rtsp_url, newurl, sizeof(network_data_get()->door_device[index].rtsp[i].rtsp_url));
+        }
+        strncpy(network_data_get()->door_device[index].ipaddr, ip, sizeof(network_data_get()->door_device[index].ipaddr));
+        network_data_save();
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "UpdateClientIP");
+        return true;
+}
+
 static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         bool reslut = false;
@@ -524,16 +572,20 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
                 printf("[%s:%d] ShellCmd\n", __func__, __LINE__);
                 reslut = tcp_device_serverce_xml_process_shellcmd(tcp_socket_fd, data);
         }
-        else if (discover_devices_data_parsing(ptr, "GetSystemDateAndTime", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing(ptr, "GetSystemDateAndTime", data, SYNC_FILE_DATA_MAX) == true)
         {
                 printf("[%s:%d] GetSystemDateAndTime\n", __func__, __LINE__);
                 reslut = tcp_device_serverce_xml_process_systemtime(tcp_socket_fd, data);
+        }
+        else if (discover_devices_data_parsing(ptr, "UpdateClientIP", data, SYNC_FILE_DATA_MAX) == true)
+        {
+                SAT_DEBUG("%s", recv_data);
+                reslut = tcp_device_serverce_xml_process_update_client_ip(tcp_socket_fd, data);
         }
         else if (strstr((const char *)recv_data, "200 OK") == NULL)
         {
                 SAT_DEBUG("%s", recv_data);
         }
-
         if (data != NULL)
         {
                 free(data);

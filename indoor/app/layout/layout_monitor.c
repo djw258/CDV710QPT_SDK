@@ -425,7 +425,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
         {
                 monitor_obj_timeout_label_display();
                 monitior_obj_channel_info_obj_display();
-                // monitor_timeout_sec--;
+                monitor_timeout_sec--;
         }
         else
         {
@@ -658,15 +658,15 @@ static void monitor_obj_talk_display(void)
         {
                 return;
         }
+        int ch = monitor_channel_get();
         if ((is_channel_ipc_camera(monitor_channel_get()) != 0x01) && (is_monitor_door_camera_talk == false))
         {
-                if (user_data_get()->etc.open_the_door == 0)
+                if (user_data_get()->etc.open_the_door == 0 || (ch == MON_CH_GUARD))
                 {
                         lv_obj_set_x(obj, 402);
                 }
                 else
                 {
-                        int ch = monitor_channel_get();
                         int lock_num = user_data_get()->etc.door2_lock_num;
                         lv_obj_set_x(obj, ((ch == MON_CH_DOOR2) && (lock_num == 2)) ? 286 : 344);
                 }

@@ -52,4 +52,10 @@ bool ipc_camera_device_name_set(const char *name, const char *ip, int port, cons
 **@功能: 密码修改
 *****************************************************************/
 bool ipc_camera_device_password_change(const char *pwd, const char *ip, int port, const char *user, const char *password, int timeout);
+/****************************************************************
+**@日期: 2022-09-20
+**@作者: leo.liu
+**@功能: ip变化上报
+*****************************************************************/
+bool ipc_camera_device_ip_change(char *client_ip, const char *ip, int port, const char *user, const char *password, int timeout);
 #endif

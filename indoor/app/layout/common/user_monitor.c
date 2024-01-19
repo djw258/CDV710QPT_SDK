@@ -355,7 +355,6 @@ BYTE1. 010(固定部分).
 ************************************************************/
 bool monitor_valid_channel_check(int channel)
 {
-        return true;
         if (channel < 8)
         {
                 if ((network_data_get()->door_device[channel].sip_url[0] != 0))

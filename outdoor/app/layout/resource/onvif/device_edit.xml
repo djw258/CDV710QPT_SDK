@@ -1,22 +1,11 @@
 POST /onvif/device_service HTTP/1.1
 Host: %s
 Content-Type: application/soap+xml; charset=utf-8
-Content-Length: %d
-SOAPAction: %s
+%sContent-Length: %d
 
 <?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tds="http://www.onvif.org/ver10/device/wsdl" xmlns:tt="http://www.onvif.org/ver10/schema">
-  <s:Header xmlns:s="http://www.w3.org/2003/05/soap-envelope">
-    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
-      <wsse:UsernameToken>
-        <wsse:Username>%s</wsse:Username>
-        <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest">%s</wsse:Password>
-        <wsse:Nonce>%s</wsse:Nonce>
-        <wsu:Created>%s</wsu:Created>
-      </wsse:UsernameToken>
-    </wsse:Security>
-  </s:Header>
-  <soap:Body>
-    <soap:Device>%s</soap:Device>
+<soap:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope">
+  %s<soap:Body>
+    <soap:%s>%s</soap:%s>
   </soap:Body>
 </soap:Envelope>

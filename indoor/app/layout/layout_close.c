@@ -14,7 +14,9 @@ enum
 static bool is_motion_snapshot_ing = false;
 static bool is_motion_record_video_ing = false;
 static int motion_timeout_sec = 0;
-static bool is_trigger_motion;
+
+static lv_timer_t *motion_timerout_timer = NULL;
+static unsigned long long motion_detection_timestap = 0;
 
 static lv_timer_t *backlight_timer = NULL;
 static void layout_close_click(lv_event_t *ev)
@@ -198,9 +200,26 @@ static void layout_motion_monitor_open(void)
 static void layout_motion_restart_motion_detection(void)
 {
     backlight_enable(false);
-    is_trigger_motion = false;
+
     monitor_close(0x02);
     lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 3000, NULL));
+}
+
+/************************************************************
+** 函数说明:移动侦测超时处理
+** 作者: xiaoxiao
+** 日期：2024-01-19 08:40:45
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void motion_timerout_task(lv_timer_t *ptimer)
+{
+    if (abs(motion_detection_timestap - user_timestamp_get()) > (60 * 60 * 1000))
+    {
+        layout_motion_restart_motion_detection();
+        lv_timer_del(motion_timerout_timer);
+        motion_timerout_timer = NULL;
+    }
 }
 
 /***
@@ -215,6 +234,8 @@ static void motion_timer_check_task(lv_timer_t *ptimer)
     if ((motion_timer_timeout_check() == true))
     {
         layout_motion_monitor_open();
+        motion_detection_timestap = user_timestamp_get();
+        motion_timerout_timer = lv_sat_timer_create(motion_timerout_task, 1000, NULL);
         // sat_linphone_motion_detection_start(80,user_data_get()->motion.sensivity);
         lv_timer_del(ptimer);
     }
@@ -301,9 +322,14 @@ static bool layout_close_motion_dectection_callback(void)
     {
         return false;
     }
+    if (motion_timerout_timer != NULL)
+    {
+        lv_timer_del(motion_timerout_timer);
+    }
+
     jpeg_record_state_set(false);
     lv_sat_timer_create(motion_event_tuya_report_timer, 5000, NULL);
-    is_trigger_motion = true;
+
     monitior_obj_channel_info_obj_display();
     monitor_obj_timeout_label_display();
     if (user_data_get()->motion.lcd_en == true)
@@ -492,7 +518,7 @@ static void layout_motion_snapshot_state_callback(bool record_ing)
 static void motion_detection_start_timer(lv_timer_t *timer)
 {
     int level = user_data_get()->motion.sensivity;
-    sat_linphone_motion_detection_start(80, level == 0 ? 120 : level == 1 ? 250
+    sat_linphone_motion_detection_start(80, level == 0 ? 150 : level == 1 ? 270
                                                                           : 400);
     lv_timer_del(timer);
 }
@@ -574,7 +600,8 @@ static void sat_layout_enter(close)
         motion_timeout_sec = 10;
         is_motion_snapshot_ing = false;
         is_motion_record_video_ing = false;
-        is_trigger_motion = false;
+        motion_timerout_timer = NULL;
+
         if (backlight_timer != NULL)
         {
             lv_timer_del(backlight_timer);
@@ -594,9 +621,13 @@ static void sat_layout_enter(close)
         sd_state_channge_callback_register(layout_motion_sd_state_change_callback);
 
         layout_motion_head_cont_create();
+
         if (user_data_get()->motion.timer_en == false)
         {
             layout_motion_monitor_open();
+            motion_detection_timestap = user_timestamp_get();
+
+            motion_timerout_timer = lv_sat_timer_create(motion_timerout_task, 1000, NULL);
         }
         else
         {

@@ -954,6 +954,14 @@ static void frame_show_restart(void)
 	{
 		lv_obj_clean(frame1);
 	}
+	file_type type = FILE_TYPE_FLASH_PHOTO;
+	int total = 0;
+	if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+	{
+		type = FILE_TYPE_VIDEO;
+	}
+	media_file_total_get(type, &total, NULL);
+
 	if ((user_data_get()->display.frame_list & 0x01) && (frame_show_frame_index < 0x01))
 	{
 		/*****  开始时间的显示 *****/
@@ -965,7 +973,7 @@ static void frame_show_restart(void)
 		frame_show_frame_index = 0x02;
 		frame_show_calendar_start();
 	}
-	else if ((user_data_get()->display.frame_list & 0x04) && (frame_show_frame_index < 0x04))
+	else if ((user_data_get()->display.frame_list & 0x04) && (frame_show_frame_index < 0x04) && total)
 	{
 		frame_show_frame_index = 0x04;
 		frame_show_playback_start();

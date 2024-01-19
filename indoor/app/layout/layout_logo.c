@@ -1152,6 +1152,32 @@ void commax_pis_information_report_timer(lv_timer_t *t)
         }
         commax_pis_information_report(network_data_get()->local_server, 80, dong, ho, "CIP_70QPT", 2, VERSION_NO, 1000);
 }
+
+// 主机重启后，ip改变要自动同步注册信息
+void register_device_dats_sync_timer(lv_timer_t *t)
+{
+        char ip[16] = {0};
+        if (sat_ip_mac_addres_get("eth0", ip, NULL, NULL) == true)
+        {
+                if (strncmp(network_data_get()->ipaddr_backup, ip, sizeof(network_data_get()->ipaddr_backup)))
+                {
+                        strncpy(network_data_get()->ipaddr_backup, ip, sizeof(network_data_get()->ipaddr_backup));
+                        network_data_save();
+                        for (int i = 0; i < DEVICE_MAX; i++)
+                        {
+                                if (network_data_get()->door_device[i].sip_url[0] != 0)
+                                {
+                                        char number[32] = {0};
+                                        sprintf(number, "sip:20%d@%s", i + 1, ip);
+                                        sat_ipcamera_device_register(number, i, 5000);
+                                        // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
+                                }
+                        }
+                }
+        }
+        lv_timer_del(t);
+}
+
 static void sat_layout_quit(logo)
 {
         /**
@@ -1161,6 +1187,7 @@ static void sat_layout_quit(logo)
         lv_timer_create(time_correction_timer, 60 * 480000 - 200, NULL);
 
         lv_timer_ready(lv_timer_create(commax_pis_information_report_timer, 30 * 60 * 1000, NULL));
-}
 
+        lv_timer_ready(lv_timer_create(register_device_dats_sync_timer, 1000, NULL));
+}
 sat_layout_create(logo);
