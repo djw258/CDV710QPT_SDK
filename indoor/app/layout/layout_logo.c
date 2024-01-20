@@ -404,24 +404,31 @@ static void security_mode_sync_callback()
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
+static void asterisk_server_sync_data_callback(char mask, char *data, int size, int pos, int max)
 {
         if (user_data_get()->is_device_init == false)
         {
                 return;
         }
         /*master本身不接受回调处理*/
-        if (((user_data_get()->system_mode & 0x0F) == 0x01) && (flag != 0x00))
+        if (((user_data_get()->system_mode & 0x0F) == 0x01) && (mask != 0x00))
+        {
+                return;
+        }
+        int flag = (int)mask;
+        static bool sync_ing[4] = {0};
+        static char *recv_data[4] = {NULL};
+        static int recv_size[4] = {0};
+        if (((pos == 0) && (sync_ing[flag])) || ((pos != 0) && (sync_ing[flag] == false)))
         {
                 return;
         }
 
-        static char *recv_data = NULL;
-        static int recv_size = 0;
-        if ((recv_data == NULL) && (pos == 0))
+        if ((recv_data[flag] == NULL) && (pos == 0))
         {
-                recv_data = (char *)malloc(max);
-                recv_size = max;
+                recv_data[flag] = (char *)malloc(max);
+                recv_size[flag] = max;
+                sync_ing[flag] = true;
         }
 
         if (recv_data == NULL)
@@ -430,27 +437,30 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 return;
         }
 
-        if (recv_size != max)
+        if (recv_size[flag] != max)
         {
-                printf("[%s:%d] reve data malloc failed( %d %d)\n", __func__, __LINE__, recv_size, max);
-                free(recv_data);
-                recv_data = NULL;
+                printf("[%s:%d] reve data malloc failed( %d %d)\n", __func__, __LINE__, recv_size[flag], max);
+                free(recv_data[flag]);
+                recv_data[flag] = NULL;
+                sync_ing[flag] = false;
                 return;
         }
-        memcpy(&recv_data[pos], data, size);
+        memcpy(&recv_data[flag][pos], data, size);
 
         if ((size + pos) == max)
         {
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
-                        user_data_info *info = (user_data_info *)recv_data;
-                        if (user_data_get()->sync_timestamp >= info->sync_timestamp)
+                        user_data_info *info = (user_data_info *)recv_data[flag];
+                        unsigned long long temp_sync_timestamp = user_data_get()->sync_timestamp;
+                        user_data_get()->sync_timestamp = info->sync_timestamp;
+                        if (temp_sync_timestamp >= info->sync_timestamp)
                         {
-                                free(recv_data);
-                                recv_data = NULL;
+                                free(recv_data[flag]);
+                                recv_data[flag] = NULL;
+                                sync_ing[flag] = false;
                                 return;
                         }
-                        user_data_get()->sync_timestamp = info->sync_timestamp;
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
                                 user_data_get()->etc.call_time = info->etc.call_time;
@@ -480,14 +490,11 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         for (int i = 0; i < 8; i++) // 警报触发取消同步
                         {
 
-                                printf("user_data_get()->alarm.alarm_trigger_enable[%d] = %d\n", i, user_data_get()->alarm.alarm_trigger_enable[i]);
-
                                 if (((user_data_get()->alarm.alarm_trigger[i]) != (info->alarm.alarm_trigger[i])) || ((user_data_get()->alarm.alarm_trigger_enable[i]) != (info->alarm.alarm_trigger_enable[i])))
                                 {
                                         user_data_get()->alarm.alarm_trigger[i] = info->alarm.alarm_trigger[i];
                                         user_data_get()->alarm.alarm_trigger_enable[i] = info->alarm.alarm_trigger_enable[i];
                                         // printf("user_data_get()->alarm.alarm_trigger[%d] = %d\n", i, user_data_get()->alarm.alarm_trigger[i]);
-                                        SAT_DEBUG("user_data_get()->alarm.alarm_trigger_enable[%d] = %d\n", i, user_data_get()->alarm.alarm_trigger_enable[i]);
                                         sync_data_alarm_trigger_check();
                                 }
                         }
@@ -511,7 +518,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 }
                 else if ((flag == 0x01) && (max == sizeof(user_network_info)))
                 {
-                        user_network_info *info = (user_network_info *)recv_data;
+                        user_network_info *info = (user_network_info *)recv_data[flag];
                         memcpy(network_data_get()->door_device, info->door_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         memcpy(network_data_get()->cctv_device, info->cctv_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         strncpy(network_data_get()->sip_server, info->sip_server, sizeof(network_data_get()->sip_server));
@@ -531,20 +538,21 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         }
                         else
                         {
-                                memcpy(register_info, recv_data, max);
+                                memcpy(register_info, recv_data[flag], max);
                         }
                 }
                 else if ((flag == 0x03) && (max == sizeof(struct tm)))
                 {
-                        struct tm *d_t = (struct tm *)recv_data;
+                        struct tm *d_t = (struct tm *)recv_data[flag];
                         standby_timer_close();
 
                         user_time_set(d_t);
 
                         standby_timer_restart(true);
                 }
-                free(recv_data);
-                recv_data = NULL;
+                free(recv_data[flag]);
+                recv_data[flag] = NULL;
+                sync_ing[flag] = false;
         }
 }
 
@@ -1154,27 +1162,42 @@ void commax_pis_information_report_timer(lv_timer_t *t)
 }
 
 // 主机重启后，ip改变要自动同步注册信息
-void register_device_dats_sync_timer(lv_timer_t *t)
+void register_device_data_sync_timer(lv_timer_t *t)
 {
-        char ip[16] = {0};
-        if (sat_ip_mac_addres_get("eth0", ip, NULL, NULL) == true)
+        if ((user_data_get()->system_mode & 0x0f) == 0x01)
         {
-                if (strncmp(network_data_get()->ipaddr_backup, ip, sizeof(network_data_get()->ipaddr_backup)))
+                char ip[16] = {0};
+                if (sat_ip_mac_addres_get("eth0", ip, NULL, NULL) == true)
                 {
-                        strncpy(network_data_get()->ipaddr_backup, ip, sizeof(network_data_get()->ipaddr_backup));
-                        network_data_save();
-                        for (int i = 0; i < DEVICE_MAX; i++)
+                        if (strncmp(network_data_get()->ipaddr_backup, ip, sizeof(network_data_get()->ipaddr_backup)))
                         {
-                                if (network_data_get()->door_device[i].sip_url[0] != 0)
+                                strncpy(network_data_get()->ipaddr_backup, ip, sizeof(network_data_get()->ipaddr_backup));
+                                network_data_save();
+                                for (int i = 0; i < DEVICE_MAX; i++)
                                 {
-                                        char number[32] = {0};
-                                        sprintf(number, "sip:20%d@%s", i + 1, ip);
-                                        sat_ipcamera_device_register(number, i, 5000);
-                                        // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
+                                        if (network_data_get()->door_device[i].sip_url[0] != 0)
+                                        {
+                                                char number[32] = {0};
+                                                sprintf(number, "sip:20%d@%s", i + 1, ip);
+                                                sat_ipcamera_device_register(number, i, 5000);
+                                                // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
+                                        }
                                 }
                         }
                 }
         }
+        else
+        {
+                struct tm tm;
+                if (sat_ipcamera_system_time_get(user_data_get()->mastar_wallpad_ip, 80, "admin", "123456789", 0x00, &tm, 1000) == true)
+                {
+                        standby_timer_close();
+                        user_time_set(&tm);
+
+                        standby_timer_restart(true);
+                }
+        }
+
         lv_timer_del(t);
 }
 
@@ -1188,6 +1211,6 @@ static void sat_layout_quit(logo)
 
         lv_timer_ready(lv_timer_create(commax_pis_information_report_timer, 30 * 60 * 1000, NULL));
 
-        lv_timer_ready(lv_timer_create(register_device_dats_sync_timer, 1000, NULL));
+        lv_timer_ready(lv_timer_create(register_device_data_sync_timer, 1000, NULL));
 }
 sat_layout_create(logo);

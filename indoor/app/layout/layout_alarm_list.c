@@ -152,7 +152,7 @@ static void alarm_list_display(lv_obj_t *parent, int type, int ch, struct tm tm)
         {
                 lv_label_set_text(ch_label, lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_SENSOR1 + ch));
         }
-        lv_obj_set_style_bg_img_src(img, (type == 0 || type == 1) ? resource_ui_src_get("ic_list_emergency_01.png") : resource_ui_src_get("ic_list_emergency_02.png"), LV_PART_MAIN);
+        lv_obj_set_style_bg_img_src(img, (type == 0 || type == 1 || type == 2) ? resource_ui_src_get("ic_list_emergency_01.png") : resource_ui_src_get("ic_list_emergency_02.png"), LV_PART_MAIN);
         lv_label_set_text_fmt(time_label, "%04d.%02d.%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 }
 

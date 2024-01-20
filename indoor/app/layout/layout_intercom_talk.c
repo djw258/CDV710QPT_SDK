@@ -140,13 +140,22 @@ void layout_intercom_talk_door_ch_btn_create(void);
 // 挂断其他设备的呼叫会话
 static void layout_intercom_talk_other_call_handup_btn_click(lv_event_t *ev)
 {
-
         lv_obj_t *obj = lv_event_get_current_target(ev);
         linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(lv_obj_get_parent(obj)->id);
         if (node != NULL)
         {
+                int ch = node->channel;
+                int index = (ch >= 0 && ch <= 5) ? ch : (ch == 16 || ch == 17) ? ch - 10
+                                                                               : -1;
+                if (index != -1)
+                {
+                        CALL_LOG_TYPE type = CALL_LOG_IN_AND_NO_ANSWER;
+
+                        layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
+                }
                 sat_linphone_handup(node->call_id);
                 linphone_incomming_node_release(node);
+
                 layout_intercom_talk_door_ch_btn_create();
         }
 }
@@ -516,8 +525,39 @@ static bool intercom_talk_call_end_callback(char *arg)
 // 呼叫失败事件注册
 static bool intercom_talk_call_failed_callback(char *arg)
 {
-
         sat_linphone_audio_play_stop();
+        int index = 0;
+        if (strstr(arg, "sip:20") != NULL)
+        {
+                index = monitor_index_get_by_user(arg);
+                if (index < 0)
+                {
+                        printf("[%s:%d] get channel failed(%s)\n", __func__, __LINE__, arg);
+                        return false;
+                }
+                index -= 1;
+        }
+        else if ((strstr(arg, "user:\"50") != NULL) || (strstr(arg, "sip:50") != NULL))
+        {
+                index = extern_index_get_by_user(arg);
+                if (index < 0)
+                {
+                        printf("[%s:%d] get channel failed(%s)\n", __func__, __LINE__, arg);
+                        return false;
+                }
+                index = index - 1 + 8;
+        }
+        else if (strstr(arg, "lobby") != NULL) /*lobby代表大厅设备*/
+        {
+
+                index = 6;
+        }
+        else if (strstr(arg, "guard") || strstr(arg, network_data_get()->guard_number)) /*guard代表*/
+        {
+
+                index = 7;
+        }
+        layout_call_log_create(CALL_LOG_CALL_OUT, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
         layout_intercom_goto_layout_process();
         return true;
 }
