@@ -649,7 +649,10 @@ static void sat_layout_enter(close)
 
 static void layout_close_backlight_open_timer(lv_timer_t *t)
 {
-    backlight_enable(true);
+    if (sat_cur_layout_get() != sat_playout_get(close))
+    {
+        backlight_enable(true);
+    }
     lv_timer_del(backlight_timer);
     backlight_timer = NULL;
 }

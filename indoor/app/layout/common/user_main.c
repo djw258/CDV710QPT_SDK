@@ -168,13 +168,8 @@ static void *asterisk_server_sync_task(void *arg)
 
         asterisk_register_info *p_register_info = asterisk_register_info_get();
 
-        static int timeout = 0;
-        // usleep(100 * 1000);
-        // sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
-        // usleep(100 * 1000);
-        // sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-        // usleep(100 * 1000);
-        // sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
+        // int timeout = 0;
+
         while (1)
         {
                 if ((user_data_get()->is_device_init) && is_asterisk_server_sync_rtc_data_force == false)
@@ -236,22 +231,22 @@ static void *asterisk_server_sync_task(void *arg)
                                 is_need_asterisk_update = false;
                                 sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
                         }
-                        if (timeout++ == 60)
-                        {
-                                timeout = 0;
-                                is_asterisk_server_sync_network_data_force = false;
-                                is_asterisk_server_sync_user_data_force = false;
-                                is_need_asterisk_update = false;
-                                usleep(100 * 1000);
-                                sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
-                                usleep(300 * 1000);
-                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                                usleep(100 * 1000);
-                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
-                                struct tm tm;
-                                user_time_read(&tm);
-                                sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1500, NULL);
-                        }
+                        // if (timeout++ == 60)
+                        // {
+                        //         timeout = 0;
+                        //         is_asterisk_server_sync_network_data_force = false;
+                        //         is_asterisk_server_sync_user_data_force = false;
+                        //         is_need_asterisk_update = false;
+                        //         usleep(100 * 1000);
+                        //         sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
+                        //         usleep(300 * 1000);
+                        //         sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+                        //         usleep(100 * 1000);
+                        //         sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
+                        //         struct tm tm;
+                        //         user_time_read(&tm);
+                        //         sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1000, NULL);
+                        // }
                         is_asterisk_server_sync_rtc_data_force = false;
                 }
                 usleep(500 * 1000);

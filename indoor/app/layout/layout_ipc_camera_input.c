@@ -117,9 +117,8 @@ static void ipc_camera_password_input_textarea_placeholder_setting(void)
         else if (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD)
         {
                 lv_textarea_set_placeholder_text(textarea, ipc_camera_password_state == 0 ? lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_OLD_PASSWORD)
-                                                                                          : lang_str_get(ipc_camera_password_input_password_old[0] == '\0' ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_PASSWORD
-                                                                                                         : ipc_camera_password_input_password_temp[0] == 0 ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_ENTER_9_DIGITS_OF_NUMBER
-                                                                                                                                                           : DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_TH_CONNETION_PASSWORD));
+                                                                                          : lang_str_get(ipc_camera_password_input_password_temp[0] == '\0' ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_ENTER_9_DIGITS_OF_NUMBER
+                                                                                                                                                            : SETTING_PASSWORD_XLS_LANG_ID_VERIFY_PASSWORD));
         }
         else if (ipc_camera_input_flag & (IPC_CAMERA_FLAG_INPUT_USER | IPC_CAMERA_FLAG_INPUT_PWD))
         {
@@ -151,6 +150,10 @@ static bool ipc_camera_password_mixture_char_check(const char *string)
         bool exist_letters = false;
         bool exist_special_characters = false;
         int len = strlen(string);
+        if (strlen(string) < 9)
+        {
+                return false;
+        }
         for (int i = 0; i < len; i++)
         {
                 if (((string[i] >= 'a') && (string[i] <= 'z')) || ((string[i] >= 'A') && (string[i] <= 'Z')))
@@ -211,7 +214,7 @@ static bool ipc_camera_determine_whether_the_key_value_is_valid(lv_keyboard_mode
 /*判断密码长度是否符合要求*/
 static bool ipc_camera_determine_password_length_is_valid(const char *txt)
 {
-
+        return true;
         if (1 /*layout_ipc_cmeara_is_doorcamera_get() == true*/)
         {
                 // 输入新密码要做非法校验，注册时输入密码或输入旧密码无需校验

@@ -269,7 +269,7 @@ static bool tcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const cha
         free(xml_buffer);
         return true;
 }
-#define SYNC_FILE_DATA_MAX (1 * 128 * 1024)
+#define SYNC_FILE_DATA_MAX (1 * 64 * 1024)
 static bool tcp_device_serverce_xml_get_userdata(int tcp_socket_fd, char *recv_string)
 {
         bool reslut = false;

@@ -2234,7 +2234,7 @@ static void layout_monitor_door_ch_btn_create(void)
         for (int i = 0; i < total; i++)
         {
                 memset(ch_name, 0, sizeof(ch_name));
-                sprintf(ch_name, "50%d", node[i].channel);
+                sprintf(ch_name, "%s%d", lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), node[i].channel);
                 lv_obj_t *obj = lv_common_img_text_btn_create(list, node[i].call_id, sec_x, sec_y, 253, 80,
                                                               layout_monitor_intercom_call_btn_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

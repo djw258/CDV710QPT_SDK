@@ -130,7 +130,7 @@ static void alarm_list_display(lv_obj_t *parent, int type, int ch, struct tm tm)
         }
         else if (type == 2)
         {
-                lv_label_set_text(type_lebel, lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_EMERGENCY_RETURN));
+                lv_label_set_text(type_lebel, lang_str_get(/* LAYOUT_ALARM_LIST_XLS_LANG_ID_EMERGENCY_RETURN*/ LAYOUT_ALARM_LIST_XLS_LANG_ID_EMERGENCY_STOP));
         }
         else if (type == 3)
         {
@@ -142,7 +142,7 @@ static void alarm_list_display(lv_obj_t *parent, int type, int ch, struct tm tm)
         }
         else if (type == 5)
         {
-                lv_label_set_text(type_lebel, lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_SECURITY_EMERGENCY_RETURN));
+                lv_label_set_text(type_lebel, lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_SECURITY_EMERGENCY_STOP /* LAYOUT_ALARM_LIST_XLS_LANG_ID_SECURITY_EMERGENCY_RETURN */));
         }
         if ((type == 0) || (type == 1) || (type == 2))
         {

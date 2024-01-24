@@ -544,11 +544,13 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                 else if ((flag == 0x03) && (max == sizeof(struct tm)))
                 {
                         struct tm *d_t = (struct tm *)recv_data[flag];
+                        bool standby_timer = standby_timer_status_get();
                         standby_timer_close();
-
                         user_time_set(d_t);
-
-                        standby_timer_restart(true);
+                        if (standby_timer)
+                        {
+                                standby_timer_restart(true);
+                        }
                 }
                 free(recv_data[flag]);
                 recv_data[flag] = NULL;
@@ -1191,10 +1193,13 @@ void register_device_data_sync_timer(lv_timer_t *t)
                 struct tm tm;
                 if (sat_ipcamera_system_time_get(user_data_get()->mastar_wallpad_ip, 80, "admin", "123456789", 0x00, &tm, 1000) == true)
                 {
+                        bool standby_timer = standby_timer_status_get();
                         standby_timer_close();
                         user_time_set(&tm);
-
-                        standby_timer_restart(true);
+                        if (standby_timer)
+                        {
+                                standby_timer_restart(true);
+                        }
                 }
         }
 

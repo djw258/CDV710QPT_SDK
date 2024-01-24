@@ -94,6 +94,16 @@ bool standby_timer_close(void)
     standby_timer_enable = false;
     return true;
 }
+/***
+** 日期: 2022-05-10 08:42
+** 作者: leo.liu
+** 函数作用：待机检测状态获取
+** 返回参数说明：
+***/
+bool standby_timer_status_get(void)
+{
+    return standby_timer_enable;
+}
 
 /***
 ** 日期: 2022-05-10 08:41

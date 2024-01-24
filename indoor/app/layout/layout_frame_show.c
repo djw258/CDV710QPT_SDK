@@ -927,6 +927,7 @@ static void frame_show_restart(void)
 	sat_linphone_media_thumb_destroy();
 	if (frame_display_timeout_check() == true)
 	{
+		SAT_DEBUG("HHHHHHHHHHHHHHHHHHHH");
 		sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 		return;
 	}
@@ -1005,6 +1006,7 @@ static void frame_show_restart(void)
 	{
 		if ((user_data_get()->display.frame_list & 0X1F) == 00)
 		{
+			SAT_DEBUG("HHHHHHHHHHHHHHHHHHHH");
 			sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 		}
 		monitor_channel_set(MON_CH_NONE);
@@ -1048,6 +1050,7 @@ static void frame_show_param_checktimer(lv_timer_t *ptimer)
 {
 	if (layout_frame_show_ch_vaile_check() == false)
 	{
+		SAT_DEBUG("HHHHHHHHHHHHHHHHHHHH");
 		sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 	}
 }
