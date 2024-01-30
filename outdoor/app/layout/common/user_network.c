@@ -708,27 +708,26 @@ static bool tcp_device_servrce_xml_get_register(int *tcp_socket_fd, const char *
         *tcp_socket_fd = -1;
 
         bool is_reboot = false;
-        if (strcmp(user_data_get()->device.number, sip_uri))
+        char uri[128] = {0};
+        strcpy(uri, sip_uri);
+        char *s = strstr(uri, "sip:");
+        if (s == NULL)
+        {
+                SAT_DEBUG("parsing sip error ");
+                return false;
+        }
+        char *p = strchr(s, '@');
+        if (p == NULL)
+        {
+                SAT_DEBUG("parsing sip error ");
+                return false;
+        }
+        *p = '\0';
+        p++;
+        if ((strncmp(user_data_get()->device.number, s + 4, sizeof(user_data_get()->device.number))) || (strncmp(user_data_get()->server_ip, p, sizeof(user_data_get()->server_ip))))
         {
                 memset(user_data_get()->device.number, 0, sizeof(user_data_get()->device.number));
                 memset(user_data_get()->server_ip, 0, sizeof(user_data_get()->server_ip));
-
-                char uri[128] = {0};
-                strcpy(uri, sip_uri);
-                char *s = strstr(uri, "sip:");
-                if (s == NULL)
-                {
-                        SAT_DEBUG("parsing sip error ");
-                        return false;
-                }
-                char *p = strchr(s, '@');
-                if (p == NULL)
-                {
-                        SAT_DEBUG("parsing sip error ");
-                        return false;
-                }
-                *p = '\0';
-                p++;
                 strncpy(user_data_get()->device.number, s + 4, sizeof(user_data_get()->device.number));
                 strncpy(user_data_get()->server_ip, p, sizeof(user_data_get()->server_ip));
                 SAT_DEBUG("NUMBER:%s,domain:%s", user_data_get()->device.number, user_data_get()->server_ip);

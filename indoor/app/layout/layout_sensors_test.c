@@ -157,6 +157,7 @@ static void layout_sensor_test_trigger_func(int arg1, int arg2)
 }
 static void sat_layout_enter(sensors_test)
 {
+    standby_timer_close();
     /***********************************************
     ** 作者: leo.liu
     ** 日期: 2023-2-2 13:46:56
@@ -188,6 +189,7 @@ static void sat_layout_enter(sensors_test)
 
 static void sat_layout_quit(sensors_test)
 {
+    standby_timer_restart(true);
     if (user_data_get()->alarm.away_alarm_enable)
     {
         extern void away_mode_alarm_trigger_callback(int arg1, int arg2);

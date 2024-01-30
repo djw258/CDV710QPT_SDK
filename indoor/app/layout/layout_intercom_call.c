@@ -86,8 +86,8 @@ static lv_obj_t *intercom_call_table_view_obj_create(void)
         lv_common_style_set_boader(btnmatrix, 20, LV_OPA_TRANSP, 0, LV_BORDER_SIDE_NONE, 0XFFFFFF, LV_PART_ITEMS);
         lv_common_style_set_boader(btnmatrix, 20, LV_OPA_TRANSP, 0, LV_BORDER_SIDE_NONE, 0XFFFFFF, LV_PART_ITEMS | LV_STATE_CHECKED);
 
-        lv_obj_set_style_pad_left(btnmatrix, 352, LV_PART_MAIN);
-        lv_obj_set_style_pad_right(btnmatrix, 352, LV_PART_MAIN);
+        lv_obj_set_style_pad_left(btnmatrix, 268, LV_PART_MAIN);
+        lv_obj_set_style_pad_right(btnmatrix, 268, LV_PART_MAIN);
 
         return tabview;
 }
@@ -159,7 +159,7 @@ static void intercom_id_obj_click(lv_event_t *e)
         {
                 return;
         }
-        if (extension_online_check(intercom_call_id_index, NULL)) // 对方分机设备是否在线
+        if (1 /* extension_online_check(intercom_call_id_index, NULL) */) // 对方分机设备是否在线
         {
                 char number[128] = {0};
                 sprintf(number, "sip:%s@%s:5066", user_name, user_data_get()->mastar_wallpad_ip);
@@ -184,18 +184,21 @@ static bool intercom_linphone_outgoing_callback(char *arg)
 
                 // intercom_call_username_setting(network_data_get()->guard_number);
                 intercom_call_username_setting(lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION));
+                extern unsigned long long call_timestamp[15];
+                call_timestamp[7] = user_timestamp_get();
         }
         else
         {
-                return false;
+                intercom_call_username_setting(arg);
+                extern unsigned long long call_timestamp[15];
+                call_timestamp[index - 1 + 8] = user_timestamp_get();
         }
 
         if (user_data_get()->audio.ring_mute == false)
         {
                 send_call_play(1, 0xfffff);
         }
-        extern unsigned long long call_timestamp[15];
-        call_timestamp[7] = user_timestamp_get();
+
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
 }
 

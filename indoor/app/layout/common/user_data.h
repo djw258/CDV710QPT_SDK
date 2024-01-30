@@ -204,7 +204,6 @@ typedef struct
         char cctv_server[32];
         char guard_number[32];
         char common_entrance_ip[32];
-        char ipaddr_backup[24];
 
         struct ipcamera_info door_device[DEVICE_MAX];
 

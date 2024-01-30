@@ -355,7 +355,7 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                                                 }
                                         }
-                                        if (alarm_trigger_check() == false)
+                                        if (alarm_trigger_check(true) == false)
                                         {
                                                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                                         }

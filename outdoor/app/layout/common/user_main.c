@@ -382,21 +382,15 @@ static void client_ip_change_report(void)
         char ip[16] = {0};
         if (sat_ip_mac_addres_get("eth0", ip, NULL, NULL) == true)
         {
-                if (strncmp(user_data_get()->ipaddr_backup, ip, sizeof(user_data_get()->ipaddr_backup)))
+                user_data_save();
+                if (user_data_get()->server_ip[0])
                 {
-                        printf("ip is %s\n", ip);
-                        printf("backup ip is %s\n", user_data_get()->ipaddr_backup);
-                        strncpy(user_data_get()->ipaddr_backup, ip, sizeof(user_data_get()->ipaddr_backup));
-                        user_data_save();
-                        if (user_data_get()->server_ip[0])
-                        {
-                                char number[32] = {0};
-                                sprintf(number, "sip:%s@%s", user_data_get()->device.number, ip);
-                                ipc_camera_device_ip_change(number, user_data_get()->server_ip, 80, user_data_get()->device.name, user_data_get()->device.password, 2000);
-                        }
-
-                        // sat_ipcamera_device_update_server_ip(i, user_data_get()->network.ipaddr, 1000);
+                        char number[32] = {0};
+                        sprintf(number, "sip:%s@%s", user_data_get()->device.number, ip);
+                        ipc_camera_device_ip_change(number, user_data_get()->server_ip, 80, user_data_get()->device.name, user_data_get()->device.password, 2000);
                 }
+
+                // sat_ipcamera_device_update_server_ip(i, user_data_get()->network.ipaddr, 1000);
         }
 }
 /*
@@ -413,8 +407,8 @@ int main(int argc, char *argv[])
         //   signal(SIGCHLD, sigchld_func);
         remove("/tmp/.linphonerc");
         printf("*****************************************************\n");
-        printf("*****        project: CDV810QPT(outdoor)        *****\n");
-        printf("*****        author:  leo                       *****\n");
+        printf("*****        project: CIPD20YS(outdoor)        *****\n");
+        printf("*****        author:  sat                       *****\n");
         printf("*****        date:    2023/03/11                *****\n");
         printf("*****************************************************\n");
         usleep(1000 * 1000);

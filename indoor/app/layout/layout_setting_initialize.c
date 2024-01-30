@@ -136,7 +136,7 @@ static void sat_layout_enter(setting_initialize)
          ** 说明: list
          ***********************************************/
         {
-                lv_common_text_create(sat_cur_layout_screen_get(), setting_initialize_obj_id_initialize_list_label, 423, 137, 179, 35,
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_initialize_obj_id_initialize_list_label, 323, 137, 379, 35,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

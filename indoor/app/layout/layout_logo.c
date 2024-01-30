@@ -73,16 +73,13 @@ static void logo_sip_server_register(void)
         char sip_sever[32] = {0};
         sprintf(sip_user_id, "50%d", user_data_get()->system_mode & 0x0F);
         sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
-        sat_linphone_register(sip_user_id, sip_user_id, NULL, sip_sever);
+        sat_linphone_register(sip_user_id, sip_user_id, "12345678", sip_sever);
 }
 
 static void sip_register_timer(lv_timer_t *t)
 {
         lv_timer_set_period(t, 5000);
-        // OPERATE_RET ret = tuya_ipc_get_mqtt_status();
-        // int num = tuya_api_client_num();
-        // SAT_DEBUG("======tuya status is %d\n", ret);
-        // SAT_DEBUG("======tuya num is %d\n", num);
+
         if (user_data_get()->is_device_init == false)
                 return;
 
@@ -253,7 +250,7 @@ void default_buzzer_call_timer(lv_timer_t *timer)
 
 static void sync_data_alarm_trigger_check()
 {
-        if ((alarm_trigger_check() == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
+        if ((alarm_trigger_check(false) == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
         {
 
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -452,6 +449,7 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
                         user_data_info *info = (user_data_info *)recv_data[flag];
+
                         unsigned long long temp_sync_timestamp = user_data_get()->sync_timestamp;
                         user_data_get()->sync_timestamp = info->sync_timestamp;
                         if (temp_sync_timestamp >= info->sync_timestamp)
@@ -461,6 +459,12 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                                 sync_ing[flag] = false;
                                 return;
                         }
+
+                        if (memcmp((const char *)user_data_get(), (const char *)info, sizeof(user_data_info)) == 0)
+                        {
+                                return;
+                        }
+
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
                                 user_data_get()->etc.call_time = info->etc.call_time;
@@ -487,17 +491,15 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                         user_data_get()->alarm.bypass_call = info->alarm.bypass_call;
                         memcpy(&user_data_get()->alarm.away_alarm_enable_list, &info->alarm.away_alarm_enable_list, sizeof(user_data_get()->alarm.away_alarm_enable_list));
                         memcpy(&user_data_get()->alarm.security_alarm_enable_list, &info->alarm.security_alarm_enable_list, sizeof(user_data_get()->alarm.security_alarm_enable_list));
-                        for (int i = 0; i < 8; i++) // 警报触发取消同步
-                        {
 
-                                if (((user_data_get()->alarm.alarm_trigger[i]) != (info->alarm.alarm_trigger[i])) || ((user_data_get()->alarm.alarm_trigger_enable[i]) != (info->alarm.alarm_trigger_enable[i])))
-                                {
-                                        user_data_get()->alarm.alarm_trigger[i] = info->alarm.alarm_trigger[i];
-                                        user_data_get()->alarm.alarm_trigger_enable[i] = info->alarm.alarm_trigger_enable[i];
-                                        // printf("user_data_get()->alarm.alarm_trigger[%d] = %d\n", i, user_data_get()->alarm.alarm_trigger[i]);
-                                        sync_data_alarm_trigger_check();
-                                }
+                        if ((memcmp(user_data_get()->alarm.alarm_trigger, info->alarm.alarm_trigger, sizeof(user_data_get()->alarm.alarm_trigger))) || (memcmp(user_data_get()->alarm.alarm_trigger_enable, info->alarm.alarm_trigger_enable, sizeof(user_data_get()->alarm.alarm_trigger_enable))))
+                        {
+                                memcpy(user_data_get()->alarm.alarm_trigger, info->alarm.alarm_trigger, sizeof(user_data_get()->alarm.alarm_trigger));
+                                memcpy(user_data_get()->alarm.alarm_trigger_enable, info->alarm.alarm_trigger_enable, sizeof(user_data_get()->alarm.alarm_trigger_enable));
+
+                                sync_data_alarm_trigger_check();
                         }
+
                         if (user_data_get()->alarm.buzzer_alarm != info->alarm.buzzer_alarm) // 蜂鸣器触发，取消同步
                         {
                                 user_data_get()->alarm.buzzer_alarm = info->alarm.buzzer_alarm;
@@ -519,6 +521,10 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                 else if ((flag == 0x01) && (max == sizeof(user_network_info)))
                 {
                         user_network_info *info = (user_network_info *)recv_data[flag];
+                        if (memcmp((const char *)network_data_get(), (const char *)info, sizeof(user_network_info)) == 0)
+                        {
+                                return;
+                        }
                         memcpy(network_data_get()->door_device, info->door_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         memcpy(network_data_get()->cctv_device, info->cctv_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         strncpy(network_data_get()->sip_server, info->sip_server, sizeof(network_data_get()->sip_server));
@@ -930,7 +936,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
                  ** 注意事项:
                  ************************************************************/
                 standby_timer_restart(true);
-                if (alarm_trigger_check() == false)
+                if (alarm_trigger_check(true) == false)
                 {
                         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
@@ -1166,24 +1172,22 @@ void commax_pis_information_report_timer(lv_timer_t *t)
 // 主机重启后，ip改变要自动同步注册信息
 void register_device_data_sync_timer(lv_timer_t *t)
 {
+        sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);
         if ((user_data_get()->system_mode & 0x0f) == 0x01)
         {
                 char ip[16] = {0};
                 if (sat_ip_mac_addres_get("eth0", ip, NULL, NULL) == true)
                 {
-                        if (strncmp(network_data_get()->ipaddr_backup, ip, sizeof(network_data_get()->ipaddr_backup)))
+                        network_data_save();
+                        for (int i = 0; i < DEVICE_MAX; i++)
                         {
-                                strncpy(network_data_get()->ipaddr_backup, ip, sizeof(network_data_get()->ipaddr_backup));
-                                network_data_save();
-                                for (int i = 0; i < DEVICE_MAX; i++)
+                                if (network_data_get()->door_device[i].sip_url[0] != 0)
                                 {
-                                        if (network_data_get()->door_device[i].sip_url[0] != 0)
-                                        {
-                                                char number[32] = {0};
-                                                sprintf(number, "sip:20%d@%s", i + 1, ip);
-                                                sat_ipcamera_device_register(number, i, 5000);
-                                                // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
-                                        }
+                                        char number[32] = {0};
+                                        sprintf(number, "sip:20%d@%s", i + 1, ip);
+                                        sat_ipcamera_device_register(number, i, 2000);
+                                        printf("\nregister outdoor\n");
+                                        // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
                                 }
                         }
                 }

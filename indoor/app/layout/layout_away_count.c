@@ -109,10 +109,10 @@ static void layout_away_alarm_release_det_timer(lv_timer_t *ptimer)
                     layout_alarm_alarm_channel_set(i);
                     user_data_get()->alarm.emergency_mode = 1;
                     user_data_get()->alarm.alarm_ring_play = true;
-                    user_data_save(true, true);
                     sat_linphone_handup(0xFFFF);
                     sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
+                user_data_save(true, true);
             }
         }
     }
@@ -124,7 +124,7 @@ static void layout_away_alarm_release_det_timer(lv_timer_t *ptimer)
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-void away_mode_alarm_trigger_callback(int arg1, int arg2)
+void layout_away_mode_alarm_trigger_callback(int arg1, int arg2)
 {
     if ((arg1 == 7) && (arg2 < ALM_LOW))
     {
@@ -189,7 +189,7 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-void away_mode_alarm_trigger_timer_create(void)
+void layout_away_mode_alarm_trigger_timer_create(void)
 {
     if ((user_data_get()->system_mode & 0x1f) == 0x01)
     {
@@ -230,7 +230,6 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
         lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
         layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
         user_data_get()->alarm.away_alarm_enable = true;
-        user_data_save(true, true);
 
         for (int i = 0; i < 7; i++)
         {
@@ -243,7 +242,8 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
                 }
             }
         }
-        away_mode_alarm_trigger_timer_create();
+        user_data_save(true, true);
+        layout_away_mode_alarm_trigger_timer_create();
         if (sat_cur_layout_get() == sat_playout_get(away_count))
         {
             sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -276,7 +276,7 @@ static void sat_layout_enter(away_count)
 {
     memset(&user_data_get()->alarm.alarm_trigger_enable, 0, sizeof(user_data_get()->alarm.alarm_trigger_enable));
 
-    alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报回调注册
+    alarm_sensor_cmd_register(layout_away_mode_alarm_trigger_callback); // 警报回调注册
 
     standby_timer_close();
     /************************************************************

@@ -40,7 +40,7 @@ void layout_alarm_alarm_channel_set(int ch);
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-bool alarm_trigger_check(void);
+bool alarm_trigger_check(bool active);
 
 /************************************************************
 ** 函数说明: 设置last_call_log new flag

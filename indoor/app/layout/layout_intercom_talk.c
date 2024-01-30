@@ -24,7 +24,7 @@ static int intercom_talk_timeout = 0;
 /*0:空闲，1：call outgoing 2:incomming 3:in_talk 4:out_talk*/
 static int intercom_call_state = 0;
 static char *intercom_call_user = NULL;
-
+static void layout_intercom_talk_door_ch_btn_create(void);
 void intercom_call_status_setting(int state)
 {
         intercom_call_state = state;
@@ -136,7 +136,7 @@ static lv_obj_t *layout_intercom_other_call_list_btn_create(void)
 
         return list;
 }
-void layout_intercom_talk_door_ch_btn_create(void);
+
 // 挂断其他设备的呼叫会话
 static void layout_intercom_talk_other_call_handup_btn_click(lv_event_t *ev)
 {
@@ -161,7 +161,7 @@ static void layout_intercom_talk_other_call_handup_btn_click(lv_event_t *ev)
 }
 
 // 门呼叫，内线呼叫会话按键刷新
-void layout_intercom_talk_door_ch_btn_create(void)
+static void layout_intercom_talk_door_ch_btn_create(void)
 {
         linphone_incomming_info node[8];
         int total;
@@ -707,20 +707,21 @@ static bool layout_intercom_inside_call(const char *arg)
 {
 
         long call_id = 0;
-        int index = extern_index_get_by_user(arg);
-        if (index < 0)
-        {
-
-                printf("[%s:%d] get extention id failed(%s)\n", __func__, __LINE__, arg);
-                return false;
-        }
-        call_timestamp[index - 1 + 8] = user_timestamp_get();
         char *str = strstr(arg, " id:");
         if (str == NULL)
         {
                 return false;
         }
         sscanf(str + 4, "%ld", &call_id);
+        int index = extern_index_get_by_user(arg);
+        if (index < 0)
+        {
+                sat_linphone_handup(call_id);
+                printf("[%s:%d] get extention id failed(%s)\n", __func__, __LINE__, arg);
+                return false;
+        }
+        call_timestamp[index - 1 + 8] = user_timestamp_get();
+
         linphone_incomming_info *node = linphone_incomming_unused_node_get(false);
         if (node != NULL)
         {
@@ -728,7 +729,6 @@ static bool layout_intercom_inside_call(const char *arg)
                 node->channel = index;
                 node->call_id = call_id;
                 // 门呼叫，内线呼叫会话按键刷新
-                extern void layout_intercom_talk_door_ch_btn_create(void);
                 layout_intercom_talk_door_ch_btn_create();
                 SAT_DEBUG("incomming join channel:%d/call id:%ld", node->channel, node->call_id);
                 return true;
@@ -767,6 +767,7 @@ static bool layout_intercom_door_call_process(const char *arg, bool is_extern_ca
         }
         if (index < 0)
         {
+                sat_linphone_handup(call_id);
                 printf("[%s:%d] get channel failed(%s)\n", __func__, __LINE__, arg);
                 return false;
         }
@@ -775,6 +776,7 @@ static bool layout_intercom_door_call_process(const char *arg, bool is_extern_ca
         char *s = strchr(arg, '"');
         if (s == NULL)
         {
+                sat_linphone_handup(call_id);
                 printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
                 return false;
         }
@@ -782,6 +784,7 @@ static bool layout_intercom_door_call_process(const char *arg, bool is_extern_ca
         char *e = strchr(s, '"');
         if (e == NULL)
         {
+                sat_linphone_handup(call_id);
                 printf("[%s:%d] get username failed(%s)\n", __func__, __LINE__, arg);
                 return false;
         }
@@ -798,12 +801,6 @@ static bool layout_intercom_door_call_process(const char *arg, bool is_extern_ca
                 strncpy(network_data_get()->door_device[index - 1].door_name, fulll_name, sizeof(network_data_get()->door_device[index - 1].door_name) - 1);
                 network_data_save();
         }
-
-        if (user_data_get()->audio.ring_mute == false)
-        {
-                ring_door_call_play(user_data_get()->audio.door_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
-        }
-
         linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
         if (node != NULL)
         {
@@ -834,11 +831,6 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
         //         return false;
         // }
         // *end = 0;
-        if (user_data_get()->audio.ring_mute == false)
-        {
-                ring_guard_play(user_data_get()->audio.securirty_office_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
-        }
-
         linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
         if (node != NULL)
         {
@@ -870,10 +862,6 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
         //         return false;
         // }
         // *end = 0;
-        if (user_data_get()->audio.ring_mute == false)
-        {
-                ring_common_door_play(user_data_get()->audio.common_entrance_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
-        }
 
         linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
         if (node != NULL)

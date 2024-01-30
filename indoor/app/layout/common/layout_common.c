@@ -312,7 +312,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-bool alarm_trigger_check(void)
+bool alarm_trigger_check(bool active)
 {
         bool alarm_occur = false;
         for (int i = 0; i < 8; i++)
@@ -338,7 +338,7 @@ bool alarm_trigger_check(void)
                                         user_data_get()->alarm.emergency_mode = 1;
                                 }
                         }
-                        else
+                        else if (user_data_get()->alarm.alarm_trigger_enable[i])
                         {
                                 user_data_get()->alarm.alarm_trigger_enable[i] = false;
                                 user_data_save(true, true);
@@ -353,9 +353,10 @@ bool alarm_trigger_check(void)
                 {
                         layout_common_call_log(i == 7 ? emergency_return : security_emergency_return, i);
                 }
+
                 if ((alarm_occur) && (sat_cur_layout_get() != sat_playout_get(alarm) || (user_data_get()->alarm.alarm_trigger[layout_alarm_alarm_channel_get()] == false)))
                 {
-                        user_data_save(true, true);
+                        user_data_save(true, active);
                         layout_common_call_log(i == 7 ? emergency_occur : security_emergency, i);
                         layout_alarm_alarm_channel_set(i);
                         sat_linphone_handup(0xFFFF);

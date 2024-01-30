@@ -156,6 +156,11 @@ static void alarm_list_display(lv_obj_t *parent, int type, int ch, struct tm tm)
         lv_label_set_text_fmt(time_label, "%04d.%02d.%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 }
 
+static void layout_alarm_list_item_click(lv_event_t *ev)
+{
+        ;
+}
+
 /************************************************************
 ** 函数说明: 警报信息列表创建
 ** 作者: xiaoxiao
@@ -185,7 +190,7 @@ static void alarm_list_info_create(void)
                 // char tm_buf[128];
                 // sprintf(tm_buf, "%04d.%02d.%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday,tm.tm_hour, tm.tm_min, tm.tm_sec);
                 lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, 96 * i, 918, 96,
-                                                                                   NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                                   layout_alarm_list_item_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                                    60, 17, 576, 43, layout_alarm_list_obj_id_type,
