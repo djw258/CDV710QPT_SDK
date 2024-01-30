@@ -182,7 +182,7 @@ static void ipc_camera_edit_sensor_linkage_click(lv_event_t *e)
                                                       (const char *)resource_ui_src_get(user_data_get()->alarm.cctv_sensor[ipc_camera_edit_index] == i ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         continue;
                 }
-                if (user_data_get()->alarm.alarm_enable[i - 1] && user_data_get()->alarm.alarm_enable_always[0][i - 1] == 0 && user_data_get()->alarm.alarm_enable_always[1][i - 1] == 0)
+                if (user_data_get()->alarm.alarm_enable[i - 1] && user_data_get()->alarm.alarm_enable_always[i - 1] == 0)
                 {
 
                         lv_obj_t *obj = lv_common_img_text_btn_create(list, i, 48, 61 + 56 * j, 365, 48,

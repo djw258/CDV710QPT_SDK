@@ -123,7 +123,7 @@ typedef struct
 
         char alarm_trigger[8]; // 传感器触发列表
 
-        bool alarm_enable_always[2][8]; // 传感器总是使能：设置了总是使能，对应模式下的传感器总是能被检测（即使没有开启警报检测）
+        bool alarm_enable_always[8]; // 传感器总是使能：设置了总是使能，对应模式下的传感器总是能被检测（即使没有开启警报检测）
 
         int away_release_time; // 离家释放时间；在点击离家检测使能的按键后，在此期间内，并不会真正的使能离家警报检测
 

@@ -232,7 +232,7 @@ static void sat_layout_enter(setting_sensor_switch)
                 int j = 0;
                 for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
                 {
-                        if (user_data_get()->alarm.alarm_enable[i] == 0 || user_data_get()->alarm.alarm_enable_always[0][i] || user_data_get()->alarm.alarm_enable_always[1][i])
+                        if (user_data_get()->alarm.alarm_enable[i] == 0 || user_data_get()->alarm.alarm_enable_always[i])
                         {
                                 continue;
                         }

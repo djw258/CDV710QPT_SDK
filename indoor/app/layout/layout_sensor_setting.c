@@ -194,23 +194,18 @@ static void sensor_setting_msgbox_click(lv_event_t *e)
         discheck1_obj = lv_obj_get_child_form_id(parent, sensor_setting_obj_id_msgbox_check_img);
         parent = lv_obj_get_child_form_id(lv_obj_get_parent(parent), sensor_setting_obj_id_msgbox_check_3);
         discheck2_obj = lv_obj_get_child_form_id(parent, sensor_setting_obj_id_msgbox_check_img);
-
-        if (user_data_get()->alarm.alarm_enable_always[0][layout_sensor_setting_select_index_get()])
-        {
-            lv_obj_set_style_bg_img_src(alway_cb_obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
-            lv_obj_add_flag(alway_cb_obj_bg, LV_OBJ_FLAG_HIDDEN);
-        }
-        else
-        {
-            lv_obj_set_style_bg_img_src(alway_cb_obj, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
-        }
         if (user_sensor_value_get(layout_sensor_setting_select_index_get()) > ALM_HIGHT)
         {
             lv_obj_add_flag(alway_cb_obj_bg, LV_OBJ_FLAG_HIDDEN);
+            if (user_data_get()->alarm.alarm_enable_always[layout_sensor_setting_select_index_get()])
+            {
+                lv_obj_set_style_bg_img_src(alway_cb_obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+            }
         }
         else
         {
             lv_obj_clear_flag(alway_cb_obj_bg, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_style_bg_img_src(alway_cb_obj, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
         }
     }
     else
@@ -220,23 +215,19 @@ static void sensor_setting_msgbox_click(lv_event_t *e)
         discheck1_obj = lv_obj_get_child_form_id(parent, sensor_setting_obj_id_msgbox_check_img);
         parent = lv_obj_get_child_form_id(lv_obj_get_parent(parent), sensor_setting_obj_id_msgbox_check_2);
         discheck2_obj = lv_obj_get_child_form_id(parent, sensor_setting_obj_id_msgbox_check_img);
-        if (user_data_get()->alarm.alarm_enable_always[1][layout_sensor_setting_select_index_get()])
-        {
-            lv_obj_set_style_bg_img_src(alway_cb_obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
-            lv_obj_add_flag(alway_cb_obj_bg, LV_OBJ_FLAG_HIDDEN);
-        }
-        else
-        {
-            lv_obj_set_style_bg_img_src(alway_cb_obj, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
-        }
 
         if (user_sensor_value_get(layout_sensor_setting_select_index_get()) < ALM_LOW)
         {
             lv_obj_add_flag(alway_cb_obj_bg, LV_OBJ_FLAG_HIDDEN);
+            if (user_data_get()->alarm.alarm_enable_always[layout_sensor_setting_select_index_get()])
+            {
+                lv_obj_set_style_bg_img_src(alway_cb_obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+            }
         }
         else
         {
             lv_obj_clear_flag(alway_cb_obj_bg, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_style_bg_img_src(alway_cb_obj, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
         }
     }
 
@@ -291,24 +282,15 @@ static void layout_sensor_setting_save(void)
             }
             if (!strncmp((const char *)check4->bg_img_src, resource_ui_src_get("btn_checkbox_s.png"), strlen(resource_ui_src_get("btn_checkbox_s.png"))))
             {
-                if (user_data_get()->alarm.alarm_enable[i] == 1)
-                {
-                    user_data_get()->alarm.alarm_enable_always[0][i] = true;
-                    user_data_get()->alarm.alarm_enable_always[1][i] = false;
-                }
-                else
-                {
-                    user_data_get()->alarm.alarm_enable_always[1][i] = true;
-                    user_data_get()->alarm.alarm_enable_always[0][i] = false;
-                }
+
+                user_data_get()->alarm.alarm_enable_always[i] = true;
                 // 设置总是监测的传感器自动加入到被检测的列表里，不需暴露在被选择的页面中
                 user_data_get()->alarm.security_alarm_enable_list |= 0x01 << i; //
                 user_data_get()->alarm.away_alarm_enable_list |= 0x01 << i;
             }
             else
             {
-                user_data_get()->alarm.alarm_enable_always[0][i] = false;
-                user_data_get()->alarm.alarm_enable_always[1][i] = false;
+                user_data_get()->alarm.alarm_enable_always[i] = false;
                 user_data_get()->alarm.security_alarm_enable_list &= ~(0x01 << i);
                 user_data_get()->alarm.away_alarm_enable_list &= ~(0x01 << i);
             }
@@ -372,7 +354,7 @@ static void setting_sensor_settings_option_display(lv_obj_t *parent)
         lv_obj_set_style_bg_img_src(cb1_img, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
         lv_obj_set_style_bg_img_src(cb2_img, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
         lv_obj_set_style_bg_img_src(cb3_img, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-        if (user_data_get()->alarm.alarm_enable_always[0][ch])
+        if (user_data_get()->alarm.alarm_enable_always[ch])
         {
             lv_obj_set_style_bg_img_src(cb4_img, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
             lv_obj_add_flag(checkbox4_bg, LV_OBJ_FLAG_HIDDEN);
@@ -395,7 +377,7 @@ static void setting_sensor_settings_option_display(lv_obj_t *parent)
         lv_obj_set_style_bg_img_src(cb1_img, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
         lv_obj_set_style_bg_img_src(cb2_img, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
         lv_obj_set_style_bg_img_src(cb3_img, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-        if (user_data_get()->alarm.alarm_enable_always[1][ch])
+        if (user_data_get()->alarm.alarm_enable_always[ch])
         {
             lv_obj_set_style_bg_img_src(cb4_img, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
             lv_obj_add_flag(checkbox4_bg, LV_OBJ_FLAG_HIDDEN);
@@ -476,7 +458,7 @@ static void layout_sensor_setting_sensor_status_display(void)
             }
             else if (user_data_get()->alarm.alarm_enable[i] == 1)
             {
-                if (user_data_get()->alarm.alarm_enable_always[0][i])
+                if (user_data_get()->alarm.alarm_enable_always[i])
                 {
                     lv_label_set_text(sun_title, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NO_ALWAYS));
                 }
@@ -487,7 +469,7 @@ static void layout_sensor_setting_sensor_status_display(void)
             }
             else if (user_data_get()->alarm.alarm_enable[i] == 2)
             {
-                if (user_data_get()->alarm.alarm_enable_always[1][i])
+                if (user_data_get()->alarm.alarm_enable_always[i])
                 {
                     lv_label_set_text(sun_title, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NC_ALWAYS));
                 }

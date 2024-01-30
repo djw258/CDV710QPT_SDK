@@ -284,7 +284,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                         return;
                 }
                 // 非总是检测情况下，没有使能警报
-                if ((user_data_get()->alarm.alarm_enable_always[0][arg1] == false) && (user_data_get()->alarm.alarm_enable_always[1][arg1] == false))
+                if ((user_data_get()->alarm.alarm_enable_always[arg1] == false))
                 {
                         if (user_data_get()->alarm.away_alarm_enable == false && user_data_get()->alarm.security_alarm_enable == false)
                         {
@@ -332,7 +332,7 @@ bool alarm_trigger_check(bool active)
                         }
                         if ((user_data_get()->alarm.alarm_trigger[i]))
                         {
-                                if ((user_data_get()->alarm.alarm_trigger_enable[i] && user_data_get()->alarm.away_alarm_enable) || user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.alarm_enable_always[0][i] || user_data_get()->alarm.alarm_enable_always[1][i])
+                                if ((user_data_get()->alarm.alarm_trigger_enable[i] && user_data_get()->alarm.away_alarm_enable) || user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.alarm_enable_always[i])
                                 {
                                         alarm_occur = true;
                                         user_data_get()->alarm.emergency_mode = 1;
@@ -740,7 +740,7 @@ bool is_alarm_trigger(void)
                 {
                         if (user_data_get()->alarm.alarm_trigger[i])
                         {
-                                if (user_data_get()->alarm.away_alarm_enable || user_data_get()->alarm.security_alarm_enable || ((user_data_get()->alarm.alarm_enable[i] == 1) && user_data_get()->alarm.alarm_enable_always[0][i]) || ((user_data_get()->alarm.alarm_enable[i] == 2) && user_data_get()->alarm.alarm_enable_always[1][i]))
+                                if (user_data_get()->alarm.away_alarm_enable || user_data_get()->alarm.security_alarm_enable || ((user_data_get()->alarm.alarm_enable[i] == 1) && user_data_get()->alarm.alarm_enable_always[i]) || ((user_data_get()->alarm.alarm_enable[i] == 2) && user_data_get()->alarm.alarm_enable_always[i]))
 
                                         return true;
                                 user_data_get()->alarm.alarm_trigger[i] = false;

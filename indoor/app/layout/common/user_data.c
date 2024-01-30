@@ -123,22 +123,14 @@ static const user_data_info user_data_default =
             .alarm_trigger_enable[5] = 0,
             .alarm_trigger_enable[6] = 0,
             .alarm_trigger_enable[7] = 0,
-            .alarm_enable_always[0][0] = false,
-            .alarm_enable_always[0][1] = false,
-            .alarm_enable_always[0][2] = false,
-            .alarm_enable_always[0][3] = false,
-            .alarm_enable_always[0][4] = false,
-            .alarm_enable_always[0][5] = false,
-            .alarm_enable_always[0][6] = false,
-            .alarm_enable_always[0][7] = false,
-            .alarm_enable_always[1][0] = false,
-            .alarm_enable_always[1][1] = false,
-            .alarm_enable_always[1][2] = false,
-            .alarm_enable_always[1][3] = false,
-            .alarm_enable_always[1][4] = false,
-            .alarm_enable_always[1][5] = false,
-            .alarm_enable_always[1][6] = false,
-            .alarm_enable_always[1][7] = false,
+            .alarm_enable_always[0] = false,
+            .alarm_enable_always[1] = false,
+            .alarm_enable_always[2] = false,
+            .alarm_enable_always[3] = false,
+            .alarm_enable_always[4] = false,
+            .alarm_enable_always[5] = false,
+            .alarm_enable_always[6] = false,
+            .alarm_enable_always[7] = false,
 
             .away_sensor_enable[0] = false,
             .away_sensor_enable[1] = false,
@@ -359,9 +351,9 @@ static void user_data_check_valid(void)
 
                 user_data_alarm_check_range_out(security_sensor_enable[i], 0, 1);
 
-                for (int j = 0; j < 2; j++)
+                for (int i = 0; i < 8; i++)
                 {
-                        user_data_alarm_check_range_out(alarm_enable_always[i][j], 0, 1);
+                        user_data_alarm_check_range_out(alarm_enable_always[i], 0, 1);
                 }
                 user_data_alarm_check_range_out(alarm_gpio_value_group[i], 0, 4);
         }

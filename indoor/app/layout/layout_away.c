@@ -295,7 +295,7 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
             user_data_get()->alarm.away_alarm_enable_list = sensor_select_list;
             for (int i = 0; i < 8; i++)
             {
-                if ((user_data_get()->alarm.alarm_enable_always[0][i]))
+                if ((user_data_get()->alarm.alarm_enable_always[i]))
                 {
                     user_data_get()->alarm.away_alarm_enable_list |= 0x01 << i;
                 }
@@ -599,7 +599,7 @@ static void layout_away_sensor_select_create(void)
     for (int i = 0; i < sizeof(main_list_group) / sizeof(security_list_info_t); i++)
     {
 
-        if (((user_data_get()->alarm.alarm_enable[i] != 0)) && (user_data_get()->alarm.away_sensor_enable[i]) && (user_data_get()->alarm.alarm_enable_always[0][i] == false) && (user_data_get()->alarm.alarm_enable_always[1][i] == false))
+        if (((user_data_get()->alarm.alarm_enable[i] != 0)) && (user_data_get()->alarm.away_sensor_enable[i]) && (user_data_get()->alarm.alarm_enable_always[i] == false))
         {
             lv_obj_t *parent = lv_common_img_text_btn_create((j <= 3) ? page_1 : page_2, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w, main_list_group[j].h,
                                                              main_list_group[i].click_cb, LV_OPA_COVER, 0x242526, LV_OPA_COVER, 0x242526,
