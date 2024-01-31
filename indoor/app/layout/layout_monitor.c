@@ -856,6 +856,7 @@ static void monitor_obj_handup_click(lv_event_t *e)
 }
 static void monitor_obj_handup_display(void)
 {
+        SAT_DEBUG("xiaoxiao");
         lv_obj_t *obj = monitor_buttom_child_obj_get(monitor_obj_id_handup_cont);
         if (obj == NULL)
         {

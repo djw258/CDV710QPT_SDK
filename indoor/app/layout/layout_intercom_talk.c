@@ -46,7 +46,6 @@ bool intercom_call_username_setting(const char *user)
 
 static void layout_intercom_goto_layout_process(bool active)
 {
-
         if (active)
         {
                 sat_linphone_handup(-1);
@@ -65,7 +64,6 @@ static void layout_intercom_goto_layout_process(bool active)
                         }
                         else
                         {
-
                                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
                         }
                         /*为了直观，加入return*/
