@@ -11,6 +11,18 @@ int tuya_monitor_channel_get(void)
 {
         return tuya_monitor_channel;
 }
+
+static bool tuya_app_quit_status_active = false;
+bool tuya_app_quit_status_active_get(void)
+{
+        return tuya_app_quit_status_active;
+}
+
+void tuya_app_quit_status_active_set(bool en)
+{
+        tuya_app_quit_status_active = en;
+}
+
 static bool tuya_event_cmd_video_start(void)
 {
 
@@ -28,16 +40,19 @@ static bool tuya_event_cmd_video_start(void)
                 if (monitor_valid_channel_check(tuya_monitor_channel))
                 {
                         monitor_channel_set(tuya_monitor_channel);
+                        tuya_app_quit_status_active_set(true);
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                 }
                 else if (monitor_door_first_valid_get(true) != -1)
                 {
                         monitor_channel_set(monitor_door_first_valid_get(true));
+                        tuya_app_quit_status_active_set(true);
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                 }
                 else if (monitor_door_first_valid_get(false) != -1)
                 {
                         monitor_channel_set(monitor_door_first_valid_get(false));
+                        tuya_app_quit_status_active_set(true);
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                 }
         }

@@ -190,5 +190,12 @@ bool tuya_network_dev_set(char *dev);
 **		设备端上报到app:
 ***/
 bool tuya_api_monitor_talk_status_reset(void);
+/***
+**	 日期:2022-06-09 18:22:31
+**	 作者: leo.liu
+**	 函数作用：涂鸦事件推送测试用例
+**	 参数说明:
+***/
+bool tuya_api_test(int channel, const char *jpg, int size);
 
 #endif

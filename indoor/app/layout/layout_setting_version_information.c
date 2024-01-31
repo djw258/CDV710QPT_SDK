@@ -140,6 +140,11 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
         }
 }
 
+static void setting_version_information_item_click(lv_event_t *e)
+{
+        ;
+}
+
 static void sat_layout_enter(setting_version_information)
 {
         sat_ipcamera_initialization_parameters(&network_data_get()->door_device[0], DEVICE_MAX);
@@ -273,7 +278,7 @@ static void sat_layout_enter(setting_version_information)
                         }
 
                         lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, 72 * i, 928, 72,
-                                                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                                           setting_version_information_item_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                            0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                            0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                                            0, 17, 576, 43, 0,

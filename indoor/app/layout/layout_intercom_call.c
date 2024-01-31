@@ -313,8 +313,8 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
 
                 lv_obj_t *cont = lv_common_img_btn_create(parent, i, 0, item_y, 1024 - 80, 88,
                                                           intercom_call_log_check_obj_click, true, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
-                                                          0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
-                                                          0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
+                                                          0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                          0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                           NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                 {
@@ -827,8 +827,8 @@ static void sat_layout_enter(intercom_call)
                         {
                                 lv_obj_t *del_all = lv_common_img_text_btn_create(page_2, intercom_call_obj_id_del_all, 40, 0, 1024 - 80, 88,
                                                                                   intercom_call_log_obj_del_all_click, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
-                                                                                  0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
-                                                                                  0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
+                                                                                  0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                                                  0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                                   50, 20, 700, 43, intercom_call_obj_id_del_all_label,
                                                                                   lang_str_get(INTERCOM_XLS_LANG_ID_CAll_SELECT_ALL), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_large,
                                                                                   0, 0, 32, 86, intercom_call_obj_id_del_all_img,

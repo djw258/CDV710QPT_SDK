@@ -100,11 +100,18 @@ static int monitor_contrast[3] = {0};
 // static char sip_call_name[4];
 static bool monitor_talk_call_end_callback(char *arg);
 
-void layout_monitor_goto_layout_process(void)
+void layout_monitor_goto_layout_process(bool active)
 {
-        monitor_close(is_channel_ipc_camera(monitor_channel_get()) == 0x01 ? 0x02 : 0x01);
+        if (is_channel_ipc_camera(monitor_channel_get()) == 1)
+        {
+                monitor_close(0x02);
+        }
+        else if (active)
+        {
+                monitor_close(0x01);
+        }
         linphone_incomming_info *node = linphone_incomming_used_node_get(true);
-        if (node == NULL)
+        if ((node == NULL) || (is_monitor_door_camera_talk))
         {
                 /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
                 if (tuya_api_client_num() > 0)
@@ -112,32 +119,40 @@ void layout_monitor_goto_layout_process(void)
 
                         tuya_api_preview_quit();
                         tuya_api_monitor_handup();
+                        tuya_app_quit_status_active_set(false);
                 }
-                node = linphone_incomming_used_node_get(false);
                 if (node == NULL)
                 {
-                        /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
-                        sat_linphone_handup(0xFFFF);
-                        if (layout_away_count_data_get()->away_setting_time_countdown_timer)
+                        node = linphone_incomming_used_node_get(false); /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
+                        if (node == NULL)
                         {
-                                sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                                sat_linphone_handup(0xFFFF);
+
+                                if (layout_away_count_data_get()->away_setting_time_countdown_timer)
+                                {
+                                        sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                                }
+                                if (alarm_trigger_check(true) == false)
+                                {
+                                        sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                                }
+                                /*为了直观，加入return*/
+                                return;
                         }
-                        if (alarm_trigger_check(true) == false)
+                        else
                         {
-                                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                                sat_linphone_incomming_refresh(node->call_id);
+                                intercom_call_status_setting(2);
+                                char number[128] = {0};
+                                sprintf(number, "sip:50%d@%s:5066", node->channel, user_data_get()->mastar_wallpad_ip);
+                                intercom_call_username_setting(number);
+                                // SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+                                linphone_incomming_node_release(node);
+                                sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                         }
-                        /*为了直观，加入return*/
-                        return;
                 }
-                sat_linphone_incomming_refresh(node->call_id);
-                intercom_call_status_setting(2);
-                char number[128] = {0};
-                sprintf(number, "sip:50%d@%s:5066", node->channel, user_data_get()->mastar_wallpad_ip);
-                intercom_call_username_setting(number);
-                // SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
-                linphone_incomming_node_release(node);
-                sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
+
         if (is_channel_ipc_camera(monitor_channel_get()) != true)
         {
                 sat_linphone_incomming_refresh(node->call_id);
@@ -153,7 +168,7 @@ void layout_monitor_goto_layout_process(void)
 
 static void monitor_obj_cctv_cancel_obj_click(lv_event_t *e)
 {
-        layout_monitor_goto_layout_process();
+        layout_monitor_goto_layout_process(true);
 }
 /***********************************************
  ** 作者: leo.liu
@@ -445,7 +460,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
                         }
                         layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
                 }
-                layout_monitor_goto_layout_process();
+                layout_monitor_goto_layout_process(true);
         }
 }
 
@@ -802,6 +817,7 @@ static void monitor_obj_talk_click(lv_event_t *e)
                 {
                         tuya_api_preview_quit();
                         tuya_api_monitor_handup();
+                        tuya_app_quit_status_active_set(false);
                 }
         }
 }
@@ -836,7 +852,7 @@ static void monitor_obj_handup_click(lv_event_t *e)
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
         }
 
-        layout_monitor_goto_layout_process();
+        layout_monitor_goto_layout_process(true);
 }
 static void monitor_obj_handup_display(void)
 {
@@ -899,6 +915,11 @@ static pthread_mutex_t door_lock_mutex = PTHREAD_MUTEX_INITIALIZER;
 static void *monitor_unlock_ctrl_task(void *arg)
 {
         door_lock_info *info = (door_lock_info *)malloc(sizeof(door_lock_info));
+        if (info == NULL)
+        {
+                printf("[%s]:malloc failed\n", __func__);
+        }
+
         memcpy(info, arg, sizeof(door_lock_info));
 
         if ((info->ch == MON_CH_DOOR1) && (info->mode == 2))
@@ -2084,17 +2105,29 @@ static void layout_monitor_door_call_btn_click(lv_event_t *ev)
 
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
         }
-        monitor_close(0x03);
+
         lv_obj_t *obj = lv_event_get_current_target(ev);
         linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(obj->id);
         if (node != NULL)
         {
+                monitor_close(0x03);
+                if ((tuya_api_client_num() > 0) && is_monitor_door_camera_talk)
+                {
+                        tuya_api_preview_quit();
+                        tuya_api_monitor_handup();
+                        tuya_app_quit_status_active_set(false);
+                }
                 sat_linphone_incomming_refresh(node->call_id);
                 monitor_channel_set(node->channel);
                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
                 SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
                 linphone_incomming_node_release(node);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+        else
+        {
+                SAT_DEBUG("get call failed");
+                layout_monitor_door_ch_btn_create();
         }
 }
 
@@ -2124,11 +2157,18 @@ static void layout_monitor_intercom_call_btn_click(lv_event_t *ev)
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
         }
 
-        monitor_close(0x03);
         lv_obj_t *obj = lv_event_get_current_target(ev);
         linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(obj->id);
         if (node != NULL)
         {
+                monitor_close(0x03);
+                if (tuya_api_client_num() > 0)
+                {
+
+                        tuya_api_preview_quit();
+                        tuya_api_monitor_handup();
+                        tuya_app_quit_status_active_set(false);
+                }
                 sat_linphone_incomming_refresh(node->call_id);
                 intercom_call_status_setting(2);
                 char number[128] = {0};
@@ -2137,6 +2177,11 @@ static void layout_monitor_intercom_call_btn_click(lv_event_t *ev)
                 SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
                 linphone_incomming_node_release(node);
                 sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+        else
+        {
+                SAT_DEBUG("get call failed");
+                layout_monitor_door_ch_btn_create();
         }
 }
 
@@ -2837,7 +2882,7 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
                         {
                                 ring_guard_play(user_data_get()->audio.securirty_office_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
                         }
-                        layout_monitor_goto_layout_process();
+                        layout_monitor_goto_layout_process(true);
                 }
                 else
                 {
@@ -2897,7 +2942,7 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
                         {
                                 ring_common_door_play(user_data_get()->audio.common_entrance_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
                         }
-                        layout_monitor_goto_layout_process();
+                        layout_monitor_goto_layout_process(true);
                 }
                 else
                 {
@@ -2994,7 +3039,7 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
                         {
                                 ring_door_call_play(user_data_get()->audio.door_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
                         }
-                        layout_monitor_goto_layout_process();
+                        layout_monitor_goto_layout_process(true);
                 }
                 else
                 {
@@ -3106,7 +3151,6 @@ bool monitor_doorcamera_call_inside_func(char *arg)
 /* arg 的格式为：user:"uername"<sip:xxx@proxy> msg:消息内容 id:建立连接的id号*/
 static bool monitor_doorcamera_end_process(char *arg)
 {
-        SAT_DEBUG("+++++++++++++++++++++++++++++++++=");
         linphone_incomming_info *node = NULL;
         long call_id = 0;
         char *str = strstr(arg, " id:");
@@ -3176,7 +3220,7 @@ static bool monitor_doorcamera_end_process(char *arg)
                         type = CALL_LOG_CALL_OUT;
                 }
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
-                layout_monitor_goto_layout_process();
+                layout_monitor_goto_layout_process(false);
         }
 
         return true;
@@ -3379,13 +3423,13 @@ static bool truye_event_cmd_audio_start(void)
 static void tuya_event_cmd_video_stop(void)
 {
         int ch = monitor_channel_get();
-        if (is_channel_ipc_camera(monitor_channel_get()) == false)
+        if (is_channel_ipc_camera(monitor_channel_get()) != 1)
         {
                 sat_ipcamera_device_channel_setting(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, network_data_get()->door_device[ch].auther_flag, 0, 1000);
         }
-        if (is_monitor_door_camera_talk == false || monitor_enter_flag_get() == MON_ENTER_TUYA_TALK_FLAG)
+        if ((is_monitor_door_camera_talk == false || monitor_enter_flag_get() == MON_ENTER_TUYA_TALK_FLAG) && (tuya_app_quit_status_active_get() == true))
         {
-                layout_monitor_goto_layout_process();
+                layout_monitor_goto_layout_process(true);
         }
 
         return;
@@ -3401,11 +3445,13 @@ static void tuya_event_cmd_video_stop(void)
 static bool tuya_event_cmd_video_start(void)
 {
         tuya_api_monitor_talk_status_reset();
+        tuya_app_quit_status_active_set(true);
         int ch = monitor_channel_get();
         if ((is_monitor_door_camera_talk) && (monitor_enter_flag_get() != MON_ENTER_TUYA_TALK_FLAG))
         {
                 tuya_api_preview_quit();
                 tuya_api_monitor_handup();
+                tuya_app_quit_status_active_set(false);
         }
         else
         {

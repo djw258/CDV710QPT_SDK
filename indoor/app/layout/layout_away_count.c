@@ -104,6 +104,7 @@ static void layout_away_alarm_release_detetion_timer(lv_timer_t *ptimer)
             {
                 layout_common_call_log(security_emergency, i);
                 user_data_get()->alarm.alarm_trigger_enable[i] = true;
+                user_data_save(true, true);
                 if (sat_cur_layout_get() != sat_playout_get(alarm))
                 {
                     layout_alarm_alarm_channel_set(i);
@@ -112,7 +113,7 @@ static void layout_away_alarm_release_detetion_timer(lv_timer_t *ptimer)
                     sat_linphone_handup(0xFFFF);
                     sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
-              }
+            }
         }
     }
 }

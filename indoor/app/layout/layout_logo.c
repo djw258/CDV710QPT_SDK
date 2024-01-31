@@ -647,14 +647,15 @@ void flash_backup_to_sd_dispaly_create(bool *backup_ed)
 ************************************************************/
 static void alarm_release_and_passwd_reset_check(void)
 {
-        if (access("/tmp/tf/CDV70QPT.BIN", F_OK) == 0)
+        if (access("/tmp/tf/CDV70QPT.BIN", F_OK) == 0) // SD放置升级文件，重置密码
         {
                 memset(&user_data_get()->alarm.alarm_trigger, 0, sizeof(user_data_get()->alarm.alarm_trigger));
+                memset(&user_data_get()->alarm.alarm_trigger_enable, 0, sizeof(user_data_get()->alarm.alarm_trigger_enable));
                 memcpy(user_data_get()->etc.password, "1234", sizeof(user_data_get()->etc.password));
         }
         char compile_time[64] = {0};
         sprintf(compile_time, "%s %s", __DATE__, __TIME__);
-        if (strncmp(user_data_get()->compile_time, compile_time, sizeof(user_data_get()->compile_time)) == 0)
+        if (strncmp(user_data_get()->compile_time, compile_time, sizeof(user_data_get()->compile_time)) != 0) // 升级自动重置密码
         {
                 memcpy(user_data_get()->etc.password, "1234", sizeof(user_data_get()->etc.password));
                 strncpy(user_data_get()->compile_time, compile_time, sizeof(user_data_get()->compile_time));

@@ -667,7 +667,11 @@ static void layout_alarm_tuya_event_report(lv_timer_t *ptimer)
 ************************************************************/
 static void sat_layout_enter(alarm)
 {
-
+        if (tuya_api_client_num() > 0)
+        {
+                tuya_api_preview_quit();
+                tuya_api_monitor_handup();
+        }
         alarm_ring_close_timer = NULL;
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();

@@ -1000,13 +1000,10 @@ static void layout_away_cctv_auto_record_init_display(void)
     lv_obj_t *obj = lv_obj_get_child_form_id(parent, layout_away_auto_record_img_id);
     if (user_data_get()->alarm.away_auto_record == true)
     {
-        SAT_DEBUG("============++++++++++=====");
         if (user_data_get()->alarm.away_alarm_enable == false)
         {
-            SAT_DEBUG("============++++++++++=====");
             if (layout_away_sensor_cctv_binding_status_valid() == false)
             {
-                SAT_DEBUG("============++++++++++=====");
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
             }
             else

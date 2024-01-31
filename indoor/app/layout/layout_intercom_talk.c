@@ -44,9 +44,13 @@ bool intercom_call_username_setting(const char *user)
         return true;
 }
 
-static void layout_intercom_goto_layout_process(void)
+static void layout_intercom_goto_layout_process(bool active)
 {
-        sat_linphone_handup(-1);
+
+        if (active)
+        {
+                sat_linphone_handup(-1);
+        }
         linphone_incomming_info *node = linphone_incomming_used_node_get(true);
 
         if (node == NULL)
@@ -313,7 +317,7 @@ static void intercom_talk_call_time_timer(lv_timer_t *ptime)
                         }
                         layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
                 }
-                layout_intercom_goto_layout_process();
+                layout_intercom_goto_layout_process(true);
                 return;
         }
         intercom_talk_call_info_display();
@@ -382,7 +386,7 @@ static void intercom_talk_handup_obj_click(lv_event_t *e)
         {
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[7]) / 1000, 7);
         }
-        layout_intercom_goto_layout_process();
+        layout_intercom_goto_layout_process(true);
 }
 
 static void intercom_talk_handup_obj_display(void)
@@ -491,7 +495,7 @@ static bool intercom_doorcamera_end_process(char *arg)
                         type = CALL_LOG_IN_AND_ANSWER;
                 }
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
-                layout_intercom_goto_layout_process();
+                layout_intercom_goto_layout_process(false);
         }
         return true;
 }
@@ -558,7 +562,7 @@ static bool intercom_talk_call_failed_callback(char *arg)
                 index = 7;
         }
         layout_call_log_create(CALL_LOG_CALL_OUT, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
-        layout_intercom_goto_layout_process();
+        layout_intercom_goto_layout_process(true);
         return true;
 }
 static void intercom_talk_call_volume_obj_click(lv_event_t *e)
