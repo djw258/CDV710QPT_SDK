@@ -31,7 +31,7 @@ static void *tuya_event_report_func(void *arg)
         user_record_info *info = (user_record_info *)arg;
         if (info->record_mode & 0x01)
         {
-                tuya_api_call_event(1, (const char *)info->data, info->size);
+                tuya_api_call_event(info->ch, (const char *)info->data, info->size);
         }
         if (info->record_mode & 0x02)
         {
