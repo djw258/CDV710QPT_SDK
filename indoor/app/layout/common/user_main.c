@@ -196,8 +196,6 @@ static void *asterisk_server_sync_task(void *arg)
                                                 is_asterisk_server_sync_user_data_force = true;
                                                 is_asterisk_server_sync_network_data_force = true;
                                                 is_need_asterisk_update = true;
-                                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL); // 第一次为了同步
-                                                usleep(100 * 1000);
                                         }
                                         if (is_asterisk_server_sync_user_data_force)
                                         {
@@ -237,15 +235,15 @@ static void *asterisk_server_sync_task(void *arg)
                                 is_asterisk_server_sync_network_data_force = false;
                                 is_asterisk_server_sync_user_data_force = false;
                                 is_need_asterisk_update = false;
+                                struct tm tm;
+                                user_time_read(&tm);
+                                sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1000, NULL);
                                 usleep(100 * 1000);
                                 sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
                                 usleep(300 * 1000);
                                 sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                                 usleep(100 * 1000);
                                 sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
-                                struct tm tm;
-                                user_time_read(&tm);
-                                sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1000, NULL);
                         }
                         is_asterisk_server_sync_rtc_data_force = false;
                 }

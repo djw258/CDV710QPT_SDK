@@ -37,7 +37,7 @@ static void setting_app_integation_confirm_click(lv_event_t *ev)
   {
     user_data_get()->etc.tuya_connect_mode = 0;
     user_data_save(false, false);
-    // tuya_network_dev_set("wlan0");
+    tuya_network_dev_set("wlan0");
     layout_setting_user_wifi_display_mode_set(2);
     sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
   }
@@ -45,7 +45,7 @@ static void setting_app_integation_confirm_click(lv_event_t *ev)
   {
     user_data_get()->etc.tuya_connect_mode = 1;
     user_data_save(false, false);
-    // tuya_network_dev_set("eth0");
+    tuya_network_dev_set("eth0");
   }
   sat_layout_goto(setting_app_integration, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }

@@ -214,40 +214,6 @@ static void buzzer_call_trigger_ui_create(void)
         }
 }
 
-/************************************************************
-** 函数说明: 蜂鸣器定时任务，蜂鸣器的触发时长为6秒，针对不同的场景，在触发时间内做相应的行为(如在监控期间触发蜂鸣岐报警，但在6秒内退出，需要在其他界面继续进行剩余时间的提示)
-** 作者: xiaoxiao
-** 日期：2023-09-12 08:11:03
-** 参数说明:
-** 注意事项：
-************************************************************/
-void default_buzzer_call_timer(lv_timer_t *timer)
-{
-        if (user_data_get()->alarm.buzzer_alarm == true)
-        {
-                lv_obj_t *bg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_alarm_screen_id);
-                if ((sat_cur_layout_get() != sat_playout_get(monitor)) && (sat_cur_layout_get() != sat_playout_get(intercom_talk)) && (sat_cur_layout_get() != sat_playout_get(alarm)))
-                {
-                        if (bg == NULL)
-                        {
-                                buzzer_call_trigger_ui_create();
-                                if (user_data_get()->audio.ring_mute == false)
-                                {
-                                        ring_buzzer_play(user_data_get()->audio.buzzer_tone);
-                                }
-                        }
-                        if (user_timestamp_get() - buzzer_call_timestamp_get() >= 6000)
-                        {
-                                buzzer_alarm_confirm_btn_click(NULL);
-                        }
-                }
-        }
-        else
-        {
-                buzzer_alarm_confirm_btn_click(NULL);
-        }
-}
-
 static void sync_data_alarm_trigger_check()
 {
         if ((alarm_trigger_check(false) == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
@@ -290,10 +256,14 @@ bool buzzer_call_duration_set(int duration)
         buzzer_call_duration = duration;
         return true;
 }
+
 static void default_buzzer_call_delay_close_task(lv_timer_t *ptimer)
 {
-        user_data_get()->alarm.buzzer_alarm = false;
-        user_data_save(true, true);
+        if ((user_data_get()->system_mode & 0x0f) == 0x01)
+        {
+                user_data_get()->alarm.buzzer_alarm = false;
+                user_data_save(true, true);
+        }
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_alarm_screen_id);
         if (obj != NULL)
         {
@@ -331,7 +301,7 @@ void buzzer_alarm_trigger_default(void)
                         {
                                 lv_timer_del((lv_timer_t *)obj->user_data);
                         }
-                        obj->user_data = lv_sat_timer_create(default_buzzer_call_delay_close_task, buzzer_call_duration, NULL);
+                        obj->user_data = lv_timer_create(default_buzzer_call_delay_close_task, buzzer_call_duration, NULL);
                 }
         }
         else
@@ -428,8 +398,9 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                 sync_ing[flag] = true;
         }
 
-        if (recv_data == NULL)
+        if (recv_data[flag] == NULL)
         {
+                sync_ing[flag] = false;
                 printf("[%s:%d] sync data failed\n", __func__, __LINE__);
                 return;
         }
@@ -448,23 +419,29 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
         {
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
+                        static user_data_info old_user_data;
+
                         user_data_info *info = (user_data_info *)recv_data[flag];
 
-                        unsigned long long temp_sync_timestamp = user_data_get()->sync_timestamp;
-                        user_data_get()->sync_timestamp = info->sync_timestamp;
-                        if (temp_sync_timestamp >= info->sync_timestamp)
+                        // unsigned long long temp_sync_timestamp = user_data_get()->sync_timestamp;
+                        // SAT_DEBUG("info->sync_timestamp is %llu", info->sync_timestamp);
+                        // SAT_DEBUG("user_data_get->sync_timestamp is %llu", user_data_get()->sync_timestamp);
+                        // if (user_data_get()->sync_timestamp >= info->sync_timestamp)
+                        // {
+                        //         free(recv_data[flag]);
+                        //         recv_data[flag] = NULL;
+                        //         sync_ing[flag] = false;
+                        //         return;
+                        // }
+                        // user_data_get()->sync_timestamp = info->sync_timestamp;
+                        if (memcmp(&old_user_data, (const char *)info, sizeof(user_data_info)) == 0)
                         {
                                 free(recv_data[flag]);
                                 recv_data[flag] = NULL;
                                 sync_ing[flag] = false;
                                 return;
                         }
-
-                        if (memcmp((const char *)user_data_get(), (const char *)info, sizeof(user_data_info)) == 0)
-                        {
-                                return;
-                        }
-
+                        memcpy(&old_user_data, info, sizeof(old_user_data));
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
                                 user_data_get()->etc.call_time = info->etc.call_time;
@@ -499,7 +476,6 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
 
                                 sync_data_alarm_trigger_check();
                         }
-
                         if (user_data_get()->alarm.buzzer_alarm != info->alarm.buzzer_alarm) // 蜂鸣器触发，取消同步
                         {
                                 user_data_get()->alarm.buzzer_alarm = info->alarm.buzzer_alarm;
@@ -520,11 +496,17 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                 }
                 else if ((flag == 0x01) && (max == sizeof(user_network_info)))
                 {
+                        static user_network_info old_network_data;
                         user_network_info *info = (user_network_info *)recv_data[flag];
-                        if (memcmp((const char *)network_data_get(), (const char *)info, sizeof(user_network_info)) == 0)
+
+                        if (memcmp(&old_network_data, (const char *)info, sizeof(user_network_info)) == 0)
                         {
+                                free(recv_data[flag]);
+                                recv_data[flag] = NULL;
+                                sync_ing[flag] = false;
                                 return;
                         }
+                        memcpy(&old_network_data, info, sizeof(old_network_data));
                         memcpy(network_data_get()->door_device, info->door_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         memcpy(network_data_get()->cctv_device, info->cctv_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         strncpy(network_data_get()->sip_server, info->sip_server, sizeof(network_data_get()->sip_server));
@@ -533,7 +515,9 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                         strncpy(network_data_get()->network.gateway, info->network.gateway, sizeof(network_data_get()->network.gateway));
                         strncpy(network_data_get()->network.dns, info->network.dns, sizeof(network_data_get()->network.dns));
                         strncpy(network_data_get()->guard_number, info->guard_number, sizeof(network_data_get()->guard_number));
+                        strncpy(network_data_get()->common_entrance_ip, info->common_entrance_ip, sizeof(network_data_get()->common_entrance_ip));
                         strncpy(network_data_get()->sip_user, info->sip_user, sizeof(network_data_get()->sip_user));
+                        network_data_save();
                 }
                 else if ((flag == 0x02) && (max == sizeof(asterisk_register_info) * 20))
                 {
@@ -553,6 +537,7 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                         bool standby_timer = standby_timer_status_get();
                         standby_timer_close();
                         user_time_set(d_t);
+                        // user_data_get()->sync_timestamp = user_timestamp_get();
                         if (standby_timer)
                         {
                                 standby_timer_restart(true);
@@ -890,8 +875,6 @@ static void logo_enter_system_timer(lv_timer_t *t)
                 }
         }
 #endif
-        // // 蜂鸣器警报执行任务
-        // lv_timer_create(default_buzzer_call_timer, 500, NULL);
 
         /***** 音频输出初始化 *****/
         audio_output_cmd_register(audio_output_event_default_process);

@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "layout_intercom_call.h"
+#include "layout_monitor.h"
 enum
 {
         intercom_call_obj_id_btnmatrix_myself,
@@ -198,6 +199,13 @@ static bool intercom_linphone_outgoing_callback(char *arg)
         {
                 send_call_play(1, 0xfffff);
         }
+        long call_id = 0;
+        char *str = strstr(arg, " id:");
+        if (str != NULL)
+        {
+                sscanf(str + 4, "%ld", &call_id);
+                layout_linphone_current_call_id_set(call_id);
+        }
 
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
 }
@@ -218,6 +226,14 @@ static bool intercom_linphone_outgoing_arly_media_register(char *arg)
         }
         extern unsigned long long call_timestamp[15];
         call_timestamp[index - 1 + 8] = user_timestamp_get();
+        long call_id = 0;
+        char *str = strstr(arg, " id:");
+        if (str != NULL)
+        {
+                sscanf(str + 4, "%ld", &call_id);
+                layout_linphone_current_call_id_set(call_id);
+        }
+
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
 }

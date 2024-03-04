@@ -539,8 +539,8 @@ static bool layout_motion_streams_running_register_callback(char *arg)
 }
 static void layout_close_buzzer_alarm_trigger_default(void)
 {
+    buzzer_call_timestamp_set(user_timestamp_get());
     layout_close_click(NULL);
-    buzzer_alarm_trigger_default();
 }
 
 bool layout_frame_show_ch_vaile_check(void)

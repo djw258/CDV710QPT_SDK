@@ -44,48 +44,6 @@ bool intercom_call_username_setting(const char *user)
         return true;
 }
 
-static void layout_intercom_goto_layout_process(bool active)
-{
-        if (active)
-        {
-                sat_linphone_handup(-1);
-        }
-        linphone_incomming_info *node = linphone_incomming_used_node_get(true);
-
-        if (node == NULL)
-        { /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
-                node = linphone_incomming_used_node_get(false);
-                if (node == NULL)
-                { /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
-                        sat_linphone_handup(0xFFFF);
-                        if (intercom_call_state == 1)
-                        {
-                                sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
-                        }
-                        else
-                        {
-                                sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
-                        }
-                        /*为了直观，加入return*/
-                        return;
-                }
-                sat_linphone_incomming_refresh(node->call_id);
-                intercom_call_status_setting(2);
-                char number[128] = {0};
-                sprintf(number, "sip:50%d@%s:5066", node->channel, user_data_get()->mastar_wallpad_ip);
-                SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
-                intercom_call_username_setting(number);
-                linphone_incomming_node_release(node);
-                sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-        }
-        sat_linphone_incomming_refresh(node->call_id);
-        monitor_channel_set(node->channel);
-        monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
-        SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
-        linphone_incomming_node_release(node);
-        sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-}
-
 // 门口机通道点击事件
 static void layout_interocm_talk_door_call_btn_click(lv_event_t *ev)
 {
@@ -95,9 +53,10 @@ static void layout_interocm_talk_door_call_btn_click(lv_event_t *ev)
         if (node != NULL)
         {
                 sat_linphone_incomming_refresh(node->call_id);
+                layout_linphone_current_call_id_set(node->call_id);
                 monitor_channel_set(node->channel);
                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
-                SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+                // SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
                 linphone_incomming_node_release(node);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
@@ -112,11 +71,12 @@ static void layout_interocm_talk_intercom_call_btn_click(lv_event_t *ev)
         if (node != NULL)
         {
                 sat_linphone_incomming_refresh(node->call_id);
+                layout_linphone_current_call_id_set(node->call_id);
                 intercom_call_status_setting(2);
                 char number[128] = {0};
                 sprintf(number, "sip:50%d@%s:5066", node->channel, user_data_get()->mastar_wallpad_ip);
                 intercom_call_username_setting(number);
-                SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+                // SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
                 linphone_incomming_node_release(node);
                 sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
@@ -315,7 +275,7 @@ static void intercom_talk_call_time_timer(lv_timer_t *ptime)
                         }
                         layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
                 }
-                layout_intercom_goto_layout_process(true);
+                layout_monitor_goto_layout_process(true);
                 return;
         }
         intercom_talk_call_info_display();
@@ -384,7 +344,7 @@ static void intercom_talk_handup_obj_click(lv_event_t *e)
         {
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[7]) / 1000, 7);
         }
-        layout_intercom_goto_layout_process(true);
+        layout_monitor_goto_layout_process(true);
 }
 
 static void intercom_talk_handup_obj_display(void)
@@ -406,7 +366,6 @@ static void intercom_talk_answer_obj_display(void)
                 SAT_DEBUG("   lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_handup);");
                 return;
         }
-        SAT_DEBUG("intercom_call_state is %d", intercom_call_state);
         if (intercom_call_state == 2)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
@@ -493,7 +452,10 @@ static bool intercom_doorcamera_end_process(char *arg)
                         type = CALL_LOG_IN_AND_ANSWER;
                 }
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
-                layout_intercom_goto_layout_process(false);
+                if (call_id == layout_linphone_current_call_id_get())
+                {
+                        layout_monitor_goto_layout_process(false);
+                }
         }
         return true;
 }
@@ -560,7 +522,7 @@ static bool intercom_talk_call_failed_callback(char *arg)
                 index = 7;
         }
         layout_call_log_create(CALL_LOG_CALL_OUT, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
-        layout_intercom_goto_layout_process(true);
+        layout_monitor_goto_layout_process(true);
         return true;
 }
 static void intercom_talk_call_volume_obj_click(lv_event_t *e)
@@ -707,7 +669,6 @@ static void layout_intercom_talk_call_screen_click(lv_event_t *e)
 
 static bool layout_intercom_inside_call(const char *arg)
 {
-
         long call_id = 0;
         char *str = strstr(arg, " id:");
         if (str == NULL)
@@ -732,18 +693,34 @@ static bool layout_intercom_inside_call(const char *arg)
                 node->call_id = call_id;
                 // 门呼叫，内线呼叫会话按键刷新
                 layout_intercom_talk_door_ch_btn_create();
-                SAT_DEBUG("incomming join channel:%d/call id:%ld", node->channel, node->call_id);
+                // SAT_DEBUG("incomming join channel:%d/call id:%ld", node->channel, node->call_id);
                 return true;
         }
         return true;
 }
 static bool intercom_talk_linphone_outgoing_callback(char *arg)
 {
+        long call_id = 0;
+        char *str = strstr(arg, " id:");
+        if (str == NULL)
+        {
+                return false;
+        }
+        sscanf(str + 4, "%ld", &call_id);
+        layout_linphone_current_call_id_set(call_id);
         return true;
 }
 
 static bool intercom_talk_linphone_outgoing_arly_media_register(char *arg)
 {
+        long call_id = 0;
+        char *str = strstr(arg, " id:");
+        if (str == NULL)
+        {
+                return false;
+        }
+        sscanf(str + 4, "%ld", &call_id);
+        layout_linphone_current_call_id_set(call_id);
         return true;
 }
 
@@ -907,8 +884,11 @@ bool layout_intercom_talk_call_incoming_func(char *arg)
 
 static void intercom_talk_buzzer_call_delay_close_task(lv_timer_t *ptimer)
 {
-        user_data_get()->alarm.buzzer_alarm = false;
-        user_data_save(true, true);
+        if ((user_data_get()->system_mode & 0x0f) == 0x01)
+        {
+                user_data_get()->alarm.buzzer_alarm = false;
+                user_data_save(true, true);
+        }
         lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
         if (obj != NULL)
         {
@@ -1139,7 +1119,15 @@ static void sat_layout_enter(intercom_talk)
                 int time = user_timestamp_get() - buzzer_call_timestamp_get();
                 if (time > 0 && time <= 6000)
                 {
-                        obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, time, obj);
+                        obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, 6000 - time, obj);
+                }
+                else
+                {
+                        if ((user_data_get()->system_mode & 0x0f) == 0x01)
+                        {
+                                user_data_get()->alarm.buzzer_alarm = false;
+                                user_data_save(true, true);
+                        }
                 }
         }
         buzzer_call_callback_register(intercom_talk_buzzer_alarm_call_callback);

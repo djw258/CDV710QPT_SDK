@@ -982,6 +982,7 @@ static void home_obj_top_icon_display_timer(lv_timer_t *ptimer)
 
 static void sat_layout_enter(home)
 {
+
         tuya_api_network_detect_enable(true);
         /***********************************************
          ** 作者: leo.liu
@@ -1405,6 +1406,14 @@ static void sat_layout_enter(home)
                 {
                         buzzer_call_duration_set(6000 - time);
                         buzzer_alarm_trigger_default();
+                }
+                else
+                {
+                        if ((user_data_get()->system_mode & 0x0f) == 0x01)
+                        {
+                                user_data_get()->alarm.buzzer_alarm = false;
+                                user_data_save(true, true);
+                        }
                 }
         }
 }

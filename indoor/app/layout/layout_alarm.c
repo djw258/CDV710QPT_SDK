@@ -586,8 +586,14 @@ static bool layout_alarm_ringplay_register_callback(int arg)
 
 static void layout_alarm_buzzer_call_delay_close_task(lv_timer_t *ptimer)
 {
-        user_data_get()->alarm.buzzer_alarm = false;
-        user_data_save(true, true);
+        if ((user_data_get()->system_mode & 0x0f) == 0x01)
+        {
+                if ((user_data_get()->system_mode & 0x0f) == 0x01)
+                {
+                        user_data_get()->alarm.buzzer_alarm = false;
+                        user_data_save(true, true);
+                }
+        }
         lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         obj->user_data = NULL;
@@ -923,7 +929,15 @@ static void sat_layout_enter(alarm)
                 int time = user_timestamp_get() - buzzer_call_timestamp_get();
                 if (time > 0 && time <= 6000)
                 {
-                        obj->user_data = lv_sat_timer_create(layout_alarm_buzzer_call_delay_close_task, time, obj);
+                        obj->user_data = lv_sat_timer_create(layout_alarm_buzzer_call_delay_close_task, 6000 - time, obj);
+                }
+                else
+                {
+                        if ((user_data_get()->system_mode & 0x0f) == 0x01)
+                        {
+                                user_data_get()->alarm.buzzer_alarm = false;
+                                user_data_save(true, true);
+                        }
                 }
         }
         buzzer_call_callback_register(layout_alarm_buzzer_alarm_call_callback);
