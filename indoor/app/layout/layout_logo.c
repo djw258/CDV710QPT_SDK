@@ -434,6 +434,7 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                         //         return;
                         // }
                         // user_data_get()->sync_timestamp = info->sync_timestamp;
+                        old_user_data.sync_timestamp = info->sync_timestamp;
                         if (memcmp(&old_user_data, (const char *)info, sizeof(user_data_info)) == 0)
                         {
                                 free(recv_data[flag]);
@@ -488,7 +489,6 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                         }
                         if (user_data_get()->alarm.security_alarm_enable != info->alarm.security_alarm_enable) // 离家设防同步
                         {
-
                                 user_data_get()->alarm.security_alarm_enable = info->alarm.security_alarm_enable;
                                 security_mode_sync_callback();
                         }
