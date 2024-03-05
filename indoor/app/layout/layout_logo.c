@@ -434,17 +434,19 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                         //         return;
                         // }
                         // user_data_get()->sync_timestamp = info->sync_timestamp;
-                        old_user_data.sync_timestamp = info->sync_timestamp;
-                        if (memcmp(&old_user_data, (const char *)info, sizeof(user_data_info)) == 0)
-                        {
-                                free(recv_data[flag]);
-                                recv_data[flag] = NULL;
-                                sync_ing[flag] = false;
-                                return;
-                        }
-                        memcpy(&old_user_data, info, sizeof(old_user_data));
+
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
+                                old_user_data.sync_timestamp = info->sync_timestamp;
+                                if (memcmp(&old_user_data, (const char *)info, sizeof(user_data_info)) == 0)
+                                {
+                                        free(recv_data[flag]);
+                                        recv_data[flag] = NULL;
+                                        sync_ing[flag] = false;
+                                        return;
+                                }
+                                memcpy(&old_user_data, info, sizeof(old_user_data));
+
                                 user_data_get()->etc.call_time = info->etc.call_time;
                                 user_data_get()->etc.open_the_door = info->etc.open_the_door;
                                 user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
