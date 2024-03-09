@@ -764,7 +764,7 @@ lv_obj_t *setting_main_list_create(int id)
         int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                if ((user_data_get()->system_mode & 0x0F) != 0X01 && ((i == 1) || i == 4))
+                if ((user_data_get()->system_mode & 0x0F) != 0X01 && ((i == 1) /* || i == 4 */))
                 {
                         continue;
                 }

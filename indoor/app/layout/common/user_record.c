@@ -229,11 +229,11 @@ static bool record_video_callback(const char *path, int ch, int mode)
         }
         else if (ch == MON_CH_LOBBY)
         {
-                sprintf(name, "%s", "Lobby");
+                sprintf(name, "%s", lang_str_get(HOME_XLS_LANG_ID_COMMON_ENTRANCE));
         }
         else if (ch == MON_CH_GUARD)
         {
-                sprintf(name, "%s", "Guard");
+                sprintf(name, "%s", lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION));
         }
         else
         {

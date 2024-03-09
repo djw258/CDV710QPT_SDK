@@ -95,11 +95,6 @@ void layout_linphone_current_call_id_set(int id)
         linphone_call_id = id;
 }
 
-int layout_linphone_current_call_id_get(void)
-{
-        return linphone_call_id;
-}
-
 /****************************************************************
  **@日期: 2023-09-20
  **@作者: leo.liu
@@ -109,7 +104,6 @@ static int monitor_brightness[3] = {0};
 static int monitor_saturation[3] = {0};
 static int monitor_contrast[3] = {0};
 // static char sip_call_name[4];
-static bool monitor_talk_call_end_callback(char *arg);
 
 void layout_monitor_goto_layout_process(bool active)
 {
@@ -151,7 +145,7 @@ void layout_monitor_goto_layout_process(bool active)
                         }
                         else
                         {
-                                linphone_call_id = node->call_id;
+                                layout_linphone_current_call_id_set(node->call_id);
                                 sat_linphone_incomming_refresh(node->call_id);
                                 intercom_call_status_setting(2);
                                 char number[128] = {0};
@@ -169,7 +163,7 @@ void layout_monitor_goto_layout_process(bool active)
                 sat_linphone_incomming_refresh(node->call_id);
         }
         sat_linphone_incomming_refresh(node->call_id);
-        linphone_call_id = node->call_id;
+        layout_linphone_current_call_id_set(node->call_id);
         monitor_channel_set(node->channel);
         layout_monitor_report_vaild_channel();
         monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
@@ -2009,7 +2003,7 @@ static bool layout_monitor_busy_callback(char *arg)
 }
 
 // 呼叫事件注册
-static bool layout_monitor_outgoing_callback(char *arg)
+bool layout_monitor_outgoing_callback(char *arg)
 {
         long call_id = 0;
         char *str = strstr(arg, " id:");
@@ -2018,12 +2012,12 @@ static bool layout_monitor_outgoing_callback(char *arg)
                 return false;
         }
         sscanf(str + 4, "%ld", &call_id);
-        linphone_call_id = call_id;
+        layout_linphone_current_call_id_set(call_id);
         SAT_DEBUG("arg is %s", arg);
         return true;
 }
 
-static bool layout_monitor_outgoing_arly_media_register(char *arg)
+bool layout_monitor_outgoing_arly_media_register(char *arg)
 {
         long call_id = 0;
         char *str = strstr(arg, " id:");
@@ -2032,12 +2026,12 @@ static bool layout_monitor_outgoing_arly_media_register(char *arg)
                 return false;
         }
         sscanf(str + 4, "%ld", &call_id);
-        linphone_call_id = call_id;
+        layout_linphone_current_call_id_set(call_id);
         SAT_DEBUG("arg is %s", arg);
         return false;
 }
 
-static bool monitor_talk_call_failed_callback(char *arg)
+bool monitor_talk_call_failed_callback(char *arg)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
         if (obj == NULL)
@@ -2904,7 +2898,7 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
                 }
                 monitor_channel_set(MON_CH_GUARD);
                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
-                linphone_call_id = call_id;
+                layout_linphone_current_call_id_set(call_id);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
         else /*内部呼叫，存储变量*/
@@ -2917,7 +2911,7 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
                         node->call_id = call_id;
                 }
                 // 如果当前是手动进监控的，包括手机和室内机，就把当前手动监控的会话关闭。进入由call机发起的会话
-                if ((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG))
+                if (((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG)) && (sat_cur_layout_get() == sat_playout_get(monitor)))
                 {
                         if (user_data_get()->audio.ring_mute == false)
                         {
@@ -2964,7 +2958,7 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
                 }
                 monitor_channel_set(MON_CH_LOBBY);
                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
-                linphone_call_id = call_id;
+                layout_linphone_current_call_id_set(call_id);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
         else /*内部呼叫，存储变量*/
@@ -2977,7 +2971,7 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
                         node->call_id = call_id;
                 }
                 // 如果当前是手动进监控的，包括手机和室内机，就把当前手动监控的会话关闭。进入由call机发起的会话
-                if ((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG))
+                if (((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG)) && (sat_cur_layout_get() == sat_playout_get(monitor)))
                 {
                         if (user_data_get()->audio.ring_mute == false)
                         {
@@ -3061,7 +3055,7 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
                 /*监控参数设置，准备进入监控页面*/
                 monitor_channel_set(index - 1);
                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
-                linphone_call_id = call_id;
+                layout_linphone_current_call_id_set(call_id);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
         else /*内部呼叫，存储变量*/
@@ -3074,7 +3068,7 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
                         node->call_id = call_id;
                 }
                 // 如果当前是手动进监控的，包括手机和室内机，就把当前手动监控的会话关闭。进入由call机发起的会话
-                if ((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG))
+                if (((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG)) && (sat_cur_layout_get() == sat_playout_get(monitor)))
                 {
                         if (user_data_get()->audio.ring_mute == false)
                         {
@@ -3129,7 +3123,7 @@ static bool monitor_intercom_extern_call(const char *arg)
                 intercom_call_status_setting(2);
 
                 intercom_call_username_setting(arg);
-                linphone_call_id = call_id;
+                layout_linphone_current_call_id_set(call_id);
                 sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
 
@@ -3271,7 +3265,7 @@ static bool monitor_doorcamera_end_process(char *arg)
         return true;
 }
 
-static bool monitor_talk_call_end_callback(char *arg)
+bool monitor_talk_call_end_callback(char *arg)
 {
         /*sip:2xxx代表门口机*/
         if (strstr(arg, "sip:20") != NULL)

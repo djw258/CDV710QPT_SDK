@@ -419,8 +419,6 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
         {
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
-                        static user_data_info old_user_data;
-
                         user_data_info *info = (user_data_info *)recv_data[flag];
 
                         // unsigned long long temp_sync_timestamp = user_data_get()->sync_timestamp;
@@ -437,6 +435,7 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
 
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
+                                static user_data_info old_user_data;
                                 old_user_data.sync_timestamp = info->sync_timestamp;
                                 if (memcmp(&old_user_data, (const char *)info, sizeof(user_data_info)) == 0)
                                 {

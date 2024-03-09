@@ -548,7 +548,7 @@ static lv_obj_t *setting_recording_sub_list_create(void)
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
                 /*此处请斟酌*/
-                if ((((user_data_get()->system_mode & 0xF0) != 0x00) && i == 1) || i == 2)
+                if ((((user_data_get()->system_mode & 0x0F) != 0x01) && (i == 1)) || i == 2)
                 {
                         continue;
                 }

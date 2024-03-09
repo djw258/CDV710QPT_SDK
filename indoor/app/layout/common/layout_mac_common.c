@@ -116,34 +116,39 @@ int is_mac_address(const char *str)
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-static void generate_mac_address(int index, char *base_mac, char *mac_address)
+// 根据索引号生成MAC地址
+static void generate_mac_address(int index, const char *base_mac, char *mac_address)
 {
   if (index < 1 || index > 65536)
   {
     // 参数超出范围，给一个默认值
     index = 1;
   }
-  if (is_mac_address(base_mac) == false)
+  if (!is_mac_address(base_mac))
   {
     return;
   }
-  // 将起始MAC地址转换为整数
-  sscanf(base_mac, "%x:%x:%x:%x:%x:%x",
-         (unsigned int *)&mac_address[0],
-         (unsigned int *)&mac_address[3],
-         (unsigned int *)&mac_address[6],
-         (unsigned int *)&mac_address[9],
-         (unsigned int *)&mac_address[12],
-         (unsigned int *)&mac_address[15]);
 
-  // 加上参数
-  int incremented_value = *((unsigned int *)&mac_address[15]) + index - 1;
-  *((unsigned int *)&mac_address[15]) = incremented_value;
+  unsigned char mac_bytes[6]; // 存储MAC地址的每个字节
+  sscanf(base_mac, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
+         &mac_bytes[0], &mac_bytes[1], &mac_bytes[2],
+         &mac_bytes[3], &mac_bytes[4], &mac_bytes[5]);
+
+  // 将起始MAC地址的最低字节加上参数
+  int incremented_value = mac_bytes[5] + index - 1;
+  mac_bytes[5] = (unsigned char)incremented_value;
+
+  // 处理低字节溢出，向高字节进位
+  while (incremented_value >= 256)
+  {
+    incremented_value /= 256; // 计算进位值
+    mac_bytes[4] += incremented_value;
+  }
 
   // 将新的MAC地址格式化为字符串
   sprintf(mac_address, "%02X:%02X:%02X:%02X:%02X:%02X",
-          mac_address[0], mac_address[3], mac_address[6],
-          mac_address[9], mac_address[12], mac_address[15]);
+          mac_bytes[0], mac_bytes[1], mac_bytes[2],
+          mac_bytes[3], mac_bytes[4], mac_bytes[5]);
 }
 
 static bool mac_address_save(char *mac_address)

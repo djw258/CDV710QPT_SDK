@@ -1194,8 +1194,8 @@ static void sat_layout_enter(home)
         ** 说明: 监控设置
         ***********************************************/
         {
-                int sec_x = ((user_data_get()->system_mode & 0xF0) != 0x10) ? 125 : 57; // user_data_get()->system_mode == 1?193:329;
-                int unit_offset = ((user_data_get()->system_mode & 0xF0) == 0x10) ? 136 : 136;
+                int sec_x = (/* (user_data_get()->system_mode & 0xF0) != 0x10*/ 0) ? 125 : 57; // user_data_get()->system_mode == 1?193:329;
+                int unit_offset = (0 /*( user_data_get()->system_mode & 0xF0) == 0x10 */) ? 136 : 136;
                 lv_obj_t *obj = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_monitor_cont, sec_x, 436, 103, 121,
                                                               home_monitor_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -1289,7 +1289,7 @@ static void sat_layout_enter(home)
                         sec_x += unit_offset;
                 }
 
-                if ((user_data_get()->system_mode & 0xF0) == 0x10)
+                if (0)
                 {
                         lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_elevator_cont, sec_x, 436, 103, 121,
                                                       home_elevator_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
