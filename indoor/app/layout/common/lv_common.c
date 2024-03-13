@@ -647,7 +647,7 @@ lv_obj_t *setting_msgdialog_msg_bg_create(int parent_id, int id, int x, int y, i
                 lv_obj_del(cont);
         }
         cont = lv_common_img_btn_create(sat_cur_layout_screen_get(), parent_id, 0, 0, 1024, 600,
-                                        NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                        NULL, true, LV_OPA_80, 0, LV_OPA_80, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);

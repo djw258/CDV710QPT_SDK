@@ -80,6 +80,7 @@ enum
         setting_general_obj_id_msgbox_cont,
         setting_general_obj_id_msgbox_parent,
         setting_general_obj_id_msgbox_title,
+        setting_general_obj_id_msgbox_list,
         setting_general_obj_id_msgbox_check_1,
         setting_general_obj_id_msgbox_check_1_text,
         setting_general_obj_id_msgbox_check_1_img,
@@ -89,7 +90,7 @@ enum
         setting_general_obj_id_msgbox_check_3,
         setting_general_obj_id_msgbox_check_3_text,
         setting_general_obj_id_msgbox_check_3_img,
-        setting_general_obj_id_msgbox_confirm,
+        setting_general_obj_id_msgbox_confirm = setting_general_obj_id_msgbox_check_1 + 12,
         setting_general_obj_id_msgbox_confirm_img,
         setting_general_obj_id_msgbox_cancel,
         setting_general_obj_id_msgbox_cancel_img,
@@ -192,7 +193,7 @@ static void door2_open_lock_num_sub_display(void)
                 return;
         }
 
-        lv_label_set_text(sub, user_data_get()->etc.door2_lock_num == 1 ? lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM1) : lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM2));
+        lv_label_set_text(sub, user_data_get()->etc.door2_lock_num != 0 ? lang_str_get(SETTING_GENERAL_XLS_LANG_ID_TWO_DOOR_OPEN_APPLY) : lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
 }
 static void setting_main_cancel_obj_click(lv_event_t *ev)
 {
@@ -252,7 +253,7 @@ static void setting_general_msgbox_del(void)
         }
         lv_obj_del(obj);
 }
-static lv_obj_t *setting_general_msgbox_create(const char *title, lv_event_cb_t cancel_cb, lv_event_cb_t confirm_cb, lv_event_cb_t checkbox_cb, const char *item[3], int n_item)
+static lv_obj_t *setting_general_msgbox_create(const char *title, lv_event_cb_t cancel_cb, lv_event_cb_t confirm_cb, lv_event_cb_t checkbox_cb, const char *item[3], int n_item, int select_item)
 {
         lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_general_obj_id_msgbox_cont, 0, 0, 1024, 600,
                                                     NULL, true, LV_OPA_80, 0, LV_OPA_80, 0,
@@ -272,9 +273,12 @@ static lv_obj_t *setting_general_msgbox_create(const char *title, lv_event_cb_t 
                               0, 2, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                               title, 0XA8A8A8, 0XA8A8A8, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
+        lv_obj_t *list = setting_list_create(msgbox, setting_general_obj_id_msgbox_list);
+        lv_common_style_set_common(list, setting_general_obj_id_msgbox_list, 27, 73, 460 - 27, 343 - 57 - 73, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+
         if (n_item == 2)
         {
-                lv_common_img_text_btn_create(msgbox, setting_general_obj_id_msgbox_check_1, 48, 110, 365, 48,
+                lv_common_img_text_btn_create(list, setting_general_obj_id_msgbox_check_1, 48, 110, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -284,7 +288,7 @@ static lv_obj_t *setting_general_msgbox_create(const char *title, lv_event_cb_t 
                                               user_data_get()->etc.open_the_door == 0 ? (const char *)resource_ui_src_get("btn_radio_s.png") : (const char *)resource_ui_src_get("btn_radio_n.png"),
                                               LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_img_text_btn_create(msgbox, setting_general_obj_id_msgbox_check_2, 48, 166, 365, 48,
+                lv_common_img_text_btn_create(list, setting_general_obj_id_msgbox_check_2, 48, 166, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -293,9 +297,9 @@ static lv_obj_t *setting_general_msgbox_create(const char *title, lv_event_cb_t 
                                               0, 8, 32, 32, setting_general_obj_id_msgbox_check_2_img,
                                               user_data_get()->etc.open_the_door == 1 ? (const char *)resource_ui_src_get("btn_radio_s.png") : (const char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
-        else
+        else if (n_item == 3)
         {
-                lv_common_img_text_btn_create(msgbox, setting_general_obj_id_msgbox_check_1, 48, 89, 365, 48,
+                lv_common_img_text_btn_create(list, setting_general_obj_id_msgbox_check_1, 48, 89, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -304,7 +308,7 @@ static lv_obj_t *setting_general_msgbox_create(const char *title, lv_event_cb_t 
                                               0, 8, 32, 32, setting_general_obj_id_msgbox_check_1_img,
                                               (const char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_img_text_btn_create(msgbox, setting_general_obj_id_msgbox_check_2, 48, 145, 365, 48,
+                lv_common_img_text_btn_create(list, setting_general_obj_id_msgbox_check_2, 48, 145, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -313,7 +317,7 @@ static lv_obj_t *setting_general_msgbox_create(const char *title, lv_event_cb_t 
                                               0, 8, 32, 32, setting_general_obj_id_msgbox_check_2_img,
                                               (const char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_img_text_btn_create(msgbox, setting_general_obj_id_msgbox_check_3, 48, 201, 365, 48,
+                lv_common_img_text_btn_create(list, setting_general_obj_id_msgbox_check_3, 48, 201, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -321,6 +325,27 @@ static lv_obj_t *setting_general_msgbox_create(const char *title, lv_event_cb_t 
                                               item[2], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 32, 32, setting_general_obj_id_msgbox_check_3_img,
                                               (const char *)resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+        else
+        {
+
+                int j = 0;
+                for (int i = 0; i < DEVICE_MAX; i++)
+                {
+                        if (monitor_valid_channel_check(i) == true)
+                        {
+
+                                lv_common_img_text_btn_create(list, setting_general_obj_id_msgbox_check_1 + i, 48, 61 + 56 * j, 365, 48,
+                                                              checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                              48, 8, 365 - 94, 32, 0,
+                                                              network_data_get()->door_device[i].door_name, 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                              0, 8, 32, 32, 1,
+                                                              (const char *)resource_ui_src_get(user_data_get()->etc.door2_lock_num & (0x01 << i) ? "btn_checkbox_s.png" : "btn_checkbox_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                j++;
+                        }
+                }
         }
 
         lv_common_img_btn_create(msgbox, setting_general_obj_id_msgbox_cancel, 0, 281, 230, 62,
@@ -384,8 +409,9 @@ static void setting_general_msgbox_moethod_checkbox_click(lv_event_t *e)
 static void setting_general_door1_opening_moethod_msgbox_confirm_click(lv_event_t *ev)
 {
         lv_obj_t *item = lv_event_get_current_target(ev);
-        lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
-        lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
+        lv_obj_t *list = lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_list);
+        lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
+        lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
 
         if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
@@ -402,8 +428,7 @@ static void setting_general_door1_opening_moethod_msgbox_confirm_click(lv_event_
 
 static void setting_general_door1_open_method_display(void)
 {
-        lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_msgbox_cont), setting_general_obj_id_msgbox_parent);
-
+        lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_msgbox_cont), setting_general_obj_id_msgbox_parent), setting_general_obj_id_msgbox_list);
         lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
 
         lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
@@ -427,7 +452,7 @@ static void setting_general_door1_opening_moethod_obj_click(lv_event_t *ev)
         item[1] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_OPEN_WHEN_CALL);
         setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPENING_METHOD),
                                       setting_general_msgbox_cancel_click, setting_general_door1_opening_moethod_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
-                                      item, 2);
+                                      item, 2, -1);
         setting_general_door1_open_method_display();
 }
 
@@ -441,8 +466,9 @@ static void setting_general_door1_opening_moethod_obj_click(lv_event_t *ev)
 static void setting_general_door1_opening_modoule_msgbox_confirm_click(lv_event_t *ev)
 {
         lv_obj_t *item = lv_event_get_current_target(ev);
-        lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
-        lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
+        lv_obj_t *list = lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_list);
+        lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
+        lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
 
         if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
@@ -450,7 +476,18 @@ static void setting_general_door1_opening_modoule_msgbox_confirm_click(lv_event_
         }
         else if (!strncmp((const char *)check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
-                user_data_get()->etc.door1_open_door_mode = 1;
+                if (user_data_get()->etc.door2_lock_num & 0x01)
+                {
+
+                        lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_general_obj_id_msgbox_cont, setting_general_obj_id_msgbox_parent, 282, 143, 460, 283);
+                        setting_msgdialog_msg_create(masgbox, setting_general_obj_id_msgbox_title, lang_str_get(SETTING_GENERAL_XLS_LANG_ID_TWO_DOOR_OPEN_CHANGE_DOOR_NUM), 0, 70, 460, 100, false);
+                        setting_msgdialog_msg_confirm_btn_create(masgbox, setting_general_obj_id_msgbox_confirm, setting_general_msgbox_cancel_click);
+                        return;
+                }
+                else
+                {
+                        user_data_get()->etc.door1_open_door_mode = 1;
+                }
         }
         user_data_save(true, true);
         setting_general_msgbox_del();
@@ -459,7 +496,7 @@ static void setting_general_door1_opening_modoule_msgbox_confirm_click(lv_event_
 
 static void setting_general_door1_open_module_display(void)
 {
-        lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_msgbox_cont), setting_general_obj_id_msgbox_parent);
+        lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_msgbox_cont), setting_general_obj_id_msgbox_parent), setting_general_obj_id_msgbox_list);
 
         lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
 
@@ -484,59 +521,73 @@ static void setting_general_door_opener_module_obj_click(lv_event_t *ev)
         item[1] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_LOCK);
         setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPENER_MODULE),
                                       setting_general_msgbox_cancel_click, setting_general_door1_opening_modoule_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
-                                      item, 2);
+                                      item, 2, -1);
         setting_general_door1_open_module_display();
 }
 
-static void setting_general_door2_opener_num_msgbox_confirm_click(lv_event_t *ev)
+static void setting_general_msgbox_door_num_checkbox_click(lv_event_t *e)
+{
+        lv_obj_t *parent = lv_event_get_current_target(e);
+        if (parent == NULL)
+        {
+                return;
+        }
+
+        lv_obj_t *checkbox = lv_obj_get_child_form_id(parent, 1);
+        if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0)
+        {
+
+                lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+        }
+        else
+        {
+                lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
+        }
+}
+
+static void setting_general_door_num_msgbox_confirm_click(lv_event_t *ev)
 {
         lv_obj_t *item = lv_event_get_current_target(ev);
-        lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
-        lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
+        lv_obj_t *list = lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_list);
+        char temp = 0x00;
+        for (int i = 0; i < DEVICE_MAX; i++)
+        {
+                item = lv_obj_get_child_form_id(list, setting_general_obj_id_msgbox_check_1 + i);
+                if (item != NULL)
+                {
+                        lv_obj_t *checkbox = lv_obj_get_child_form_id(item, 1);
+                        if (checkbox)
+                        {
+                                if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_s.png"), strlen(resource_ui_src_get("btn_checkbox_s.png"))) == 0)
+                                {
+                                        if ((i == 0) && (user_data_get()->etc.door1_open_door_mode == 1))
+                                        {
 
-        if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
-        {
-                user_data_get()->etc.door2_lock_num = 1;
+                                                lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_general_obj_id_msgbox_cont, setting_general_obj_id_msgbox_parent, 282, 143, 460, 283);
+                                                setting_msgdialog_msg_create(masgbox, setting_general_obj_id_msgbox_title, lang_str_get(SETTING_GENERAL_XLS_LANG_ID_TWO_DOOR_OPEN_CHANGE_DOOR_METHOD), 0, 40, 460, 200, false);
+                                                setting_msgdialog_msg_confirm_btn_create(masgbox, setting_general_obj_id_msgbox_confirm, setting_general_msgbox_cancel_click);
+
+                                                return;
+                                        }
+                                        else
+                                        {
+                                                temp |= (0X01 << i);
+                                        }
+                                }
+                        }
+                }
         }
-        else if (!strncmp((const char *)check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
-        {
-                user_data_get()->etc.door2_lock_num = 2;
-        }
+        user_data_get()->etc.door2_lock_num = temp;
         user_data_save(true, true);
         setting_general_msgbox_del();
         door2_open_lock_num_sub_display();
 }
 
-static void setting_general_door2_opener_num_display(void)
-{
-        lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_msgbox_cont), setting_general_obj_id_msgbox_parent);
-
-        lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
-
-        lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
-        if (user_data_get()->etc.door2_lock_num == 1)
-        {
-
-                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-        }
-        else
-        {
-                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-        }
-}
-
 static void setting_general_door2_opener_num_obj_click(lv_event_t *e)
 {
 
-        const char *item[2] = {0};
-        item[0] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM1);
-        item[1] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM2);
-
-        setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM), setting_general_msgbox_cancel_click, setting_general_door2_opener_num_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
-                                      item, 2);
-        setting_general_door2_opener_num_display();
+        setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM), setting_general_msgbox_cancel_click, setting_general_door_num_msgbox_confirm_click, setting_general_msgbox_door_num_checkbox_click,
+                                      NULL, DEVICE_MAX, 0);
 }
 
 static void setting_general_call_time_msgbox_item_click(lv_event_t *e)
@@ -607,9 +658,10 @@ static void setting_general_call_time_msgbox_confirm_click(lv_event_t *ev)
 {
 
         lv_obj_t *item = lv_event_get_current_target(ev);
-        lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
-        lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
-        lv_obj_t *check3 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_3), setting_general_obj_id_msgbox_check_3_img);
+        lv_obj_t *list = lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_list);
+        lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
+        lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
+        lv_obj_t *check3 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_general_obj_id_msgbox_check_3), setting_general_obj_id_msgbox_check_3_img);
         if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
                 user_data_get()->etc.call_time = 1;
@@ -629,7 +681,7 @@ static void setting_general_call_time_msgbox_confirm_click(lv_event_t *ev)
 
 static void setting_general_call_time_num_display(void)
 {
-        lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_msgbox_cont), setting_general_obj_id_msgbox_parent);
+        lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_msgbox_cont), setting_general_obj_id_msgbox_parent), setting_general_obj_id_msgbox_list);
 
         lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
 
@@ -664,7 +716,7 @@ static void setting_general_call_time_obj_click(lv_event_t *ev)
         item[2] = lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_3_MINUTE);
         setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER_OF_DOORCAMERA),
                                       setting_general_msgbox_cancel_click, setting_general_call_time_msgbox_confirm_click, setting_general_call_time_msgbox_item_click,
-                                      item, 3);
+                                      item, 3, -1);
         setting_general_call_time_num_display();
 }
 

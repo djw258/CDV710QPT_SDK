@@ -116,14 +116,17 @@ bool layout_monitor_report_vaild_channel(void)
 {
         int ch = monitor_channel_get();
         int media_type = 0;
+        int lock_num = -1;
         if ((ch >= 8) && ch <= 13)
         {
                 ch = ch - 1;
                 media_type = 1;
+                lock_num = -1;
         }
         else if ((ch == 16) || (ch == 17))
         {
                 ch = ch - 3;
+                lock_num = -1;
                 if (ch == 17)
                         media_type = 2;
         }
@@ -133,10 +136,11 @@ bool layout_monitor_report_vaild_channel(void)
         }
         else
         {
+                lock_num = user_data_get()->etc.door2_lock_num & (0x01 << ch);
                 ch = ch + 1;
         }
 
-        return tuya_api_channel_report(ch, media_type, monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(TUYA_CH_DOOR1),
+        return tuya_api_channel_report(ch, media_type, monitor_valid_channel_check(MON_CH_DOOR1), lock_num, language_common_ch_string_get(TUYA_CH_DOOR1),
                                        monitor_valid_channel_check(MON_CH_DOOR2), language_common_ch_string_get(TUYA_CH_DOOR2),
                                        monitor_valid_channel_check(MON_CH_DOOR3), language_common_ch_string_get(TUYA_CH_DOOR3),
                                        monitor_valid_channel_check(MON_CH_DOOR4), language_common_ch_string_get(TUYA_CH_DOOR4),

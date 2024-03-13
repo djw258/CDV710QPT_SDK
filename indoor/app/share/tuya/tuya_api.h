@@ -47,20 +47,20 @@ bool tuya_api_app_sync_utc_time(void);
 **   函数作用：上传有效通道
 **   参数说明:channe:当前监控的通道
 ***/
-bool tuya_api_channel_report(int cur, int media_type, bool door1_valild, const char *door1_str,
-                             bool door2_valild, const char *door2_str,
-                             bool door3_valild, const char *door3_str,
-                             bool door4_valild, const char *door4_str,
-                             bool door5_valild, const char *door5_str,
-                             bool door6_valild, const char *door6_str,
-                             bool door7_valild, const char *door7_str,
+bool tuya_api_channel_report(int cur, int media_type, int lock_num, bool door1_valid, const char *door1_str,
+                             bool door2_valid, const char *door2_str,
+                             bool door3_valid, const char *door3_str,
+                             bool door4_valid, const char *door4_str,
+                             bool door5_valid, const char *door5_str,
+                             bool door6_valid, const char *door6_str,
                              bool cctv1_valid, const char *cctv1_str,
                              bool cctv2_valid, const char *cctv2_str,
                              bool cctv3_valid, const char *cctv3_str,
                              bool cctv4_valid, const char *cctv4_str,
                              bool cctv5_valid, const char *cctv5_str,
                              bool cctv6_valid, const char *cctv6_str,
-                             bool cctv7_valid, const char *cctv7_str);
+                             bool lobby_valid, const char *lobby_str,
+                             bool guard_valid, const char *guard_str);
 
 /***
 **   日期:2022-06-07 19:30:28
