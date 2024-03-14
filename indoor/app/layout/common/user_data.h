@@ -86,7 +86,7 @@ typedef struct
         /***** door1开锁模式 0:camera locak ,1：digital door lock*****/
         char door1_open_door_mode;
         /***** 1:1lock 2:2lock *****/
-        char door2_lock_num;
+        char door_lock_num;
         /*****  house hold password *****/
         char password[4];
         /*****  common entrance password *****/

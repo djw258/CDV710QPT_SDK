@@ -449,7 +449,7 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                                 user_data_get()->etc.call_time = info->etc.call_time;
                                 user_data_get()->etc.open_the_door = info->etc.open_the_door;
                                 user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
-                                user_data_get()->etc.door2_lock_num = info->etc.door2_lock_num;
+                                user_data_get()->etc.door_lock_num = info->etc.door_lock_num;
                                 strncpy(user_data_get()->etc.password, info->etc.password, sizeof(user_data_get()->etc.password));
                                 strncpy(user_data_get()->etc.comm_ent_password, info->etc.comm_ent_password, sizeof(user_data_get()->etc.comm_ent_password));
                                 memcpy(&user_data_get()->alarm.cctv_sensor, &info->alarm.cctv_sensor, sizeof(user_data_get()->alarm.cctv_sensor));

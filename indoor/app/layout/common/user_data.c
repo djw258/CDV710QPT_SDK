@@ -85,7 +85,7 @@ static const user_data_info user_data_default =
             .deive_id = 0,
             .open_the_door = 0,
             .door1_open_door_mode = 0,
-            .door2_lock_num = 1,
+            .door_lock_num = 0,
             .password = {"1234"},
             .comm_ent_password = {"1234"},
             .time_automatically = 1,
@@ -320,7 +320,7 @@ static void user_data_check_valid(void)
         user_data_etc_check_range_out(deive_id, 0, 3);
         user_data_etc_check_range_out(open_the_door, 0, 1);
         user_data_etc_check_range_out(door1_open_door_mode, 0, 1);
-        user_data_etc_check_range_out(door2_lock_num, 0, 0xff);
+        user_data_etc_check_range_out(door_lock_num, 0, 0xff);
         user_data_etc_check_range_out(password[0], '0', '9');
         user_data_etc_check_range_out(password[1], '0', '9');
         user_data_etc_check_range_out(password[2], '0', '9');

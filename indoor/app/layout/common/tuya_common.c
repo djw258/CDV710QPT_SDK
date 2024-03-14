@@ -83,7 +83,7 @@ bool tuya_event_defalut_handle(TUYA_CMD cmd, int arg)
                 return tuya_event_cmd_video_stop();
                 break;
         case TUYA_EVENT_CMD_AUDIO_START:
-                // tuya_api_door2_unlock_mode_report(user_data_get()->etc.door2_lock_num);
+                // tuya_api_door2_unlock_mode_report(user_data_get()->etc.door_lock_num);
                 // return truye_event_cmd_audio_start();
                 break;
         case TUYA_EVENT_CMD_ONLINE:
@@ -116,7 +116,7 @@ bool layout_monitor_report_vaild_channel(void)
 {
         int ch = monitor_channel_get();
         int media_type = 0;
-        int lock_num = -1;
+        int lock_num = 0;
         if ((ch >= 8) && ch <= 13)
         {
                 ch = ch - 1;
@@ -125,10 +125,13 @@ bool layout_monitor_report_vaild_channel(void)
         }
         else if ((ch == 16) || (ch == 17))
         {
-                ch = ch - 3;
-                lock_num = -1;
+                lock_num = 1;
                 if (ch == 17)
+                {
                         media_type = 2;
+                        lock_num = 0;
+                }
+                ch = ch - 3;
         }
         else if ((ch < 0) || (ch > 6))
         {
@@ -136,11 +139,13 @@ bool layout_monitor_report_vaild_channel(void)
         }
         else
         {
-                lock_num = user_data_get()->etc.door2_lock_num & (0x01 << ch);
+                lock_num = (user_data_get()->etc.door_lock_num & (0x01 << ch))
+                               ? 2
+                               : 1;
                 ch = ch + 1;
         }
 
-        return tuya_api_channel_report(ch, media_type, monitor_valid_channel_check(MON_CH_DOOR1), lock_num, language_common_ch_string_get(TUYA_CH_DOOR1),
+        return tuya_api_channel_report(ch, media_type, lock_num, monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(TUYA_CH_DOOR1),
                                        monitor_valid_channel_check(MON_CH_DOOR2), language_common_ch_string_get(TUYA_CH_DOOR2),
                                        monitor_valid_channel_check(MON_CH_DOOR3), language_common_ch_string_get(TUYA_CH_DOOR3),
                                        monitor_valid_channel_check(MON_CH_DOOR4), language_common_ch_string_get(TUYA_CH_DOOR4),
