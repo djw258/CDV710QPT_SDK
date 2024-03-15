@@ -4,7 +4,7 @@
 #include "lang_xls.h"
 #include "stdio.h"
 #include "user_monitor.h"
-static char *layout_default_language_string[LANGUAGE_STRING_TOTAL] =
+static char *layout_default_language_string[LANGUAGE_STRING_TOTAL] = // 意义不大，只有xls文件出错才会使用这里的语言
     {
         "영문English",
         "English",

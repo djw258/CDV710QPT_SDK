@@ -121,7 +121,7 @@ bool layout_monitor_report_vaild_channel(void)
         {
                 ch = ch - 1;
                 media_type = 1;
-                lock_num = -1;
+                lock_num = 0;
         }
         else if ((ch == 16) || (ch == 17))
         {
@@ -131,6 +131,7 @@ bool layout_monitor_report_vaild_channel(void)
                         media_type = 2;
                         lock_num = 0;
                 }
+
                 ch = ch - 3;
         }
         else if ((ch < 0) || (ch > 6))

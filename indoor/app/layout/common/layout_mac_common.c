@@ -153,29 +153,32 @@ static void generate_mac_address(int index, const char *base_mac, char *mac_addr
 
 static bool mac_address_save(char *mac_address)
 {
-  if (access(MAC_ADDRESS_CONF_PATH, F_OK) == 0)
+  if (access(MAC_ADDRESS_CONF_PATH, F_OK) == 0) // 无作用，以前实现的时候会用这个路径来保存，再复制到真正的路径，只是为了重新烧录mac的时候，清除掉这个路径的备份文件
   {
     system("rm -rf " MAC_ADDRESS_CONF_PATH);
   }
-  system("mkdir " MAC_ADDRESS_CONF_PATH);
-  char conf_path[64] = {0};
-  snprintf(conf_path, sizeof(conf_path), "%seth0_mac.conf", MAC_ADDRESS_CONF_PATH);
-  int fd = open(conf_path, O_CREAT | O_WRONLY);
-  if (fd < 0)
-  {
-    printf("open %s failed \n", conf_path);
-    return false;
-  }
+  // system("mkdir " MAC_ADDRESS_CONF_PATH);
+  // char conf_path[64] = {0};
+  // snprintf(conf_path, sizeof(conf_path), "%seth0_mac.conf", MAC_ADDRESS_CONF_PATH);
+  // int fd = open(conf_path, O_CREAT | O_WRONLY);
+  // if (fd < 0)
+  // {
+  //   printf("open %s failed \n", conf_path);
+  //   return false;
+  // }
 
-  char buffer[1024] = {0};
-  memset(buffer, 0, sizeof(buffer));
-  int len = sprintf(buffer, "%s", mac_address);
-  write(fd, buffer, len);
-  close(fd);
+  // char buffer[1024] = {0};
+  // memset(buffer, 0, sizeof(buffer));
+  // int len = sprintf(buffer, "%s", mac_address);
+  // write(fd, buffer, len);
+  // close(fd);
 
-  char cmd[128] = {0};
-  sprintf(cmd, "cp %s %seth0_mac", conf_path, APPCONFIG_MAC_ADDRESS_CONF_PATH);
-  printf("cmd is %s\n", cmd);
+  // char cmd[128] = {0};
+  // sprintf(cmd, "cp %s %s", conf_path, APPCONFIG_MAC_ADDRESS_CONF_PATH);
+  // system(cmd);
+  remove(APPCONFIG_MAC_ADDRESS_CONF_PATH);
+  char cmd[256] = {0};
+  sprintf(cmd, "echo %s >> %s", mac_address, APPCONFIG_MAC_ADDRESS_CONF_PATH);
   system(cmd);
   return true;
 }
@@ -254,12 +257,10 @@ bool local_mac_address_get(char *mac_address)
   {
     return false;
   }
-  char conf_path[64] = {0};
-  snprintf(conf_path, sizeof(conf_path), "%seth0_mac", APPCONFIG_MAC_ADDRESS_CONF_PATH);
-  int fd = open(conf_path, O_RDONLY);
+  int fd = open(APPCONFIG_MAC_ADDRESS_CONF_PATH, O_RDONLY);
   if (fd < 0)
   {
-    printf("open %s failed \n", conf_path);
+    printf("open %s failed \n", APPCONFIG_MAC_ADDRESS_CONF_PATH);
     return false;
   }
   char buffer[1024] = {0};

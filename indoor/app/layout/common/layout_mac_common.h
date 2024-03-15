@@ -2,7 +2,7 @@
 #ifndef _LAYOUT_MAC_COMMON_H_
 #define _LAYOUT_MAC_COMMON_H_
 #define MAC_ADDRESS_CONF_PATH "/app/tuya/mac/"
-#define APPCONFIG_MAC_ADDRESS_CONF_PATH "/appconfigs/"
+#define APPCONFIG_MAC_ADDRESS_CONF_PATH "/appconfigs/eth0_mac"
 #define INDOOR_MAC_TXT_PATH "/tmp/tf/indoor_mac/"
 #define OUTDOOR_MAC_TXT_PATH "/tmp/tf/outdoor_mac/"
 /***

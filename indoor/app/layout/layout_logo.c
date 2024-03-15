@@ -1154,6 +1154,21 @@ void commax_pis_information_report_timer(lv_timer_t *t)
         commax_pis_information_report(network_data_get()->local_server, 80, dong, ho, "CIP_70QPT", 2, VERSION_NO, 1000);
 }
 
+bool replace_ip_address(char *string, const char *ip_addr)
+{
+        char *at_position = strchr(string, '@'); // 寻找@符号的位置
+        if ((at_position != NULL) && ip_addr != NULL)
+        {
+                if (strcmp(at_position + 1, ip_addr) != 0)
+                {
+                        // 找到@符号后，将其后面的部分替换为新的IP地址
+                        strcpy(at_position + 1, ip_addr);
+                        return true;
+                }
+        }
+        return false;
+}
+
 // 主机重启后，ip改变要自动同步注册信息
 void register_device_data_sync_timer(lv_timer_t *t)
 {
@@ -1163,11 +1178,11 @@ void register_device_data_sync_timer(lv_timer_t *t)
                 char ip[16] = {0};
                 if (sat_ip_mac_addres_get("eth0", ip, NULL, NULL) == true)
                 {
-                        network_data_save();
                         for (int i = 0; i < DEVICE_MAX; i++)
                         {
                                 if (network_data_get()->door_device[i].sip_url[0] != 0)
                                 {
+                                        replace_ip_address(network_data_get()->door_device[i].sip_url, ip);
                                         char number[32] = {0};
                                         sprintf(number, "sip:20%d@%s", i + 1, ip);
                                         sat_ipcamera_device_register(number, i, 2000);
@@ -1175,6 +1190,7 @@ void register_device_data_sync_timer(lv_timer_t *t)
                                         // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
                                 }
                         }
+                        network_data_save();
                 }
         }
         else
