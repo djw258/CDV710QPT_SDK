@@ -431,24 +431,49 @@ static void layout_intercom_talk_touch_callback(lv_event_t *e)
         standby_timer_restart(false);
 }
 
-bool intercom_talk_call_failed_callback(char *arg)
+bool intercom_talk_call_busy_callback(char *arg)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_id_buzzer_call_label);
-        if (obj == NULL)
-        {
-                return false;
-        }
 
-        if (obj->user_data)
-        {
-                lv_timer_del((lv_timer_t *)obj->user_data);
-        }
-        obj->user_data = lv_sat_timer_create(intercom_talk_top_display_delay_close_task, 3000, obj);
-
-        lv_label_set_text(obj, lang_str_get(MONITOR_XLS_LANG_ID_OUTDOOR_BUSY));
-
-        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         return false;
+}
+
+// 呼叫失败事件注册
+static bool intercom_talk_call_failed_callback(char *arg)
+{
+        sat_linphone_audio_play_stop();
+        int index = 0;
+        if (strstr(arg, "sip:20") != NULL)
+        {
+                index = monitor_index_get_by_user(arg);
+                if (index < 0)
+                {
+                        printf("[%s:%d] get channel failed(%s)\n", __func__, __LINE__, arg);
+                        return false;
+                }
+                index -= 1;
+        }
+        else if ((strstr(arg, "user:\"50") != NULL) || (strstr(arg, "sip:50") != NULL))
+        {
+                index = extern_index_get_by_user(arg);
+                if (index < 0)
+                {
+                        printf("[%s:%d] get channel failed(%s)\n", __func__, __LINE__, arg);
+                        return false;
+                }
+                index = index - 1 + 8;
+        }
+        else if (strstr(arg, "lobby") != NULL) /*lobby代表大厅设备*/
+        {
+
+                index = 6;
+        }
+        else if (strstr(arg, "guard") || strstr(arg, network_data_get()->guard_number)) /*guard代表*/
+        {
+                index = 7;
+        }
+        layout_call_log_create(CALL_LOG_CALL_OUT, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
+        layout_monitor_goto_layout_process(true);
+        return true;
 }
 static void sat_layout_enter(intercom_talk)
 {
@@ -633,7 +658,7 @@ static void sat_layout_enter(intercom_talk)
 
         user_linphone_call_streams_connected_receive_register(intercom_talk_call_answer_callback);
 
-        user_linphone_call_busy_register(intercom_talk_call_failed_callback);
+        user_linphone_call_busy_register(intercom_talk_call_busy_callback);
 
         user_linphone_call_error_register(intercom_talk_call_failed_callback);
 

@@ -192,7 +192,7 @@ static void wifi_input_animation_task_create(lv_obj_t *parent)
                 setting_msgdialog_msg_create(parent, wifi_input_obj_id_connect_status, lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECTING), 0, 110, 460, 80, false);
         }
 
-        static bool loop_count = 0; // wifi最大连接时长标志
+        static int loop_count = 0; // wifi最大连接时长标志
         loop_count = 0;
         lv_sat_timer_create(wifi_input_animation_connecting_task, 1000, &loop_count);
 
