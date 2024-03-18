@@ -931,9 +931,10 @@ static void *monitor_unlock_ctrl_task(void *arg)
 
         memcpy(info, arg, sizeof(door_lock_info));
 
-        if ((info->ch == MON_CH_DOOR1) && (info->mode == 0))
+        if ((info->mode == 0))
         {
-                door1_lock1_pin_ctrl(info->en);
+                if ((info->ch == MON_CH_DOOR1))
+                        door1_lock1_pin_ctrl(info->en);
         }
         else if (/* (info->ch == MON_CH_DOOR2) && */ (info->mode == 2))
         {
@@ -1043,18 +1044,10 @@ static bool monitor_obj_unlock_icon_display(int ch, int mode)
 static void monitor_obj_normal_lock_click(lv_event_t *e)
 {
         int ch = monitor_channel_get();
-        int mode = 0;
-        if (ch == MON_CH_DOOR1)
-        {
-                if (user_data_get()->etc.door1_open_door_mode == 0)
-                {
-                        mode = (user_data_get()->etc.door_lock_num & (0x01 << ch)) ? 2 : 1;
-                }
-                else
-                {
-                        mode = 0;
-                }
-        }
+        int mode = (user_data_get()->etc.door_lock_num & (0x01 << ch)) ? 2 : 1;
+        if ((ch == MON_CH_DOOR1) && user_data_get()->etc.door1_open_door_mode == 1)
+                mode = 0;
+
         if (monitor_obj_unlock_icon_display(ch, mode) == true)
         {
                 ring_unlock_play();
@@ -2045,11 +2038,6 @@ bool monitor_talk_call_failed_callback(char *arg)
         {
                 return false;
         }
-        int channel = monitor_index_get_by_user(arg);
-        if ((channel == -1) || (channel != monitor_channel_get() + 1))
-        {
-                return false;
-        }
 
         if (obj->user_data)
         {
@@ -2390,7 +2378,7 @@ static void sat_layout_enter(monitor)
 {
 
         /*呼叫繁忙事件注册（在监控状态收到别人的呼叫）*/
-        user_linphone_call_busy_register(layout_monitor_busy_callback);
+        user_linphone_call_busy_register(monitor_talk_call_failed_callback);
 
         user_linphone_call_outgoing_call_register(layout_monitor_outgoing_callback);
 
@@ -3312,23 +3300,19 @@ static bool tuya_event_cmd_door_open(int arg)
         int ch = monitor_channel_get();
         sprintf(password, "%d", (arg / 10) & 0xFFFFFFFF);
 
-        if ((strncmp(user_data_get()->etc.password, password, 4) == 0) || ch == MON_CH_LOBBY)
+        if ((ch == MON_CH_DOOR1) && user_data_get()->etc.door1_open_door_mode == 1)
+                num = 0;
+
+        if (strncmp(user_data_get()->etc.password, password, 4) == 0)
         {
                 ok = true;
 
-                if (ch == MON_CH_DOOR1)
-                {
-                        num = (user_data_get()->etc.door1_open_door_mode == 1) ? 0 : num;
-                }
-                else if ((ch < MON_CH_DOOR1) || (ch > MON_CH_DOOR8))
-                {
-                        num = 1;
-                }
                 if (monitor_obj_unlock_icon_display(ch, num) == true)
                 {
                         ring_unlock_play();
                 }
         }
+
         tuya_api_open_door_success_report(ok);
         return ok;
 }

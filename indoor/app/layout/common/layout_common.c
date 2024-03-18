@@ -792,6 +792,25 @@ bool is_eth0_inserted(void)
         return 0;
 }
 
+struct commax_alarm_event
+{
+        char dong[5];
+        char ho[5];
+        struct tm tm;
+        char event;
+        char type;
+};
+static void *commax_alarm_event_report(void *arg)
+{
+        struct commax_alarm_event *ala_evt;
+        ala_evt = (struct commax_alarm_event *)arg;
+        if (ala_evt != NULL)
+        {
+                commax_emergency_event_report(network_data_get()->local_server, 80, ala_evt->dong, ala_evt->ho, &(ala_evt->tm), ala_evt->event, ala_evt->type, 1000);
+        }
+        return NULL;
+}
+
 /************************************************************
 ** 函数说明:警报记录
 ** 作者: xiaoxiao
@@ -820,7 +839,19 @@ bool layout_common_call_log(int type, int ch)
                 {
                         memmove(&ho[0], &ho[1], 4);
                 }
-                result = commax_emergency_event_report(network_data_get()->local_server, 80, dong, ho, &tm, event, (type % 3) + 1, 500);
-        }
+
+                pthread_t task_id;
+                struct commax_alarm_event *ala_evt = (struct commax_alarm_event *)malloc(sizeof(struct commax_alarm_event));
+                if (ala_evt)
+                {
+                        strcpy(ala_evt->dong, dong);
+                        strcpy(ala_evt->ho, dong);
+                        ala_evt->tm = tm;
+                        ala_evt->event = event;
+                        ala_evt->type = (type % 3) + 1;
+                        pthread_create(&task_id, sat_pthread_attr_get(), commax_alarm_event_report, (void *)&ala_evt);
+                        pthread_detach(task_id);
+                }
+          }
         return result;
 }

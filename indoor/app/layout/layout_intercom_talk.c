@@ -217,12 +217,6 @@ static void intercom_talk_answer_obj_display(void)
         }
 }
 
-// 呼叫繁忙事件注册
-static bool intercom_talk_call_busy_callback(char *arg)
-{
-        return true;
-}
-
 static void intercom_talk_call_volume_obj_click(lv_event_t *e)
 {
         lv_obj_t *bottom = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_call_bottom_cont);
@@ -365,12 +359,15 @@ static void layout_intercom_talk_call_screen_click(lv_event_t *e)
         }
 }
 
-static void intercom_talk_buzzer_call_delay_close_task(lv_timer_t *ptimer)
+static void intercom_talk_top_display_delay_close_task(lv_timer_t *ptimer)
 {
-        if ((user_data_get()->system_mode & 0x0f) == 0x01)
+        if (user_data_get()->alarm.buzzer_alarm)
         {
-                user_data_get()->alarm.buzzer_alarm = false;
-                user_data_save(true, true);
+                if ((user_data_get()->system_mode & 0x0f) == 0x01)
+                {
+                        user_data_get()->alarm.buzzer_alarm = false;
+                        user_data_save(true, true);
+                }
         }
         lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
         if (obj != NULL)
@@ -411,7 +408,7 @@ static void intercom_talk_buzzer_alarm_call_callback(void)
                         {
                                 lv_timer_del((lv_timer_t *)obj->user_data);
                         }
-                        obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, 6000, obj);
+                        obj->user_data = lv_sat_timer_create(intercom_talk_top_display_delay_close_task, 6000, obj);
                 }
         }
         else
@@ -434,6 +431,25 @@ static void layout_intercom_talk_touch_callback(lv_event_t *e)
         standby_timer_restart(false);
 }
 
+bool intercom_talk_call_failed_callback(char *arg)
+{
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_id_buzzer_call_label);
+        if (obj == NULL)
+        {
+                return false;
+        }
+
+        if (obj->user_data)
+        {
+                lv_timer_del((lv_timer_t *)obj->user_data);
+        }
+        obj->user_data = lv_sat_timer_create(intercom_talk_top_display_delay_close_task, 3000, obj);
+
+        lv_label_set_text(obj, lang_str_get(MONITOR_XLS_LANG_ID_OUTDOOR_BUSY));
+
+        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        return false;
+}
 static void sat_layout_enter(intercom_talk)
 {
 
@@ -504,6 +520,15 @@ static void sat_layout_enter(intercom_talk)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                 intercom_talk_call_status_label_display();
+        }
+        {
+                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), intercom_talk_obj_id_buzzer_call_label, 327, 66, 370, 60,
+                                                      NULL, LV_OPA_COVER, 0X303030, LV_OPA_TRANSP, 0,
+                                                      16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      lang_str_get(HOME_XLS_LANG_ID_USE_MOBILE_APP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -591,7 +616,7 @@ static void sat_layout_enter(intercom_talk)
                 int time = user_timestamp_get() - buzzer_call_timestamp_get();
                 if (time > 0 && time <= 6000)
                 {
-                        obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, 6000 - time, obj);
+                        obj->user_data = lv_sat_timer_create(intercom_talk_top_display_delay_close_task, 6000 - time, obj);
                 }
                 else
                 {
@@ -608,9 +633,9 @@ static void sat_layout_enter(intercom_talk)
 
         user_linphone_call_streams_connected_receive_register(intercom_talk_call_answer_callback);
 
-        user_linphone_call_busy_register(intercom_talk_call_busy_callback);
+        user_linphone_call_busy_register(intercom_talk_call_failed_callback);
 
-        user_linphone_call_error_register(monitor_talk_call_failed_callback);
+        user_linphone_call_error_register(intercom_talk_call_failed_callback);
 
         user_linphone_call_end_register(monitor_talk_call_end_callback);
 
