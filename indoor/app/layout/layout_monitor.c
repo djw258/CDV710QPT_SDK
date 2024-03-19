@@ -923,10 +923,11 @@ static pthread_mutex_t door_lock_mutex = PTHREAD_MUTEX_INITIALIZER;
  ***********************************************/
 static void *monitor_unlock_ctrl_task(void *arg)
 {
-        door_lock_info *info = (door_lock_info *)malloc(sizeof(door_lock_info));
+        door_lock_info *info = (door_lock_info *)arg;
         if (info == NULL)
         {
                 printf("[%s]:malloc failed\n", __func__);
+                return NULL;
         }
 
         memcpy(info, arg, sizeof(door_lock_info));
@@ -990,12 +991,12 @@ static void *monitor_unlock_ctrl_task(void *arg)
 static void monitor_unlock_ctrl(int ch, int mode, bool en)
 {
         pthread_mutex_lock(&door_lock_mutex);
-        static door_lock_info info;
-        info.ch = ch;
-        info.en = en;
-        info.mode = mode;
+        door_lock_info *info = (door_lock_info *)malloc(sizeof(door_lock_info));
+        info->ch = ch;
+        info->en = en;
+        info->mode = mode;
         pthread_t task_id;
-        pthread_create(&task_id, sat_pthread_attr_get(), monitor_unlock_ctrl_task, (void *)&info);
+        pthread_create(&task_id, sat_pthread_attr_get(), monitor_unlock_ctrl_task, (void *)info);
         pthread_detach(task_id);
 }
 
@@ -1008,7 +1009,12 @@ static void monitor_obj_unlock_open_timer(lv_timer_t *ptimer)
                 lv_obj_del(obj);
         }
         door_lock_info *info = (door_lock_info *)obj->user_data;
-        monitor_unlock_ctrl(info->ch, info->mode, info->en);
+        if (info)
+        {
+                monitor_unlock_ctrl(info->ch, info->mode, info->en);
+                free(info);
+        }
+
         lv_timer_del(unlock_timer);
         unlock_timer = NULL;
 }
@@ -1027,12 +1033,12 @@ static bool monitor_obj_unlock_icon_display(int ch, int mode)
                                        resource_ui_src_get("btn_call_notice_door.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
 
         monitor_unlock_ctrl(ch, mode, true);
-        static door_lock_info info;
-        obj->user_data = &info;
-        info.ch = ch;
-        info.en = false;
-        info.mode = mode;
-        lv_timer_reset(unlock_timer = lv_timer_create(monitor_obj_unlock_open_timer, 1500, &info));
+        door_lock_info *info = (door_lock_info *)malloc(sizeof(door_lock_info));
+        obj->user_data = info;
+        info->ch = ch;
+        info->en = false;
+        info->mode = mode;
+        lv_timer_reset(unlock_timer = lv_timer_create(monitor_obj_unlock_open_timer, 1500, (void *)info));
         return true;
 }
 

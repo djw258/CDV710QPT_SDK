@@ -321,9 +321,12 @@ bool alarm_trigger_check(bool active)
                 {
                         if (user_data_get()->alarm.alarm_enable[i] == 0)
                         {
-                                user_data_get()->alarm.alarm_trigger[i] = false;
-                                user_data_get()->alarm.alarm_trigger_enable[i] = false;
-                                user_data_save(true, true);
+                                if ((user_data_get()->alarm.alarm_trigger[i]) || user_data_get()->alarm.alarm_trigger_enable[i])
+                                {
+                                        user_data_get()->alarm.alarm_trigger[i] = false;
+                                        user_data_get()->alarm.alarm_trigger_enable[i] = false;
+                                        user_data_save(true, true);
+                                }
                                 continue;
                         }
                         if (((!user_data_get()->alarm.away_alarm_enable_list) & (0x01 << i)) && (!user_data_get()->alarm.security_alarm_enable_list) & (0x01 << i))
@@ -852,6 +855,6 @@ bool layout_common_call_log(int type, int ch)
                         pthread_create(&task_id, sat_pthread_attr_get(), commax_alarm_event_report, (void *)&ala_evt);
                         pthread_detach(task_id);
                 }
-          }
+        }
         return result;
 }

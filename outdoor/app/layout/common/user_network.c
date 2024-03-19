@@ -2937,7 +2937,7 @@ static void *sat_socket_tcp_receive_task(void *arg)
         int read_len = 0;
         int remain_len = DOOR_CAMERA_RECEIVE_BUFFER_MAX;
         int recv_len = 0;
-        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 100)) > 0)
+        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 200)) > 0)
         {
                 //  printf("%s\n", receive_data);la
                 read_len += recv_len;
