@@ -810,6 +810,7 @@ static void *commax_alarm_event_report(void *arg)
         if (ala_evt != NULL)
         {
                 commax_emergency_event_report(network_data_get()->local_server, 80, ala_evt->dong, ala_evt->ho, &(ala_evt->tm), ala_evt->event, ala_evt->type, 1000);
+                free(ala_evt);
         }
         return NULL;
 }

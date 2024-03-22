@@ -20,7 +20,7 @@ static bool alarm_list_sync(void)
 	{
 		return false;
 	}
-	if(write(fd, alarm_list, sizeof(alarm_list_info) * alarm_list_total) < 0)
+	if (write(fd, alarm_list, sizeof(alarm_list_info) * alarm_list_total) < 0)
 	{
 		perror("write failed\n");
 	}
@@ -53,7 +53,7 @@ bool alarm_list_init(void)
 			break;
 		}
 	}
-	printf("alarm_list_total is %d\n",alarm_list_total);
+	printf("alarm_list_total is %d\n", alarm_list_total);
 	close(fd);
 	alarm_list_sync();
 	return true;
@@ -64,9 +64,9 @@ bool alarm_list_init(void)
 **   函数作用：添加一个警报信息
 **   参数说明:
 ***/
-bool alarm_list_add(int type,int id, struct tm *tm)
+bool alarm_list_add(int type, int id, struct tm *tm)
 {
-	if(id >=0)
+	if (id >= 0)
 	{
 		trigger_tm[id] = *tm;
 	}
@@ -103,7 +103,7 @@ bool alarm_list_del_all(void)
 **   函数作用：获取列表
 **   参数说明:
 ***/
-bool alarm_list_get(int index, int * type, int *ch, struct tm *tm)
+bool alarm_list_get(int index, int *type, int *ch, struct tm *tm)
 {
 	if (index >= alarm_list_total)
 	{
@@ -130,12 +130,12 @@ bool alarm_list_total_get(int *total)
 ** 函数说明: 根据报警通道获取最近一次报警时间
 ** 作者: xiaoxiao
 ** 日期: 2023-05-06 23:06:39
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 bool alarm_occur_time_get(int ch, struct tm *tm)
 {
-	if((ch > 8) || (ch < 0))
+	if ((ch > 8) || (ch < 0))
 	{
 		return false;
 	}

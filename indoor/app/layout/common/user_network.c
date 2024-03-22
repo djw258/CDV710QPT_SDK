@@ -610,11 +610,11 @@ static void *sat_socket_tcp_receive_task(void *arg)
         unsigned char *data = (unsigned char *)arg;
         int client_fd = *((int *)data);
         unsigned char *receive_data = data + sizeof(int);
-        memset(receive_data, 0, TCP_RECEIVE_BUFFER_SIZE);
+        memset(receive_data, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         int read_len = 0;
-        int remain_len = TCP_RECEIVE_BUFFER_SIZE;
+        int remain_len = DOOR_CAMERA_RECEIVE_BUFFER_MAX;
         int recv_len = 0;
-        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 200)) > 0)
+        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 100)) > 0)
         {
                 //  printf("%s\n", receive_data);la
                 read_len += recv_len;
@@ -642,7 +642,7 @@ static void *user_network_tcp_task(void *arg)
                 if (client_fd >= 0)
                 {
                         pthread_t thread_id;
-                        unsigned char *receive_data = (unsigned char *)malloc(sizeof(int) + TCP_RECEIVE_BUFFER_SIZE);
+                        unsigned char *receive_data = (unsigned char *)malloc(sizeof(int) + DOOR_CAMERA_RECEIVE_BUFFER_MAX);
                         int *p_socket_fd = (int *)receive_data;
                         *p_socket_fd = client_fd;
                         pthread_create(&thread_id, sat_pthread_attr_get(), sat_socket_tcp_receive_task, receive_data);

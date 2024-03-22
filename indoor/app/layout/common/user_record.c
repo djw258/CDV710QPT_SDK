@@ -29,22 +29,26 @@ static void *tuya_event_report_func(void *arg)
 {
 
         user_record_info *info = (user_record_info *)arg;
-        if (info->record_mode & 0x01)
+        if (info)
         {
-                tuya_api_call_event(info->ch, (const char *)info->data, info->size);
-        }
-        if (info->record_mode & 0x02)
-        {
-                tuya_api_alarm_event(info->ch, (const char *)info->data, info->size);
-        }
-        if (info->record_mode & 0x04)
-        {
-                tuya_api_motion_event(info->ch, (const char *)info->data, info->size);
-        }
-        if (info->data != NULL)
-        {
-                free((char *)info->data);
-                info->data = NULL;
+                if (info->record_mode & 0x01)
+                {
+                        tuya_api_call_event(info->ch, (const char *)info->data, info->size);
+                }
+                if (info->record_mode & 0x02)
+                {
+                        tuya_api_alarm_event(info->ch, (const char *)info->data, info->size);
+                }
+                if (info->record_mode & 0x04)
+                {
+                        tuya_api_motion_event(info->ch, (const char *)info->data, info->size);
+                }
+                if (info->data != NULL)
+                {
+                        free((char *)info->data);
+                        info->data = NULL;
+                }
+                free(info);
         }
 
         return NULL;
@@ -88,23 +92,17 @@ void tuya_event_report(int event, int ch, unsigned char *data, int size)
         {
                 return;
         }
-        static user_record_info info;
+        user_record_info *info = (user_record_info *)malloc(sizeof(user_record_info));
 
-        if (info.data != NULL)
-        {
-                free((char *)info.data);
-                info.data = NULL;
-        }
+        info->data = (char *)malloc(size);
 
-        info.data = (char *)malloc(size);
-
-        memcpy(info.data, data, size);
-        info.size = size;
-        info.ch = ch;
-        info.record_mode = event;
+        memcpy(info->data, data, size);
+        info->size = size;
+        info->ch = ch;
+        info->record_mode = event;
 
         pthread_t task_id;
-        pthread_create(&task_id, sat_pthread_attr_get(), tuya_event_report_func, (void *)&info);
+        pthread_create(&task_id, sat_pthread_attr_get(), tuya_event_report_func, (void *)info);
         pthread_detach(task_id);
 }
 /***
@@ -145,7 +143,9 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 {
                         sprintf(name, "%s", network_data_get()->door_device[ch].door_name);
                 }
+                printf("[%s:%d]--------------------\n", __func__, __LINE__);
                 media_file_create(type, name, mode & 0x3F, file_path);
+                printf("[%s:%d]--------------------\n", __func__, __LINE__);
                 int fd = open(file_path, O_CREAT | O_WRONLY);
                 if (fd >= 0)
                 {
@@ -157,7 +157,9 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 {
                         printf("\n\n snap jpg: %s open failed \n\n", file_path);
                 }
+                printf("[%s:%d]--------------------\n", __func__, __LINE__);
                 media_file_bad_check(file_path);
+                printf("[%s:%d]--------------------\n", __func__, __LINE__);
         }
 
         if (((mode & REC_MODE_TUYA_CALL) || (mode & REC_MODE_TUYA_ALARM) || (mode & REC_MODE_TUYA_MOTION)) && ((user_data_get()->system_mode & 0x0f) == 0x01))

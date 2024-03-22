@@ -53,6 +53,8 @@ enum
 	MSG_EVENT_CMD_AUDIO_RING_PLAY,
 	/*linphone 通话状态*/
 	MSG_EVENT_CMD_LINPHONE_STATE,
+
+	MSG_EVNET_CMD_CALL_END,
 };
 
 typedef struct
@@ -211,4 +213,11 @@ void call_ring_play_status_func_register(void (*callback)(int));
 ** 说明: linphone通话状态
 ***********************************************/
 void linphone_call_status_event_func_register(void (*callback)(int));
+
+/***********************************************
+** 作者: xiaoxiao
+** 日期: 2022-12-28 13:42:13
+** 说明: 会话结束注册
+***********************************************/
+void call_end_event_fun_register(void (*callback)(void));
 #endif

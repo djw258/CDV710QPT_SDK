@@ -334,6 +334,14 @@ static void call_ring_event_callback(void)
                 sat_linphone_audio_play_start(RESOURCE_RING_PATH "call_door1.wav", 1);
         }
 }
+
+/*会话结束回调*/
+static void call_end_event_callback(void)
+{
+        // exit(0);
+        // system("/app/SAT_ANYKA3918.BIN &");
+}
+
 /* ring play:arg1:0,start,1:finish*/
 /*LinphoneCallState*/
 
@@ -377,7 +385,8 @@ static void linphone_call_status_callback(int state)
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-static void client_ip_change_report(void)
+static void
+client_ip_change_report(void)
 {
         char ip[16] = {0};
         if (sat_ip_mac_addres_get("eth0", ip, NULL, NULL) == true)
@@ -393,6 +402,31 @@ static void client_ip_change_report(void)
                 // sat_ipcamera_device_update_server_ip(i, user_data_get()->network.ipaddr, 1000);
         }
 }
+
+#if 1
+static void *outdoor_call_task(void *arg)
+{
+        char user[8] = {0};
+        while ((1))
+        {
+                for (int i = 1; i < 9; i++)
+                {
+                        memset(user, 0, sizeof(user));
+                        sprintf(user, "50%d", i);
+                        /*只要存在一个在线，则呼叫*/
+                        if (asterisk_register_online_check(user) == true)
+                        {
+                                char call[64] = {0};
+                                sprintf(call, "sip:100@%s:5066", user_data_get()->server_ip);
+                                sat_linphone_call(call, true, true, NULL);
+                                break;
+                        }
+                }
+                sleep(90);
+        }
+        return NULL;
+}
+#endif
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
@@ -449,6 +483,8 @@ int main(int argc, char *argv[])
         video_stream_status_callback_register(video_stream_status_callback);
         /*播放呼叫铃声*/
         call_ring_event_fun_register(call_ring_event_callback);
+
+        call_end_event_fun_register(call_end_event_callback);
         /*铃声播放状态*/
         // call_ring_play_status_func_register(call_ring_play_status_callback);
         /*linphone 状态改变处理函数*/
@@ -467,6 +503,10 @@ int main(int argc, char *argv[])
         pthread_t thread_id;
         pthread_create(&thread_id, sat_pthread_attr_get(), media_server_task, NULL);
 
+#if 1
+        pthread_create(&thread_id, sat_pthread_attr_get(), outdoor_call_task, NULL);
+        pthread_detach(thread_id);
+#endif
         /*
          * @日期: 2022-08-08
          * @作者: leo.liu

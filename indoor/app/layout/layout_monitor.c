@@ -107,6 +107,7 @@ static int monitor_contrast[3] = {0};
 
 void layout_monitor_goto_layout_process(bool active)
 {
+        printf("[%s]====[%d]=========quit monitor\n", __func__, __LINE__);
         if (is_channel_ipc_camera(monitor_channel_get()) == 1)
         {
                 monitor_close(0x02);
@@ -466,6 +467,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
                         }
                         layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
                 }
+                printf("[%s]====[%d]=========quit monitor\n", __func__, __LINE__);
                 layout_monitor_goto_layout_process(true);
         }
 }
@@ -1003,18 +1005,16 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
 static void monitor_obj_unlock_open_timer(lv_timer_t *ptimer)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_unlock_icon);
-
-        if (obj != NULL)
-        {
-                lv_obj_del(obj);
-        }
         door_lock_info *info = (door_lock_info *)obj->user_data;
         if (info)
         {
                 monitor_unlock_ctrl(info->ch, info->mode, info->en);
                 free(info);
         }
-
+        if (obj != NULL)
+        {
+                lv_obj_del(obj);
+        }
         lv_timer_del(unlock_timer);
         unlock_timer = NULL;
 }
@@ -2858,6 +2858,7 @@ static void sat_layout_quit(monitor)
         user_linphone_call_end_register(NULL);
 
         user_linphone_call_error_register(NULL);
+        printf("[%s]====[%d]=========quit monitor\n", __func__, __LINE__);
 }
 
 sat_layout_create(monitor);
@@ -3259,6 +3260,7 @@ static bool monitor_doorcamera_end_process(char *arg)
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
                 if (call_id == linphone_call_id)
                 {
+                        printf("[%s]====[%d]=========quit monitor\n", __func__, __LINE__);
                         layout_monitor_goto_layout_process(false);
                 }
         }
