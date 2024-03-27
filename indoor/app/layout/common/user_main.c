@@ -236,22 +236,22 @@ static void *asterisk_server_sync_task(void *arg)
                                 usleep(100 * 1000); // 网络数据比较大，延时时间设置得更长
                         }
                         timeout++;
-                        if (timeout == 120) // 1分钟左右同步一次数据
+                        if (timeout == 5) // 1分钟左右同步一次数据
                         {
                                 is_asterisk_server_sync_network_data_force = false;
                                 sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                         }
-                        else if (timeout == 121)
+                        else if (timeout == 6)
                         {
                                 is_asterisk_server_sync_user_data_force = false;
                                 sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
                         }
-                        else if (timeout == 122)
+                        else if (timeout == 7)
                         {
                                 is_need_asterisk_update = false;
                                 sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
                         }
-                        else if (timeout == 123)
+                        else if (timeout == 8)
                         {
                                 timeout = 0;
                                 struct tm tm;
