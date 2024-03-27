@@ -107,7 +107,6 @@ static int monitor_contrast[3] = {0};
 
 void layout_monitor_goto_layout_process(bool active)
 {
-        printf("[%s]====[%d]=========quit monitor\n", __func__, __LINE__);
         if (is_channel_ipc_camera(monitor_channel_get()) == 1)
         {
                 monitor_close(0x02);
@@ -159,10 +158,6 @@ void layout_monitor_goto_layout_process(bool active)
                 }
         }
 
-        if (is_channel_ipc_camera(monitor_channel_get()) != true)
-        {
-                sat_linphone_incomming_refresh(node->call_id);
-        }
         sat_linphone_incomming_refresh(node->call_id);
         layout_linphone_current_call_id_set(node->call_id);
         monitor_channel_set(node->channel);
@@ -467,7 +462,6 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
                         }
                         layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
                 }
-                printf("[%s]====[%d]=========quit monitor\n", __func__, __LINE__);
                 layout_monitor_goto_layout_process(true);
         }
 }
@@ -911,7 +905,7 @@ static void monitor_obj_handup_display(void)
         }
 }
 
-typedef struct layout_monitor
+typedef struct
 {
         int ch;
         int mode;
@@ -2401,7 +2395,7 @@ static void sat_layout_enter(monitor)
         monitor_timeout_sec_reset(30);
 
         int ch = monitor_channel_get();
-        if (is_channel_ipc_camera(monitor_channel_get()) == false)
+        if ((is_channel_ipc_camera(monitor_channel_get()) == 0) && ((user_data_get()->system_mode & 0xf) == 0x01 || monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG)) // 主机或者分机手动进门监控才通知门改变分辨率,所有分机都发指令给门，对门的负荷大
         {
                 if (tuya_api_client_num() >= 1)
                 {
@@ -2858,7 +2852,6 @@ static void sat_layout_quit(monitor)
         user_linphone_call_end_register(NULL);
 
         user_linphone_call_error_register(NULL);
-        printf("[%s]====[%d]=========quit monitor\n", __func__, __LINE__);
 }
 
 sat_layout_create(monitor);
@@ -3260,7 +3253,6 @@ static bool monitor_doorcamera_end_process(char *arg)
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
                 if (call_id == linphone_call_id)
                 {
-                        printf("[%s]====[%d]=========quit monitor\n", __func__, __LINE__);
                         layout_monitor_goto_layout_process(false);
                 }
         }

@@ -128,7 +128,6 @@ bool layout_monitor_report_vaild_channel(void)
                 lock_num = 1;
                 if (ch == 17)
                 {
-                        media_type = 2;
                         lock_num = 0;
                 }
 

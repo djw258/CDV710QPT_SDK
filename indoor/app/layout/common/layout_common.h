@@ -78,6 +78,14 @@ void sd_state_change_default_callback(void);
 void asterisk_server_sync_user_data_force(bool is_sync);
 
 /************************************************************
+** 函数说明: 设置用户注册数据改变标记状态
+** 作者: xiaoxiao
+** 日期: 2023-08-04 08:33:44
+** 参数说明: flag : 0x00:user_data 0x01:network_data
+** 注意事项:
+************************************************************/
+void asterisk_server_asterisk_data_force(bool is_sync);
+/************************************************************
 ** 函数说明: 设置网络配置文件改变标记状态
 ** 作者: xiaoxiao
 ** 日期: 2023-08-04 08:33:44
@@ -193,4 +201,12 @@ bool is_eth0_inserted(void);
 ** 注意事项：
 ************************************************************/
 bool layout_common_call_log(int type, int ch);
+/************************************************************
+** 函数说明:ip变化后更新数据
+** 作者: xiaoxiao
+** 日期：2024-03-25 16:42:12
+** 参数说明:
+** 注意事项：
+************************************************************/
+bool replace_ip_address(char *string, const char *ip_addr);
 #endif

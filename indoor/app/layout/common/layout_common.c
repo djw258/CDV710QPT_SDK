@@ -795,18 +795,18 @@ bool is_eth0_inserted(void)
         return 0;
 }
 
-struct commax_alarm_event
+typedef struct
 {
         char dong[5];
         char ho[5];
         struct tm tm;
         char event;
         char type;
-};
+} commax_alarm_event;
 static void *commax_alarm_event_report(void *arg)
 {
-        struct commax_alarm_event *ala_evt;
-        ala_evt = (struct commax_alarm_event *)arg;
+        commax_alarm_event *ala_evt;
+        ala_evt = (commax_alarm_event *)arg;
         if (ala_evt != NULL)
         {
                 commax_emergency_event_report(network_data_get()->local_server, 80, ala_evt->dong, ala_evt->ho, &(ala_evt->tm), ala_evt->event, ala_evt->type, 1000);
@@ -845,17 +845,39 @@ bool layout_common_call_log(int type, int ch)
                 }
 
                 pthread_t task_id;
-                struct commax_alarm_event *ala_evt = (struct commax_alarm_event *)malloc(sizeof(struct commax_alarm_event));
+                commax_alarm_event *ala_evt = (commax_alarm_event *)malloc(sizeof(commax_alarm_event));
                 if (ala_evt)
                 {
                         strcpy(ala_evt->dong, dong);
-                        strcpy(ala_evt->ho, dong);
+                        strcpy(ala_evt->ho, ho);
                         ala_evt->tm = tm;
                         ala_evt->event = event;
                         ala_evt->type = (type % 3) + 1;
-                        pthread_create(&task_id, sat_pthread_attr_get(), commax_alarm_event_report, (void *)&ala_evt);
+                        pthread_create(&task_id, sat_pthread_attr_get(), commax_alarm_event_report, (void *)ala_evt);
                         pthread_detach(task_id);
                 }
         }
         return result;
+}
+
+/************************************************************
+** 函数说明:ip变化后更新数据
+** 作者: xiaoxiao
+** 日期：2024-03-25 16:42:12
+** 参数说明:
+** 注意事项：
+************************************************************/
+bool replace_ip_address(char *string, const char *ip_addr)
+{
+        char *at_position = strchr(string, '@'); // 寻找@符号的位置
+        if ((at_position != NULL) && ip_addr != NULL)
+        {
+                if (strcmp(at_position + 1, ip_addr) != 0)
+                {
+                        // 找到@符号后，将其后面的部分替换为新的IP地址
+                        strcpy(at_position + 1, ip_addr);
+                        return true;
+                }
+        }
+        return false;
 }

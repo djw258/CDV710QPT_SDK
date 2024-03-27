@@ -142,6 +142,11 @@ static void lv_task_scheduling_start(void)
 static bool is_asterisk_server_sync_user_data_force = false;
 static bool is_asterisk_server_sync_network_data_force = false;
 static bool is_asterisk_server_sync_rtc_data_force = false;
+static bool is_need_asterisk_update = false;
+void asterisk_server_asterisk_data_force(bool is_sync)
+{
+        is_need_asterisk_update = is_sync;
+}
 void asterisk_server_sync_user_data_force(bool is_sync)
 {
         is_asterisk_server_sync_user_data_force = is_sync;
@@ -161,10 +166,9 @@ bool asterisk_server_sync_rtc_data_force_get(void)
 /*使用线程异步发送*/
 static void *asterisk_server_sync_task(void *arg)
 {
+        sleep(2); // 考虑到所有设备上线时间不统一，有可能发生设备第一次注册的时间戳在线程的轮询间隔内，造成短时间内，主线程需要同步的次数较多，短时间内消耗大量内存
 
         static bool is_registers_online[20] = {0};
-
-        bool is_need_asterisk_update = false;
 
         asterisk_register_info *p_register_info = asterisk_register_info_get();
 
@@ -179,7 +183,7 @@ static void *asterisk_server_sync_task(void *arg)
                         for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
                         {
                                 /*主机过滤*/
-                                if ((p_register_info[i].name[0] == '\0') || (strncmp(p_register_info[i].name, "501", 3) == 0))
+                                if ((p_register_info[i].name[0] == '\0') /*  || (strncmp(p_register_info[i].name, "501", 3) == 0) */)
                                 {
                                         if ((p_register_info[i].name[0] == '\0') && (is_registers_online[i] == true))
                                         {
@@ -197,20 +201,7 @@ static void *asterisk_server_sync_task(void *arg)
                                                 is_asterisk_server_sync_network_data_force = true;
                                                 is_need_asterisk_update = true;
                                         }
-                                        if (is_asterisk_server_sync_user_data_force)
-                                        {
-                                                is_asterisk_server_sync_user_data_force = false;
 
-                                                user_data_get()->sync_timestamp = user_timestamp_get();
-                                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                                                usleep(300 * 1000); // 网络数据比较大，延时时间设置得更长
-                                        }
-                                        if (is_asterisk_server_sync_network_data_force)
-                                        {
-                                                is_asterisk_server_sync_network_data_force = false;
-                                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
-                                                usleep(100 * 1000);
-                                        }
                                         is_registers_online[i] = true;
                                 }
                                 else if ((is_registers_online[i] == true) && (abs(timestamp - p_register_info[i].timestamp) > (10 * 1000)))
@@ -223,28 +214,51 @@ static void *asterisk_server_sync_task(void *arg)
                                 }
                         }
 
+                        if (is_asterisk_server_sync_user_data_force)
+                        {
+                                is_asterisk_server_sync_user_data_force = false;
+
+                                user_data_get()->sync_timestamp = user_timestamp_get();
+                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+                                usleep(100 * 1000); // 网络数据比较大，延时时间设置得更长
+                        }
+                        if (is_asterisk_server_sync_network_data_force)
+                        {
+                                is_asterisk_server_sync_network_data_force = false;
+                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
+                                usleep(300 * 1000); // 加一些延时，避免室内机同时申请的空间太多
+                        }
                         /*需要同步注册信息*/
                         if (is_need_asterisk_update == true)
                         {
                                 is_need_asterisk_update = false;
                                 sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
+                                usleep(100 * 1000); // 网络数据比较大，延时时间设置得更长
                         }
-                        if (timeout++ == 120)
+                        timeout++;
+                        if (timeout == 120) // 1分钟左右同步一次数据
+                        {
+                                is_asterisk_server_sync_network_data_force = false;
+                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+                        }
+                        else if (timeout == 121)
+                        {
+                                is_asterisk_server_sync_user_data_force = false;
+                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
+                        }
+                        else if (timeout == 122)
+                        {
+                                is_need_asterisk_update = false;
+                                sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
+                        }
+                        else if (timeout == 123)
                         {
                                 timeout = 0;
-                                is_asterisk_server_sync_network_data_force = false;
-                                is_asterisk_server_sync_user_data_force = false;
-                                is_need_asterisk_update = false;
                                 struct tm tm;
                                 user_time_read(&tm);
                                 sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1000, NULL);
-                                usleep(100 * 1000);
-                                sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
-                                usleep(300 * 1000);
-                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                                usleep(100 * 1000);
-                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
                         }
+
                         is_asterisk_server_sync_rtc_data_force = false;
                 }
                 usleep(500 * 1000);
@@ -265,6 +279,7 @@ static void sigchld(int sign)
  */
 int main(int argc, char *argv[])
 {
+        // system("sysctl -w kernel.printk=\"3 3 3 3\""); // 设置内核打印等级，忽略内核打印
         signal(SIGCHLD, sigchld);
         signal(SIGPIPE, SIG_IGN);
 

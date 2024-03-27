@@ -221,8 +221,7 @@ static bool asterisk_register_online_check(const char *user)
         asterisk_register_info *p_register_info = asterisk_register_info_get();
         for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
         {
-
-                if (strncmp(p_register_info[i].name, user, strlen(user)) != NULL)
+                if (strncmp(p_register_info[i].name, user, strlen(user)) == NULL)
                 {
                         /*分机收到的时间戳为0,代表已经离线*/
                         if (p_register_info[i].timestamp)
@@ -249,7 +248,7 @@ static void key_call_process(unsigned int code, unsigned int state)
                 memset(user, 0, sizeof(user));
                 sprintf(user, "50%d", i);
                 /*只要存在一个在线，则呼叫*/
-                if (asterisk_register_online_check(user) == true)
+                if (asterisk_register_online_check(user) == 0)
                 {
                         char call[64] = {0};
                         sprintf(call, "sip:100@%s:5066", user_data_get()->server_ip);
@@ -340,6 +339,7 @@ static void call_end_event_callback(void)
 {
         // exit(0);
         // system("/app/SAT_ANYKA3918.BIN &");
+        sat_kill_task_process("SAT_ANYKA3918.BIN");
 }
 
 /* ring play:arg1:0,start,1:finish*/
@@ -378,16 +378,9 @@ static void linphone_call_status_callback(int state)
 }
 #endif
 
-/************************************************************
-** 函数说明: ip变化检测及上报
-** 作者: xiaoxiao
-** 日期：2024-01-18 16:30:52
-** 参数说明:
-** 注意事项：
-************************************************************/
-static void
-client_ip_change_report(void)
+static void *client_ip_report_task(void *arg)
 {
+        usleep(200 * 1000);
         char ip[16] = {0};
         if (sat_ip_mac_addres_get("eth0", ip, NULL, NULL) == true)
         {
@@ -396,14 +389,36 @@ client_ip_change_report(void)
                 {
                         char number[32] = {0};
                         sprintf(number, "sip:%s@%s", user_data_get()->device.number, ip);
-                        ipc_camera_device_ip_change(number, user_data_get()->server_ip, 80, user_data_get()->device.name, user_data_get()->device.password, 2000);
+                        if (ipc_camera_device_ip_change(number, user_data_get()->server_ip, 80, user_data_get()->device.name, user_data_get()->device.password, 2000) == false) // 室内接收此事件后，会把注册信息同步给门(很重要)，以防万一，加一次判断
+                        {
+                                ipc_camera_device_ip_change(number, user_data_get()->server_ip, 80, user_data_get()->device.name, user_data_get()->device.password, 2000);
+                        }
                 }
-
-                // sat_ipcamera_device_update_server_ip(i, user_data_get()->network.ipaddr, 1000);
         }
+        return NULL;
 }
 
-#if 1
+/************************************************************
+** 函数说明: ip变化检测及上报
+** 作者: xiaoxiao
+** 日期：2024-01-18 16:30:52
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void client_ip_report(void)
+{
+        if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
+        {
+                char domain[32] = {0};
+                sprintf(domain, "%s:5066", user_data_get()->server_ip);
+                sat_linphone_register(user_data_get()->device.name, user_data_get()->device.number, NULL, domain);
+        }
+        pthread_t thread_id;
+        pthread_create(&thread_id, sat_pthread_attr_get(), client_ip_report_task, NULL);
+        pthread_detach(thread_id);
+}
+#define CALL_TEST 0
+#if CALL_TEST
 static void *outdoor_call_task(void *arg)
 {
         char user[8] = {0};
@@ -441,11 +456,11 @@ int main(int argc, char *argv[])
         //   signal(SIGCHLD, sigchld_func);
         remove("/tmp/.linphonerc");
         printf("*****************************************************\n");
-        printf("*****        project: CIPD20YS(outdoor)        *****\n");
-        printf("*****        author:  sat                       *****\n");
-        printf("*****        date:    2023/03/11                *****\n");
+        printf("*****        project: CIPD20YS(outdoor)       *****\n");
+        printf("*****        author:  sat                                       *****\n");
+        printf("*****        date:    2023/03/11                         *****\n");
         printf("*****************************************************\n");
-        usleep(1000 * 1000);
+        // usleep(1000 * 1000);
         sdk_run_config config = {0};
         ak_sdk_init(&config);
 
@@ -490,20 +505,12 @@ int main(int argc, char *argv[])
         /*linphone 状态改变处理函数*/
         // linphone_call_status_event_func_register(linphone_call_status_callback);
 
-        if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
-        {
-                usleep(100 * 1000);
-                char domain[32] = {0};
-                sprintf(domain, "%s:5066", user_data_get()->server_ip);
-                sat_linphone_register(user_data_get()->device.name, user_data_get()->device.number, NULL, domain);
-        }
-
-        client_ip_change_report();
+        client_ip_report();
 
         pthread_t thread_id;
         pthread_create(&thread_id, sat_pthread_attr_get(), media_server_task, NULL);
 
-#if 1
+#if CALL_TEST
         pthread_create(&thread_id, sat_pthread_attr_get(), outdoor_call_task, NULL);
         pthread_detach(thread_id);
 #endif

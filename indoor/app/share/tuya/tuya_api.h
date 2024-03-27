@@ -45,7 +45,7 @@ bool tuya_api_app_sync_utc_time(void);
 **   日期:2022-06-07 18:15:39
 **   作者: leo.liu
 **   函数作用：上传有效通道
-**   参数说明:channe:当前监控的通道
+**   参数说明:channe:当前监控的通道;media_type:0\音视频,1\【视频,2\音频；lock_num锁数量
 ***/
 bool tuya_api_channel_report(int cur, int media_type, int lock_num, bool door1_valid, const char *door1_str,
                              bool door2_valid, const char *door2_str,

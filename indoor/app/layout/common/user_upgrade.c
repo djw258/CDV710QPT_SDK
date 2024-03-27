@@ -81,6 +81,7 @@ bool upgrade_outdoor_device(int multicast_socket, const char *upgrade_path)
                         client_fd[i] = sat_socket_tcp_accept(server_fd, &client_addr, 3 * 1000);
                         if (client_fd[i] < 0)
                         {
+                                printf("client_fd[%d] accept failed\n", i);
                                 break;
                         }
                         else if (sat_socket_tcp_receive(client_fd[i], (unsigned char *)client_ip[i], sizeof(client_ip[i]), 500) <= 0)

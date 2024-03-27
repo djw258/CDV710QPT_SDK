@@ -74,7 +74,7 @@ bool alarm_list_add(int type, int id, struct tm *tm)
 	if (alarm_list_total == 256)
 	{
 		alarm_list_total--;
-		memmove(&alarm_list[0], &alarm_list[1], alarm_list_total);
+		memmove(&alarm_list[0], &alarm_list[1], alarm_list_total * sizeof(alarm_list_info));
 	}
 	alarm_list[alarm_list_total].type = type;
 	alarm_list[alarm_list_total].ch = id;

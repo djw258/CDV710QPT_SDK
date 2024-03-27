@@ -2939,7 +2939,7 @@ static void *sat_socket_tcp_receive_task(void *arg)
         int recv_len = 0;
         while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 200)) > 0)
         {
-                //  printf("%s\n", receive_data);la
+                SAT_DEBUG("%s\n", receive_data);
                 read_len += recv_len;
                 remain_len -= recv_len;
         }
@@ -2961,6 +2961,7 @@ static void *user_network_tcp_task(void *arg)
         struct sockaddr_in client_addr;
 
         sat_socket_tcp_open(&server_fd, USER_NETWORK_TCP_SYNC_SERVER_PORT, DEVICE_MAX);
+        SAT_DEBUG("user_network_tcp_task start");
         while (1)
         {
                 memset(&client_addr, 0, sizeof(struct sockaddr_in));

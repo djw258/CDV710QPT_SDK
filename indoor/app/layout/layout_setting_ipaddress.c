@@ -269,6 +269,7 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                                 {
                                         if (network_data_get()->door_device[i].sip_url[0] != 0)
                                         {
+                                                replace_ip_address(network_data_get()->door_device[i].sip_url, network_data_get()->network.ipaddr);
                                                 char number[32] = {0};
                                                 sprintf(number, "sip:20%d@%s", i + 1, network_data_get()->network.ipaddr);
                                                 sat_ipcamera_device_register(number, i, 5000);

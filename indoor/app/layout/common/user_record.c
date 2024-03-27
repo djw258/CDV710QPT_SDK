@@ -143,9 +143,7 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 {
                         sprintf(name, "%s", network_data_get()->door_device[ch].door_name);
                 }
-                printf("[%s:%d]--------------------\n", __func__, __LINE__);
                 media_file_create(type, name, mode & 0x3F, file_path);
-                printf("[%s:%d]--------------------\n", __func__, __LINE__);
                 int fd = open(file_path, O_CREAT | O_WRONLY);
                 if (fd >= 0)
                 {
@@ -157,9 +155,7 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 {
                         printf("\n\n snap jpg: %s open failed \n\n", file_path);
                 }
-                printf("[%s:%d]--------------------\n", __func__, __LINE__);
                 media_file_bad_check(file_path);
-                printf("[%s:%d]--------------------\n", __func__, __LINE__);
         }
 
         if (((mode & REC_MODE_TUYA_CALL) || (mode & REC_MODE_TUYA_ALARM) || (mode & REC_MODE_TUYA_MOTION)) && ((user_data_get()->system_mode & 0x0f) == 0x01))

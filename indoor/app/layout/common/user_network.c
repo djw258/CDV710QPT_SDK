@@ -203,6 +203,7 @@ static void *user_network_common_multicast_task(void *arg)
 
 /*********************************************** 		tcp   		***********************************************/
 #define POST_ONVIF_DEVICE_HTML_TEXT "POST /onvif/device_service"
+#define TCP_RECEIVE_BUFFER_SIZE (128 * 1024)
 static bool tcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const char *string)
 {
         int html_size = sat_file_size_get(S200_OK_REQUEST_PATH);
@@ -212,14 +213,14 @@ static bool tcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const cha
                 return false;
         }
 
-        char *html_fmt = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        char *html_fmt = (char *)malloc(TCP_RECEIVE_BUFFER_SIZE);
         if (html_fmt == NULL)
         {
-                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                SAT_DEBUG("char *html_buffer = (char *)malloc(TCP_RECEIVE_BUFFER_SIZE);");
                 return false;
         }
 
-        memset(html_fmt, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        memset(html_fmt, 0, TCP_RECEIVE_BUFFER_SIZE);
         int read_len = sat_file_read(S200_OK_REQUEST_PATH, html_fmt, html_size);
         if (read_len < 0)
         {
@@ -228,10 +229,10 @@ static bool tcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const cha
                 return false;
         }
 
-        char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        char *html_buffer = (char *)malloc(TCP_RECEIVE_BUFFER_SIZE);
         if (html_buffer == NULL)
         {
-                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                SAT_DEBUG("char *html_buffer = (char *)malloc(TCP_RECEIVE_BUFFER_SIZE);");
                 free(html_fmt);
                 return false;
         }
@@ -245,10 +246,10 @@ static bool tcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const cha
                 return false;
         }
 
-        char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        char *xml_buffer = (char *)malloc(TCP_RECEIVE_BUFFER_SIZE);
         if (xml_buffer == NULL)
         {
-                SAT_DEBUG("char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                SAT_DEBUG("char *xml_buffer = (char *)malloc(TCP_RECEIVE_BUFFER_SIZE);");
                 free(html_buffer);
                 free(html_fmt);
                 return false;
@@ -260,7 +261,7 @@ static bool tcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const cha
         memset(xml_fmt, 0, strlen(xml_fmt) + 1);
         strcpy(xml_fmt, xml_buffer);
 
-        memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        memset(html_buffer, 0, TCP_RECEIVE_BUFFER_SIZE);
         sprintf(html_buffer, html_fmt, xml_size);
         free(html_fmt);
         free(xml_buffer);
@@ -386,7 +387,6 @@ static bool tcp_device_serverce_xml_process_shellcmd(int tcp_socket_fd, char *re
         return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
 }
 
-#define TCP_RECEIVE_BUFFER_SIZE (128 * 1024)
 static bool tcp_device_serverce_xml_process_systemtime(int tcp_socket_fd, char *recv_string)
 {
         int html_size = sat_file_size_get(SYSTEM_TIME_RESPONSE_PATH);
@@ -524,6 +524,7 @@ static bool tcp_device_serverce_xml_process_update_client_ip(int tcp_socket_fd, 
         {
                 return false;
         }
+        asterisk_server_asterisk_data_force(true);
         index -= 1;
         char newurl[128] = {0};
         for (int i = 0; i < network_data_get()->door_device[index].profile_token_num; i++)
@@ -582,7 +583,7 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
         }
         else if (discover_devices_data_parsing(ptr, "UpdateClientIP", data, SYNC_FILE_DATA_MAX) == true)
         {
-                SAT_DEBUG("%s", recv_data);
+                printf("[%s:%d] UpdateClientIP\n", __func__, __LINE__);
                 reslut = tcp_device_serverce_xml_process_update_client_ip(tcp_socket_fd, data);
         }
         else if (strstr((const char *)recv_data, "200 OK") == NULL)
@@ -610,13 +611,13 @@ static void *sat_socket_tcp_receive_task(void *arg)
         unsigned char *data = (unsigned char *)arg;
         int client_fd = *((int *)data);
         unsigned char *receive_data = data + sizeof(int);
-        memset(receive_data, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        memset(receive_data, 0, TCP_RECEIVE_BUFFER_SIZE);
         int read_len = 0;
-        int remain_len = DOOR_CAMERA_RECEIVE_BUFFER_MAX;
+        int remain_len = TCP_RECEIVE_BUFFER_SIZE;
         int recv_len = 0;
-        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 100)) > 0)
+        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 200)) > 0)
         {
-                //  printf("%s\n", receive_data);la
+                // printf("%s\n", receive_data);
                 read_len += recv_len;
                 remain_len -= recv_len;
         }
@@ -642,7 +643,7 @@ static void *user_network_tcp_task(void *arg)
                 if (client_fd >= 0)
                 {
                         pthread_t thread_id;
-                        unsigned char *receive_data = (unsigned char *)malloc(sizeof(int) + DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+                        unsigned char *receive_data = (unsigned char *)malloc(sizeof(int) + TCP_RECEIVE_BUFFER_SIZE);
                         int *p_socket_fd = (int *)receive_data;
                         *p_socket_fd = client_fd;
                         pthread_create(&thread_id, sat_pthread_attr_get(), sat_socket_tcp_receive_task, receive_data);
