@@ -378,14 +378,14 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                 return;
         }
         /*master本身不接受回调处理*/
-        if (((user_data_get()->system_mode & 0x0F) == 0x01) && (mask != 0x00))
+        if (((user_data_get()->system_mode & 0x0F) == 0x01) && ((mask == 0x01) || (mask == 0x02) || (mask == 0x03)))
         {
                 return;
         }
         int flag = (int)mask;
-        static bool sync_ing[4] = {0};
-        static char *recv_data[4] = {NULL};
-        static int recv_size[4] = {0};
+        static bool sync_ing[5] = {0};
+        static char *recv_data[5] = {NULL};
+        static int recv_size[5] = {0};
         if (((pos == 0) && (sync_ing[flag])) || ((pos != 0) && (sync_ing[flag] == false)))
         {
                 return;
@@ -543,6 +543,13 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                         {
                                 standby_timer_restart(true);
                         }
+                }
+                else if ((flag == 0x04) && (max == sizeof(alarm_list_info) * ALARM_LIST_MAX))
+                {
+                        USER_ALARM_LIST *alarm_list = alarm_list_info_get();
+                        memcpy(alarm_list, recv_data[flag], max);
+                        asterisk_server_alarm_log_force(true);
+                        alarm_list_sync();
                 }
                 free(recv_data[flag]);
                 recv_data[flag] = NULL;

@@ -100,32 +100,10 @@ static void setting_installation_sensor_test_obj_click(lv_event_t *ev)
         sat_layout_goto(sensors_test, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 
-static void setting_installation_factory_reset_confirm_func(lv_event_t *ev)
-{
-        user_data_reset();
-        network_data_reset();
-        tuay_api_data_reset();
-        alarm_list_del_all();
-        call_list_del_all();
-        wifi_api_reset_default();
-        media_file_delete_all(FILE_TYPE_FLASH_PHOTO, true);
-        backlight_enable(false);
-        usleep(100 * 1000);
-        system("reboot");
-        // setting_msgdialog_msg_del(setting_installation_obj_id_factory_reset_msg_bg);
-}
-
-static void setting_installation_factory_reset_cancel_func(lv_event_t *ev)
-{
-        setting_msgdialog_msg_del(setting_installation_obj_id_factory_reset_msg_bg);
-}
 static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
 {
 
         sat_layout_goto(factory_reset, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
-        lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_installation_obj_id_factory_reset_msg_bg, factory_reset_obj_id_msgbox, 282, 93, 460, 352);
-        setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_title, lang_str_get(INSTALLATION_XLS_LANG_ID_FACTORY_RESET_ACK), 0, 110, 460, 120, false);
-        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, factory_reset_obj_id_conrfirm, factory_reset_obj_id_cancel, setting_installation_factory_reset_confirm_func, setting_installation_factory_reset_cancel_func);
 }
 
 static void setting_installation_slave_indoor_register_display(lv_event_t *ev)

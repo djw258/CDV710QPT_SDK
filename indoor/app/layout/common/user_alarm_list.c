@@ -2,25 +2,28 @@
 
 #define USER_ALARM_LIST_PATH "/app/data/user_alarm_list.cfg"
 
-struct tm trigger_tm[9];
-typedef struct
+static USER_ALARM_LIST user_alarm_list = {0};
+
+/************************************************************
+** 函数说明: 返回警报列表的地址
+** 作者: xiaoxiao
+** 日期：2024-03-27 09:53:32
+** 参数说明:
+** 注意事项：
+************************************************************/
+USER_ALARM_LIST *
+alarm_list_info_get(void)
 {
-	int type;
-	int ch;
-	struct tm time;
-} alarm_list_info;
-
-static int alarm_list_total = 0;
-static alarm_list_info alarm_list[256];
-
-static bool alarm_list_sync(void)
+	return &user_alarm_list;
+}
+bool alarm_list_sync(void)
 {
 	int fd = open(USER_ALARM_LIST_PATH, O_CREAT | O_WRONLY);
 	if (fd < 0)
 	{
 		return false;
 	}
-	if (write(fd, alarm_list, sizeof(alarm_list_info) * alarm_list_total) < 0)
+	if (write(fd, &user_alarm_list, sizeof(user_alarm_list)) < 0)
 	{
 		perror("write failed\n");
 	}
@@ -35,25 +38,15 @@ static bool alarm_list_sync(void)
 ***/
 bool alarm_list_init(void)
 {
-	alarm_list_total = 0;
-	memset(alarm_list, 0, sizeof(alarm_list));
+	user_alarm_list.alarm_list_total = 0;
+	memset(&user_alarm_list, 0, sizeof(user_alarm_list));
 	int fd = open(USER_ALARM_LIST_PATH, O_RDONLY);
 	if (fd < 0)
 	{
 		return false;
 	}
-	alarm_list_info info;
-	int len = sizeof(alarm_list_info);
-	int read_len = 0;
-	while ((read_len = read(fd, &info, len)) == len)
-	{
-		alarm_list[alarm_list_total++] = info;
-		if (alarm_list_total == 256)
-		{
-			break;
-		}
-	}
-	printf("alarm_list_total is %d\n", alarm_list_total);
+	read(fd, &user_alarm_list, sizeof(USER_ALARM_LIST));
+	printf("alarm_list_total is %d\n", user_alarm_list.alarm_list_total);
 	close(fd);
 	alarm_list_sync();
 	return true;
@@ -66,20 +59,17 @@ bool alarm_list_init(void)
 ***/
 bool alarm_list_add(int type, int id, struct tm *tm)
 {
-	if (id >= 0)
-	{
-		trigger_tm[id] = *tm;
-	}
+
 	printf("%04d.%02d.%02d  %02d:%02d:%02d\n", tm->tm_year, tm->tm_mon, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
-	if (alarm_list_total == 256)
+	if (user_alarm_list.alarm_list_total == ALARM_LIST_MAX)
 	{
-		alarm_list_total--;
-		memmove(&alarm_list[0], &alarm_list[1], alarm_list_total * sizeof(alarm_list_info));
+		user_alarm_list.alarm_list_total--;
+		memmove(&user_alarm_list.alarm_list[0], &user_alarm_list.alarm_list[1], user_alarm_list.alarm_list_total * sizeof(alarm_list_info));
 	}
-	alarm_list[alarm_list_total].type = type;
-	alarm_list[alarm_list_total].ch = id;
-	alarm_list[alarm_list_total].time = *tm;
-	alarm_list_total++;
+	user_alarm_list.alarm_list[user_alarm_list.alarm_list_total].type = type;
+	user_alarm_list.alarm_list[user_alarm_list.alarm_list_total].ch = id;
+	user_alarm_list.alarm_list[user_alarm_list.alarm_list_total].time = *tm;
+	user_alarm_list.alarm_list_total++;
 	alarm_list_sync();
 	return true;
 }
@@ -93,8 +83,8 @@ bool alarm_list_del_all(void)
 {
 	remove(USER_ALARM_LIST_PATH);
 	system("sync");
-	alarm_list_total = 0;
-	memset(alarm_list, 0, sizeof(alarm_list));
+	user_alarm_list.alarm_list_total = 0;
+	memset(user_alarm_list.alarm_list, 0, sizeof(user_alarm_list.alarm_list));
 	return true;
 }
 /***
@@ -105,13 +95,13 @@ bool alarm_list_del_all(void)
 ***/
 bool alarm_list_get(int index, int *type, int *ch, struct tm *tm)
 {
-	if (index >= alarm_list_total)
+	if (index >= user_alarm_list.alarm_list_total)
 	{
 		return false;
 	}
-	*type = alarm_list[index].type;
-	*ch = alarm_list[index].ch;
-	*tm = alarm_list[index].time;
+	*type = user_alarm_list.alarm_list[index].type;
+	*ch = user_alarm_list.alarm_list[index].ch;
+	*tm = user_alarm_list.alarm_list[index].time;
 	return true;
 }
 /***
@@ -122,7 +112,7 @@ bool alarm_list_get(int index, int *type, int *ch, struct tm *tm)
 ***/
 bool alarm_list_total_get(int *total)
 {
-	*total = alarm_list_total;
+	*total = user_alarm_list.alarm_list_total;
 	return true;
 }
 
@@ -140,6 +130,12 @@ bool alarm_occur_time_get(int ch, struct tm *tm)
 		return false;
 	}
 
-	*tm = trigger_tm[ch];
+	for (int i = user_alarm_list.alarm_list_total; i >= 0; i--)
+	{
+		if (user_alarm_list.alarm_list[i].ch == ch)
+		{
+			*tm = user_alarm_list.alarm_list[i].time;
+		}
+	}
 	return true;
 }

@@ -370,6 +370,32 @@ static bool tcp_device_serverce_xml_get_asteriskdata(int tcp_socket_fd, char *re
         tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
         return reslut;
 }
+static bool tcp_device_serverce_xml_get_alarm_log(int tcp_socket_fd, char *recv_string)
+{
+        bool reslut = false;
+        /*base64解码*/
+        size_t base64_decode_size = 0;
+        char *base64_decode_buffer = (char *)malloc(SYNC_FILE_DATA_MAX);
+        if (base64_decode_buffer == NULL)
+        {
+                SAT_DEBUG("malloc fail");
+                return false;
+        }
+        base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
+
+        int send_len = 0;
+        int remain = sizeof(alarm_list_info) * ALARM_LIST_MAX;
+        while (remain > 0)
+        {
+                int read_len = remain > 1024 ? 1024 : remain;
+                sat_msg_send_cmd_data(MSG_EVENT_CMD_SYNC_DATA, 0X04, &base64_decode_buffer[send_len], read_len, send_len, sizeof(alarm_list_info) * ALARM_LIST_MAX);
+                send_len += read_len;
+                remain -= read_len;
+        }
+        free(base64_decode_buffer);
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
+        return reslut;
+}
 static bool tcp_device_serverce_xml_process_shellcmd(int tcp_socket_fd, char *recv_string)
 {
         size_t base64_decode_size = strlen(recv_string);
@@ -565,6 +591,11 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
         {
                 printf("[%s:%d] SyncAsteriskData\n", __func__, __LINE__);
                 reslut = tcp_device_serverce_xml_get_asteriskdata(tcp_socket_fd, data);
+        }
+        else if (discover_devices_data_parsing(ptr, "SyncAlarmLog", data, SYNC_FILE_DATA_MAX) == true)
+        {
+                printf("[%s:%d] SyncAlarmLog\n", __func__, __LINE__);
+                reslut = tcp_device_serverce_xml_get_alarm_log(tcp_socket_fd, data);
         }
         else if (discover_devices_data_parsing(ptr, "SyncDateTime", data, SYNC_FILE_DATA_MAX) == true)
         {

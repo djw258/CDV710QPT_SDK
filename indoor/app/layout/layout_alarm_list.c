@@ -61,6 +61,15 @@ static void layout_alarm_list_msgbox_cancel_click(lv_event_t *e)
 static void layout_alarm_list_msgbox_confirm_click(lv_event_t *e)
 {
         alarm_list_del_all();
+        if ((user_data_get()->system_mode & 0x0f) == 0x01)
+        {
+                asterisk_server_alarm_log_force(true);
+        }
+        else
+        {
+                sat_ipcamera_data_sync(0x04, 0x04, (char *)alarm_list_info_get(), sizeof(alarm_list_info) * 256, 10, 1500, NULL);
+        }
+
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
