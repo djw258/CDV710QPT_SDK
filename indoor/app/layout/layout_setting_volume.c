@@ -601,7 +601,7 @@ static bool setting_volume_ring_play_callback(int arg)
 }
 static void layout_setting_touch_callback(lv_event_t *e)
 {
-        standby_timer_restart(false);
+        standby_timer_restart(false, true);
 }
 static void sat_layout_enter(setting_volume)
 {

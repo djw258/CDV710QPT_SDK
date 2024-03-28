@@ -967,7 +967,7 @@ static void sat_layout_quit(alarm)
 
         record_video_stop();
         monitor_close(0x02);
-        standby_timer_restart(true);
+        standby_timer_restart(true, true);
         lv_disp_set_bg_image(lv_disp_get_default(), NULL);
 }
 

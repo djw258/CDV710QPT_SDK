@@ -112,7 +112,6 @@ static void layout_setting_time_save_time(void)
                 {
                         if (asterisk_server_sync_rtc_data_force_get() == false)
                         {
-
                                 asterisk_server_sync_rtc_data_force(true);
                                 user_time_set(&tm);
                                 asterisk_register_info *p_info = asterisk_register_info_get();
@@ -196,7 +195,7 @@ static void setting_time_set_date_automatically_click(lv_event_t *ev)
                                         asterisk_server_sync_rtc_data_force(false);
                                         sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1500, NULL);
                                 }
-
+                                asterisk_server_sync_rtc_data_force(false);
                                 break;
                         }
                 }
@@ -481,7 +480,7 @@ static void sat_layout_quit(setting_time)
         layout_setting_time_save_time();
         if (user_data_get()->is_device_init == true) // 启动设置会有机会进入这里，所以要加判断
         {
-                standby_timer_restart(true);
+                standby_timer_restart(true, true);
         }
 }
 

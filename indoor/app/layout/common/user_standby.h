@@ -16,7 +16,7 @@ bool standby_timer_init(sat_layout_info *playout, int timeout);
 ** 函数作用：待机检测重新及时
 ** 返回参数说明：
 ***/
-bool standby_timer_restart(bool fouce_enable);
+bool standby_timer_restart(bool fouce_enable, bool refresh);
 
 /***
 ** 日期: 2022-05-10 08:42

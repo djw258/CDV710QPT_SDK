@@ -433,7 +433,7 @@ static void video_thumb_play_state_callback(unsigned int sate)
         }
         else if (sate == 0x02)
         {
-                standby_timer_restart(true);
+                standby_timer_restart(true, true);
         }
 }
 
@@ -452,7 +452,7 @@ static void video_obj_play_click(lv_event_t *e)
 }
 static void layout_video_touch_callback(lv_event_t *e)
 {
-        standby_timer_restart(false);
+        standby_timer_restart(false, true);
 }
 
 static void layout_video_first_frame_callback(int arg1, int arg2)
@@ -636,7 +636,7 @@ static void sat_layout_enter(video)
 }
 static void sat_layout_quit(video)
 {
-        standby_timer_restart(true);
+        standby_timer_restart(true, true);
         //   sat_linphone_media_thumb_destroy();
         lv_obj_pressed_func = lv_layout_touch_callback;
 

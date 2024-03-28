@@ -7,7 +7,7 @@
 ** 函数作用：超时时间
 ** 返回参数说明：
 ***/
-static int standby_timeout = 30000;
+static int standby_timeout = 30;
 
 /***
 ** 日期: 2022-05-10 08:45
@@ -55,13 +55,12 @@ bool standby_timer_init(sat_layout_info *playout, int timeout)
 ** 函数作用：待机检测重新及时
 ** 返回参数说明：
 ***/
-bool standby_timer_restart(bool fouce_enable)
+bool standby_timer_restart(bool fouce_enable, bool refresh)
 {
     if (fouce_enable)
-    {
         standby_timer_enable = true;
-    }
-    standby_timeout_timestamp = user_timestamp_get() + standby_timeout;
+    if (refresh)
+        standby_timeout_timestamp = 0;
     return true;
 }
 
@@ -75,7 +74,7 @@ bool standby_timer_restart(bool fouce_enable)
 bool standby_timer_reset(int timeout)
 {
     standby_timeout = timeout;
-    standby_timeout_timestamp = user_timestamp_get() + standby_timeout;
+    standby_timeout_timestamp = 0;
     return true;
 }
 /***
@@ -117,9 +116,11 @@ bool standby_timeout_check_and_process(void)
     {
         return false;
     }
-    unsigned long long timestamp = user_timestamp_get();
-    if (timestamp > standby_timeout_timestamp)
+    standby_timeout_timestamp++;
+
+    if (standby_timeout_timestamp > standby_timeout)
     {
+        standby_timeout_timestamp = 0;
         if (standby_goto_playout != NULL)
         {
             _sat_layout_goto(standby_goto_playout, LV_SCR_LOAD_ANIM_FADE_IN);

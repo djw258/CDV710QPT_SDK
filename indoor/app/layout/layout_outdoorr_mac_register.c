@@ -281,7 +281,7 @@ static void sat_layout_enter(outdoor_mac_register)
 static void sat_layout_quit(outdoor_mac_register)
 {
   sd_state_channge_callback_register(sd_state_change_default_callback);
-  standby_timer_restart(true);
+  standby_timer_restart(true, true);
 }
 
 sat_layout_create(outdoor_mac_register);

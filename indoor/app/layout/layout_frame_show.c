@@ -1093,7 +1093,7 @@ static void sat_layout_enter(frame_show)
 }
 static void sat_layout_quit(frame_show)
 {
-	standby_timer_restart(true);
+	standby_timer_restart(true, true);
 	sat_linphone_media_thumb_destroy();
 	thumb_display_refresh_register(NULL);
 	sd_state_channge_callback_register(sd_state_change_default_callback);

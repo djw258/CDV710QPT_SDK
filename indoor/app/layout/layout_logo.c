@@ -422,8 +422,6 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                         user_data_info *info = (user_data_info *)recv_data[flag];
 
                         // unsigned long long temp_sync_timestamp = user_data_get()->sync_timestamp;
-                        // SAT_DEBUG("info->sync_timestamp is %llu", info->sync_timestamp);
-                        // SAT_DEBUG("user_data_get->sync_timestamp is %llu", user_data_get()->sync_timestamp);
                         // if (user_data_get()->sync_timestamp >= info->sync_timestamp)
                         // {
                         //         free(recv_data[flag]);
@@ -541,10 +539,10 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                         // user_data_get()->sync_timestamp = user_timestamp_get();
                         if (standby_timer)
                         {
-                                standby_timer_restart(true);
+                                standby_timer_restart(true, false);
                         }
                 }
-                else if ((flag == 0x04) && (max == sizeof(alarm_list_info) * ALARM_LIST_MAX))
+                else if ((flag == 0x04) && (max == sizeof(USER_ALARM_LIST)))
                 {
                         USER_ALARM_LIST *alarm_list = alarm_list_info_get();
                         memcpy(alarm_list, recv_data[flag], max);
@@ -887,7 +885,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         /***** 音频输出初始化 *****/
         audio_output_cmd_register(audio_output_event_default_process);
 
-        standby_timer_init(sat_playout_get(close), user_data_get()->display.screen_off_time * 1000);
+        standby_timer_init(sat_playout_get(close), user_data_get()->display.screen_off_time);
         lv_timer_t *standby_timer = lv_timer_create(standby_dection_timer, 1000, NULL);
         lv_timer_ready(standby_timer);
 
@@ -927,7 +925,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
                  ** 参数说明:
                  ** 注意事项:
                  ************************************************************/
-                standby_timer_restart(true);
+                standby_timer_restart(true, true);
                 if (alarm_trigger_check(true) == false)
                 {
                         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -1170,19 +1168,23 @@ void register_device_data_sync_timer(lv_timer_t *t)
                 char ip[16] = {0};
                 if (sat_ip_mac_addres_get("eth0", ip, NULL, NULL) == true)
                 {
+                        bool replace = false;
                         for (int i = 0; i < DEVICE_MAX; i++)
                         {
                                 if (network_data_get()->door_device[i].sip_url[0] != 0)
                                 {
-                                        replace_ip_address(network_data_get()->door_device[i].sip_url, ip);
+                                        if (replace_ip_address(network_data_get()->door_device[i].sip_url, ip) == true)
+                                        {
+                                                replace = true;
+                                        }
                                         char number[32] = {0};
                                         sprintf(number, "sip:20%d@%s", i + 1, ip);
                                         sat_ipcamera_device_register(number, i, 2000);
-                                        printf("\nregister outdoor\n");
                                         // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
                                 }
                         }
-                        network_data_save();
+                        if (replace)
+                                network_data_save();
                 }
         }
         else
@@ -1195,7 +1197,7 @@ void register_device_data_sync_timer(lv_timer_t *t)
                         user_time_set(&tm);
                         if (standby_timer)
                         {
-                                standby_timer_restart(true);
+                                standby_timer_restart(true, true);
                         }
                 }
         }

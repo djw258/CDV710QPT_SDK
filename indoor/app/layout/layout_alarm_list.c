@@ -67,7 +67,7 @@ static void layout_alarm_list_msgbox_confirm_click(lv_event_t *e)
         }
         else
         {
-                sat_ipcamera_data_sync(0x04, 0x04, (char *)alarm_list_info_get(), sizeof(alarm_list_info) * 256, 10, 1500, NULL);
+                sat_ipcamera_data_sync(0x04, 0x04, (char *)alarm_list_info_get(), sizeof(USER_ALARM_LIST), 10, 1500, NULL);
         }
 
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);

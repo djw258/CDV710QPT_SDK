@@ -428,7 +428,7 @@ static void intercom_talk_buzzer_alarm_call_callback(void)
 
 static void layout_intercom_talk_touch_callback(lv_event_t *e)
 {
-        standby_timer_restart(false);
+        standby_timer_restart(false, true);
 }
 
 bool intercom_talk_call_busy_callback(char *arg)
@@ -676,7 +676,7 @@ static void sat_layout_quit(intercom_talk)
         user_linphone_call_error_register(NULL);
         sat_linphone_audio_play_stop();
         lv_obj_pressed_func = lv_layout_touch_callback;
-        standby_timer_restart(true);
+        standby_timer_restart(true, true);
         lv_disp_set_bg_image(lv_disp_get_default(), NULL);
         user_linphone_call_busy_register(NULL);
         user_linphone_call_end_register(NULL);

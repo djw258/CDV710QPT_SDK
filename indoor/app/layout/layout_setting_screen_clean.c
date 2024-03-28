@@ -66,7 +66,7 @@ static void sat_layout_enter(setting_screen_clean)
 }
 static void sat_layout_quit(setting_screen_clean)
 {
-        standby_timer_restart(true);
+        standby_timer_restart(true, true);
 }
 
 sat_layout_create(setting_screen_clean);

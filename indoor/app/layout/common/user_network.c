@@ -384,14 +384,15 @@ static bool tcp_device_serverce_xml_get_alarm_log(int tcp_socket_fd, char *recv_
         base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
 
         int send_len = 0;
-        int remain = sizeof(alarm_list_info) * ALARM_LIST_MAX;
+        int remain = sizeof(USER_ALARM_LIST);
         while (remain > 0)
         {
                 int read_len = remain > 1024 ? 1024 : remain;
-                sat_msg_send_cmd_data(MSG_EVENT_CMD_SYNC_DATA, 0X04, &base64_decode_buffer[send_len], read_len, send_len, sizeof(alarm_list_info) * ALARM_LIST_MAX);
+                sat_msg_send_cmd_data(MSG_EVENT_CMD_SYNC_DATA, 0X04, &base64_decode_buffer[send_len], read_len, send_len, sizeof(USER_ALARM_LIST));
                 send_len += read_len;
                 remain -= read_len;
         }
+
         free(base64_decode_buffer);
         tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
         return reslut;

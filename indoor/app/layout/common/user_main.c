@@ -171,7 +171,7 @@ bool asterisk_server_sync_rtc_data_force_get(void)
 /*使用线程异步发送*/
 static void *asterisk_server_sync_task(void *arg)
 {
-        sleep(2); // 考虑到所有设备上线时间不统一，有可能发生设备第一次注册的时间戳在线程的轮询间隔内，造成短时间内，主线程需要同步的次数较多，短时间内消耗大量内存
+        sleep(2); // 考虑到所有设备上线时间非常接近，有可能发生设备第一次注册的时间戳在线程的轮询间隔内，造成短时间内，主线程需要同步的次数较多，短时间内消耗大量内存
 
         static bool is_registers_online[20] = {0};
 
@@ -226,55 +226,58 @@ static void *asterisk_server_sync_task(void *arg)
 
                                 user_data_get()->sync_timestamp = user_timestamp_get();
                                 sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                                usleep(100 * 1000); // 网络数据比较大，延时时间设置得更长
+                                usleep(100 * 1000); // 加一些延时，避免室内机同时申请的空间太多
                         }
                         if (is_asterisk_server_sync_network_data_force)
                         {
                                 is_asterisk_server_sync_network_data_force = false;
                                 sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
-                                usleep(300 * 1000); // 加一些延时，避免室内机同时申请的空间太多
+                                usleep(500 * 1000); // 加一些延时，避免室内机同时申请的空间太多
                         }
                         /*需要同步注册信息*/
                         if (is_need_asterisk_update == true)
                         {
                                 is_need_asterisk_update = false;
                                 sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
-                                usleep(100 * 1000); // 网络数据比较大，延时时间设置得更长
+                                usleep(100 * 1000); // 加一些延时，避免室内机同时申请的空间太多
                         }
                         /*需要同步警报信息*/
                         if (is_need_alarm_log_sync == true)
                         {
                                 is_need_alarm_log_sync = false;
-                                sat_ipcamera_data_sync(0x04, 0x01, (char *)alarm_list_info_get(), sizeof(alarm_list_info) * 256, 10, 1500, NULL);
-                                usleep(100 * 1000); // 网络数据比较大，延时时间设置得更长
+                                sat_ipcamera_data_sync(0x04, 0x01, (char *)alarm_list_info_get(), sizeof(USER_ALARM_LIST), 10, 1500, NULL);
+                                usleep(300 * 1000); // 加一些延时，避免室内机同时申请的空间太多
                         }
-                        timeout++;
-                        if (timeout == 120) // 1分钟左右同步一次数据
-                        {
-                                is_asterisk_server_sync_network_data_force = false;
-                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                        }
-                        else if (timeout == 121) // 1分钟左右同步一次数据
-                        {
-                                is_need_alarm_log_sync = false;
-                                sat_ipcamera_data_sync(0x04, 0x01, (char *)alarm_list_info_get(), sizeof(alarm_list_info) * 256, 10, 1500, NULL);
-                        }
-                        else if (timeout == 122)
-                        {
-                                is_asterisk_server_sync_user_data_force = false;
-                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
-                        }
-                        else if (timeout == 123)
-                        {
-                                is_need_asterisk_update = false;
-                                sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
-                        }
-                        else if (timeout == 124)
-                        {
-                                timeout = 0;
-                                struct tm tm;
-                                user_time_read(&tm);
-                                sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1000, NULL);
+
+                        { // 不能保证每一次TCP都能成功建立，或者每一次都能正确接收全部数据，所以需要定时器定时同步数据(周期不能太短)
+                                timeout++;
+                                if (timeout == 100) // 1分钟左右同步一次数据
+                                {
+                                        is_asterisk_server_sync_network_data_force = false;
+                                        sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+                                }
+                                else if (timeout == 150) // 1分钟左右同步一次数据
+                                {
+                                        is_need_alarm_log_sync = false;
+                                        sat_ipcamera_data_sync(0x04, 0x01, (char *)alarm_list_info_get(), sizeof(USER_ALARM_LIST), 10, 1500, NULL);
+                                }
+                                else if (timeout == 200)
+                                {
+                                        is_asterisk_server_sync_user_data_force = false;
+                                        sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
+                                }
+                                else if (timeout == 250)
+                                {
+                                        is_need_asterisk_update = false;
+                                        sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
+                                }
+                                else if (timeout == 300)
+                                {
+                                        timeout = 0;
+                                        struct tm tm;
+                                        user_time_read(&tm);
+                                        sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1000, NULL);
+                                }
                         }
 
                         is_asterisk_server_sync_rtc_data_force = false;

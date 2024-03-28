@@ -584,7 +584,7 @@ static void sat_layout_quit(always_record)
   record_state_callback_register(NULL);
   snapshot_state_callback_register(NULL);
 
-  standby_timer_restart(true);
+  standby_timer_restart(true, true);
 
   user_linphone_call_streams_running_receive_register(NULL);
 }

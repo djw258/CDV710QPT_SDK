@@ -189,7 +189,7 @@ static void sat_layout_enter(sensors_test)
 
 static void sat_layout_quit(sensors_test)
 {
-    standby_timer_restart(true);
+    standby_timer_restart(true, true);
     if (user_data_get()->alarm.away_alarm_enable)
     {
         extern void away_mode_alarm_trigger_callback(int arg1, int arg2);

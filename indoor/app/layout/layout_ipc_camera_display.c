@@ -353,7 +353,7 @@ static void sat_layout_quit(ipc_camera_display)
 {
         if (user_data_get()->is_device_init == true) // 启动设置会有机会进入这里，所以要加判断
         {
-                standby_timer_restart(true);
+                standby_timer_restart(true, true);
         }
         lv_common_video_mode_enable(false);
         sat_linphone_ipcamera_stop();

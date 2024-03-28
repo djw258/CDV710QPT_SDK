@@ -147,7 +147,7 @@ static void wifi_input_animation_connecting_task(lv_timer_t *task)
                         setting_msgdialog_msg_confirm_btn_create(parent, wifi_input_obj_id_confirm_btn, wifi_input_msg_dialog_error_confirm_up);
                         if (user_data_get()->is_device_init == true) // 启动设置会有机会进入这里，所以要加判断
                         {
-                                standby_timer_restart(true);
+                                standby_timer_restart(true, true);
                         }
                 }
                 else
@@ -363,7 +363,7 @@ static void sat_layout_quit(wifi_input)
 {
         if (user_data_get()->is_device_init == true) // 启动设置会有机会进入这里，所以要加判断
         {
-                standby_timer_restart(true);
+                standby_timer_restart(true, true);
         }
 }
 sat_layout_create(wifi_input);

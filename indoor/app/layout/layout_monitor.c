@@ -2371,7 +2371,7 @@ static void layout_monitor_buzzer_alarm_call_callback(void)
 
 static void layout_monitor_touch_callback(lv_event_t *e)
 {
-        standby_timer_restart(false);
+        standby_timer_restart(false, true);
 }
 
 static void sat_layout_enter(monitor)
@@ -2816,7 +2816,7 @@ static void sat_layout_enter(monitor)
 static void sat_layout_quit(monitor)
 {
         lv_common_video_mode_enable(false);
-        standby_timer_restart(true);
+        standby_timer_restart(true, true);
         door1_lock1_power_pin_ctrl(false);
         sat_linphone_alarm_backgound_sound(false);
         if (unlock_timer != NULL)
@@ -2829,7 +2829,7 @@ static void sat_layout_quit(monitor)
         lv_obj_remove_event_cb(sat_cur_layout_screen_get(), layout_monitor_full_screen_display);
         lv_obj_pressed_func = lv_layout_touch_callback;
 
-        standby_timer_restart(true);
+        standby_timer_restart(true, true);
 
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
 

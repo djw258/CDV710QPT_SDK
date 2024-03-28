@@ -688,7 +688,7 @@ static void sat_layout_quit(close)
 
     backlight_timer = lv_timer_create(layout_close_backlight_open_timer, 300, NULL);
 
-    standby_timer_restart(true);
+    standby_timer_restart(true, true);
 }
 
 sat_layout_create(close);
