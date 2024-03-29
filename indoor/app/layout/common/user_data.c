@@ -207,7 +207,6 @@ bool user_data_save(bool data_sync, bool activve)
                 user_data.sync_timestamp = user_timestamp_get();
         }
         write(fd, &user_data, sizeof(user_data_info));
-
         close(fd);
         system("sync");
 

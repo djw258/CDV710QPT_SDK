@@ -130,12 +130,13 @@ bool alarm_occur_time_get(int ch, struct tm *tm)
 		return false;
 	}
 
-	for (int i = user_alarm_list.alarm_list_total; i >= 0; i--)
+	for (int i = user_alarm_list.alarm_list_total - 1; i >= 0; i--)
 	{
 		if (user_alarm_list.alarm_list[i].ch == ch)
 		{
 			*tm = user_alarm_list.alarm_list[i].time;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }

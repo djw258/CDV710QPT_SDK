@@ -321,6 +321,7 @@ static void video_stream_status_callback(bool en)
 /*铃声回调*/
 static void call_ring_event_callback(void)
 {
+        return;
         sat_linphone_audio_play_stop();
         if (CIP_D20YS_WORK_MODE & 0x01)
         {
@@ -417,10 +418,11 @@ static void client_ip_report(void)
         pthread_create(&thread_id, sat_pthread_attr_get(), client_ip_report_task, NULL);
         pthread_detach(thread_id);
 }
-#define CALL_TEST 0
+#define CALL_TEST 1
 #if CALL_TEST
 static void *outdoor_call_task(void *arg)
 {
+        sleep(5);
         char user[8] = {0};
         while ((1))
         {
@@ -460,7 +462,7 @@ int main(int argc, char *argv[])
         printf("*****        author:  sat                                       *****\n");
         printf("*****        date:    2023/03/11                         *****\n");
         printf("*****************************************************\n");
-        // usleep(1000 * 1000);
+        // usleep(1000 * 1000); // 进程重启，不能百分百保证端口资源被释放，所以加延时
         sdk_run_config config = {0};
         ak_sdk_init(&config);
 

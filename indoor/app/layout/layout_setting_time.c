@@ -127,6 +127,7 @@ static void layout_setting_time_save_time(void)
                                         }
                                 }
                                 asterisk_server_sync_rtc_data_force(false);
+                                printf("year is %d\n", tm.tm_year);
                                 sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1500, NULL);
                                 break;
                         }
