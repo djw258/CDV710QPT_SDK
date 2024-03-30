@@ -116,27 +116,26 @@ bool alarm_list_total_get(int *total)
 	return true;
 }
 
-/************************************************************
-** 函数说明: 根据报警通道获取最近一次报警时间
-** 作者: xiaoxiao
-** 日期: 2023-05-06 23:06:39
-** 参数说明:
-** 注意事项:
-************************************************************/
-bool alarm_occur_time_get(int ch, struct tm *tm)
-{
-	if ((ch > 8) || (ch < 0))
-	{
-		return false;
-	}
-
-	for (int i = user_alarm_list.alarm_list_total - 1; i >= 0; i--)
-	{
-		if (user_alarm_list.alarm_list[i].ch == ch)
-		{
-			*tm = user_alarm_list.alarm_list[i].time;
-			return true;
-		}
-	}
-	return false;
-}
+// /************************************************************
+// ** 函数说明: 根据报警通道获取最近一次报警时间
+// ** 作者: xiaoxiao
+// ** 日期: 2023-05-06 23:06:39
+// ** 参数说明:
+// ** 注意事项:
+// ************************************************************/
+// bool alarm_occur_time_get(int ch, struct tm *tm)
+// {
+// 	if ((ch > 8) || (ch < 0))
+// 	{
+// 		return false;
+// 	}
+// 	for (int i = user_alarm_list.alarm_list_total - 1; i >= 0; i--)
+// 	{
+// 		if (user_alarm_list.alarm_list[i].ch == ch)
+// 		{
+// 			*tm = user_alarm_list.alarm_list[i].time;
+// 			return true;
+// 		}
+// 	}
+// 	return false;
+// }

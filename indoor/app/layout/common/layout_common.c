@@ -254,6 +254,40 @@ void layout_alarm_alarm_channel_set(int ch)
         alarm_ch = ch;
 }
 
+struct tm trigger_tm[9];
+/************************************************************
+ ** 函数说明: 根据报警通道设置最近一次报警时间
+ ** 作者: xiaoxiao
+ ** 日期: 2023-05-06 23:06:39
+ ** 参数说明:
+ ** 注意事项:
+ ************************************************************/
+bool alarm_occur_time_set(int ch, struct tm *tm)
+{
+        if ((ch >= 0) && (ch <= 8))
+        {
+                trigger_tm[ch] = *tm;
+                return true;
+        }
+        return false;
+}
+/************************************************************
+ ** 函数说明: 根据报警通道获取最近一次报警时间
+ ** 作者: xiaoxiao
+ ** 日期: 2023-05-06 23:06:39
+ ** 参数说明:
+ ** 注意事项:
+ ************************************************************/
+bool alarm_occur_time_get(int ch, struct tm *tm)
+{
+        if ((ch > 8) || (ch < 0))
+        {
+                return false;
+        }
+
+        *tm = trigger_tm[ch];
+        return true;
+}
 /************************************************************
 ** 函数说明: 警报处理函数
 ** 作者: xiaoxiao
@@ -827,9 +861,12 @@ bool layout_common_call_log(int type, int ch)
         bool result = true;
         struct tm tm;
         user_time_read(&tm);
-        alarm_list_add(type, ch, &tm);
+        alarm_occur_time_set(ch, &tm);
         if ((user_data_get()->system_mode & 0x0f) == 0x01)
         {
+                alarm_list_add(type, ch, &tm);
+                asterisk_server_alarm_log_force(true);
+
                 int event = (user_data_get()->alarm.away_alarm_enable || user_data_get()->alarm.security_alarm_enable) ? 3 : 1;
                 char dong[5] = {0};
                 char ho[5] = {0};

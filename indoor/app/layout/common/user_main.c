@@ -34,6 +34,7 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <common/sat_watch_dog.h>
 
 // #include "dds/topic_table.h"
 #if 0
@@ -171,7 +172,7 @@ bool asterisk_server_sync_rtc_data_force_get(void)
 /*使用线程异步发送*/
 static void *asterisk_server_sync_task(void *arg)
 {
-        sleep(2); // 考虑到所有设备上线时间非常接近，有可能发生设备第一次注册的时间戳在线程的轮询间隔内，造成短时间内，主线程需要同步的次数较多，短时间内消耗大量内存
+        sleep(8); // 考虑到所有设备上线时间非常接近，有可能发生设备第一次注册的时间戳在线程的轮询间隔内，造成短时间内，主线程需要同步的次数较多，短时间内消耗大量内存
 
         static bool is_registers_online[20] = {0};
 
@@ -289,9 +290,14 @@ static void *asterisk_server_sync_task(void *arg)
 
 static void sigchld(int sign)
 {
+        ;
         // wait(NULL);
 }
 
+static void sigsegv(int sign)
+{
+        watch_dog_close();
+}
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
@@ -303,6 +309,7 @@ int main(int argc, char *argv[])
         // system("sysctl -w kernel.printk=\"3 3 3 3\""); // 设置内核打印等级，忽略内核打印
         signal(SIGCHLD, sigchld);
         signal(SIGPIPE, SIG_IGN);
+        signal(SIGSEGV, sigsegv);
 
         /*先干掉asterik服务器*/
         remove("/tmp/.linphonerc");
