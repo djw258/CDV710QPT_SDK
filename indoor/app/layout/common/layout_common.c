@@ -386,10 +386,6 @@ bool alarm_trigger_check(bool active)
                         alarm_occur = true;
                         user_data_get()->alarm.emergency_mode = 0;
                 }
-                if (sat_cur_layout_get() == sat_playout_get(alarm) && (user_data_get()->alarm.alarm_trigger[layout_alarm_alarm_channel_get()] == false) && (i == layout_alarm_alarm_channel_get()))
-                {
-                        layout_common_call_log(i == 7 ? emergency_return : security_emergency_return, i);
-                }
 
                 if ((alarm_occur) && (sat_cur_layout_get() != sat_playout_get(alarm) || (user_data_get()->alarm.alarm_trigger[layout_alarm_alarm_channel_get()] == false)))
                 {

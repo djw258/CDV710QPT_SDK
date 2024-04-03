@@ -171,10 +171,10 @@ static void sat_layout_enter(setting_frame_item)
                                                                                         0, 28, 32, 32, main_list_group[i].img_id,
                                                                                         resource_ui_src_get((user_data_get()->display.frame_list & (0x01 >> i)) ? "btn_checkbox_s.png" : "btn_checkbox_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                        // if (((user_data_get()->system_mode & 0x0f) != 0x01) && i == 3)
-                        // {
-                        //         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                        // }
+                        if (((user_data_get()->system_mode & 0x0f) != 0x01) && i == 3)
+                        {
+                                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                        }
                 }
                 setting_frame_item_checkbox_display();
         }
