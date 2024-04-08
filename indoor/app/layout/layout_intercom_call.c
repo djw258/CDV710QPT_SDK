@@ -325,7 +325,7 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
                 char tm_buffer[64] = {0};
                 char du_buffer[64];
                 sprintf(du_buffer, "%02d:%02d", duration / 60, duration % 60);
-                sprintf(tm_buffer, "%04d-%02d:%02d  %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+                sprintf(tm_buffer, "%04d-%02d-%02d  %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 
                 lv_obj_t *cont = lv_common_img_btn_create(parent, i, 0, item_y, 1024 - 80, 88,
                                                           intercom_call_log_check_obj_click, true, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
@@ -580,45 +580,6 @@ static void intercom_call_log_obj_del_cancel_click(lv_event_t *ev)
                 lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
                 lv_obj_add_flag(checkbox, LV_OBJ_FLAG_HIDDEN);
         }
-
-        // if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_title_delete.png"), strlen(resource_ui_src_get("btn_title_delete.png"))) == 0)
-        // {
-
-        //         lv_label_set_text_fmt(title,"%d seleced",checkbox_s_num);
-        //         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_title_check.png"), LV_PART_MAIN);
-        //         lv_obj_clear_flag(del_cancel,LV_OBJ_FLAG_HIDDEN);
-        //         lv_obj_clear_flag(del_all,LV_OBJ_FLAG_HIDDEN);
-        //         lv_obj_set_y(log_list,88);
-        //         lv_obj_add_flag(back,LV_OBJ_FLAG_HIDDEN);
-
-        //         for (int i = total - 1; i >= 0; i--)
-        //         {
-        //                 lv_obj_t * list_btn = lv_obj_get_child_form_id(log_list,i);
-        //                 lv_obj_t * checkbox = lv_obj_get_child_form_id(list_btn,call_log_list_cont_obj_checkbox_id);
-        //                 lv_obj_t * title_cont = lv_obj_get_child_form_id(list_btn,call_log_list_cont_obj_titie_id);
-
-        //                 lv_obj_set_x(title_cont,40);
-        //                 lv_obj_clear_flag(checkbox,LV_OBJ_FLAG_HIDDEN);
-
-        //         }
-
-        // }
-        // else
-        // {
-        //         for (int i = total - 1; i >= 0; i--)
-        //         {
-        //                 lv_obj_t * list_btn = lv_obj_get_child_form_id(log_list,i);
-        //                 lv_obj_t * checkbox = lv_obj_get_child_form_id(list_btn,call_log_list_cont_obj_checkbox_id);
-        //                 if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_s.png"), strlen(resource_ui_src_get("btn_checkbox_s.png"))) == 0)
-        //                 {
-        //                         call_list_del(i);
-        //                 }
-
-        //         }
-        //         enter_intercomm_call_mode_set(1);
-        //         sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-
-        // }
 }
 
 /************************************************************

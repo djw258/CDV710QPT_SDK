@@ -108,30 +108,24 @@ static void layout_setting_time_save_time(void)
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_sec_roller);
                 lv_roller_get_selected_str(obj, buffer, 8);
                 sscanf(buffer, "%d", &(tm.tm_sec));
-                while (1)
+
+                main_sync_lock_set(true);
+                user_time_set(&tm);
+                asterisk_register_info *p_info = asterisk_register_info_get();
+                unsigned long long timestamp = user_timestamp_get();
+                if (p_info != NULL)
                 {
-                        if (asterisk_server_sync_rtc_data_force_get() == false)
+                        for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
                         {
-                                asterisk_server_sync_rtc_data_force(true);
-                                user_time_set(&tm);
-                                asterisk_register_info *p_info = asterisk_register_info_get();
-                                unsigned long long timestamp = user_timestamp_get();
-                                if (p_info != NULL)
+                                if (p_info[i].name[0] != 0 && p_info[i].timestamp != 0)
                                 {
-                                        for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
-                                        {
-                                                if (p_info[i].name[0] != 0 && p_info[i].timestamp != 0)
-                                                {
-                                                        p_info[i].timestamp = timestamp;
-                                                }
-                                        }
+                                        p_info[i].timestamp = timestamp;
                                 }
-                                asterisk_server_sync_rtc_data_force(false);
-                                printf("year is %d\n", tm.tm_year);
-                                sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1500, NULL);
-                                break;
                         }
                 }
+                main_sync_lock_set(false);
+                printf("year is %d\n", tm.tm_year);
+                sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1500, NULL);
         }
 }
 
@@ -169,37 +163,29 @@ static void setting_time_set_date_automatically_click(lv_event_t *ev)
         user_data_save(false, false);
         if (user_data_get()->etc.time_automatically)
         {
-                while (1)
+                main_sync_lock_set(true);
+                extern bool tuya_api_time_sync(void);
+                if (tuya_api_time_sync() == true)
                 {
-                        if (asterisk_server_sync_rtc_data_force_get() == false)
+                        struct tm tm;
+                        user_time_read(&tm);
+                        setting_time_param_init();
+                        asterisk_register_info *p_info = asterisk_register_info_get();
+                        unsigned long long timestamp = user_timestamp_get();
+                        if (p_info != NULL)
                         {
-
-                                asterisk_server_sync_rtc_data_force(true);
-                                extern bool tuya_api_time_sync(void);
-                                if (tuya_api_time_sync() == true)
+                                for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
                                 {
-                                        struct tm tm;
-                                        user_time_read(&tm);
-                                        setting_time_param_init();
-                                        asterisk_register_info *p_info = asterisk_register_info_get();
-                                        unsigned long long timestamp = user_timestamp_get();
-                                        if (p_info != NULL)
+                                        if (p_info[i].name[0] != 0 && p_info[i].timestamp != 0)
                                         {
-                                                for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
-                                                {
-                                                        if (p_info[i].name[0] != 0 && p_info[i].timestamp != 0)
-                                                        {
-                                                                p_info[i].timestamp = timestamp;
-                                                        }
-                                                }
+                                                p_info[i].timestamp = timestamp;
                                         }
-                                        asterisk_server_sync_rtc_data_force(false);
-                                        sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1500, NULL);
                                 }
-                                asterisk_server_sync_rtc_data_force(false);
-                                break;
                         }
+                        main_sync_lock_set(false);
+                        sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1500, NULL);
                 }
+                main_sync_lock_set(false);
 
                 lv_obj_clear_flag(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_roller_cont), LV_OBJ_FLAG_HIDDEN);
         }

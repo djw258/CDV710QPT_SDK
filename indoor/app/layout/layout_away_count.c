@@ -102,17 +102,21 @@ static void layout_away_alarm_release_detetion_timer(lv_timer_t *ptimer)
         {
             if (layout_away_count_data_get()->away_release_time[i]++ == user_data_get()->alarm.away_release_time)
             {
+                main_sync_lock_set(true);
                 layout_common_call_log(security_emergency, i);
+                asterisk_server_alarm_log_force(true);
+                main_sync_lock_set(false);
                 user_data_get()->alarm.alarm_trigger_enable[i] = true;
-                user_data_save(true, true);
                 if (sat_cur_layout_get() != sat_playout_get(alarm))
                 {
                     layout_alarm_alarm_channel_set(i);
                     user_data_get()->alarm.emergency_mode = 1;
                     user_data_get()->alarm.alarm_ring_play = true;
+                    user_data_save(true, true);
                     sat_linphone_handup(0xFFFF);
                     sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
+                user_data_save(true, true);
             }
         }
     }
@@ -152,10 +156,13 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
         {
             if (user_data_get()->alarm.alarm_trigger[arg1] == false)
             {
+                main_sync_lock_set(true);
                 user_data_get()->alarm.alarm_trigger[arg1] = true;
                 if (user_data_get()->alarm.alarm_enable_always[arg1])
                 {
                     layout_common_call_log(security_emergency, arg1);
+                    asterisk_server_alarm_log_force(true);
+                    main_sync_lock_set(false);
                     if (sat_cur_layout_get() != sat_playout_get(alarm))
                     {
                         layout_alarm_alarm_channel_set(arg1);
@@ -169,6 +176,7 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
                 else
                 {
 
+                    main_sync_lock_set(false);
                     layout_away_count_data_get()->away_release_time[arg1] = 0;
                     if (user_data_get()->alarm.away_release_time == 0)
                     {

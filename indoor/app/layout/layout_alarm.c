@@ -174,6 +174,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
 ************************************************************/
 static void layout_alarm_trigger_func(int arg1, int arg2)
 {
+        main_sync_lock_set(true);
         if ((arg1 == 7) && (arg2 < ALM_LOW))
         {
                 if (user_data_get()->alarm.buzzer_alarm == false)
@@ -187,16 +188,19 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
         {
                 if ((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1))) && (!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
                 {
+                        main_sync_lock_set(false);
                         return;
                 }
                 if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 < ALM_LOW) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 > ALM_HIGHT)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
                 {
 
+                        layout_common_call_log(security_emergency, arg1);
+                        asterisk_server_alarm_log_force(true);
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
                         user_data_save(true, true);
-                        layout_common_call_log(security_emergency, arg1);
                 }
         }
+        main_sync_lock_set(false);
 }
 
 /************************************************************
@@ -346,14 +350,6 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                 {
                                                         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                                                 }
-                                        }
-                                        if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
-                                        {
-                                                layout_common_call_log(security_emergency_stop, 7);
-                                        }
-                                        else
-                                        {
-                                                layout_common_call_log(emergency_stop, 7);
                                         }
                                         if (alarm_trigger_check(true) == false)
                                         {

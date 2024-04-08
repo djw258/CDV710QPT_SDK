@@ -142,7 +142,6 @@ static void lv_task_scheduling_start(void)
 
 static bool is_asterisk_server_sync_user_data_force = false;
 static bool is_asterisk_server_sync_network_data_force = false;
-static bool is_asterisk_server_sync_rtc_data_force = false;
 static bool is_need_asterisk_update = false;
 static bool is_need_alarm_log_sync = false;
 void asterisk_server_alarm_log_force(bool is_sync)
@@ -161,16 +160,18 @@ void asterisk_server_sync_network_data_force(bool is_sync)
 {
         is_asterisk_server_sync_network_data_force = is_sync;
 }
-void asterisk_server_sync_rtc_data_force(bool is_sync)
+
+static pthread_mutex_t sat_sync_lock = PTHREAD_MUTEX_INITIALIZER;
+void main_sync_lock_set(bool en)
 {
-        is_asterisk_server_sync_rtc_data_force = is_sync;
-}
-bool asterisk_server_sync_rtc_data_force_get(void)
-{
-        return is_asterisk_server_sync_rtc_data_force;
+        if (en)
+                pthread_mutex_lock(&sat_sync_lock);
+        else
+                pthread_mutex_unlock(&sat_sync_lock);
 }
 /*使用线程异步发送*/
-static void *asterisk_server_sync_task(void *arg)
+static void *
+asterisk_server_sync_task(void *arg)
 {
         sleep(8); // 考虑到所有设备上线时间非常接近，有可能发生设备第一次注册的时间戳在线程的轮询间隔内，造成短时间内，主线程需要同步的次数较多，短时间内消耗大量内存
 
@@ -182,9 +183,9 @@ static void *asterisk_server_sync_task(void *arg)
 
         while (1)
         {
-                if ((user_data_get()->is_device_init) && is_asterisk_server_sync_rtc_data_force == false)
+                pthread_mutex_lock(&sat_sync_lock);
+                if ((user_data_get()->is_device_init))
                 {
-                        is_asterisk_server_sync_rtc_data_force = true;
                         unsigned long long timestamp = user_timestamp_get();
                         for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
                         {
@@ -221,12 +222,22 @@ static void *asterisk_server_sync_task(void *arg)
                                 }
                         }
 
+                        /*需要同步警报信息*/
+                        if (is_need_alarm_log_sync == true)
+                        {
+                                is_need_alarm_log_sync = false;
+                                sat_ipcamera_data_sync(0x04, 0x01, (char *)alarm_list_info_get(), sizeof(USER_ALARM_LIST), 10, 1500, NULL);
+
+                                usleep(300 * 1000); // 加一些延时，避免室内机同时申请的空间太多
+                        }
+
                         if (is_asterisk_server_sync_user_data_force)
                         {
                                 is_asterisk_server_sync_user_data_force = false;
 
                                 user_data_get()->sync_timestamp = user_timestamp_get();
                                 sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+
                                 usleep(100 * 1000); // 加一些延时，避免室内机同时申请的空间太多
                         }
                         if (is_asterisk_server_sync_network_data_force)
@@ -241,13 +252,6 @@ static void *asterisk_server_sync_task(void *arg)
                                 is_need_asterisk_update = false;
                                 sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
                                 usleep(100 * 1000); // 加一些延时，避免室内机同时申请的空间太多
-                        }
-                        /*需要同步警报信息*/
-                        if (is_need_alarm_log_sync == true)
-                        {
-                                is_need_alarm_log_sync = false;
-                                sat_ipcamera_data_sync(0x04, 0x01, (char *)alarm_list_info_get(), sizeof(USER_ALARM_LIST), 10, 1500, NULL);
-                                usleep(300 * 1000); // 加一些延时，避免室内机同时申请的空间太多
                         }
 
                         { // 不能保证每一次TCP都能成功建立，或者每一次都能正确接收全部数据，所以需要定时器定时同步数据(周期不能太短)
@@ -280,9 +284,8 @@ static void *asterisk_server_sync_task(void *arg)
                                         sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1000, NULL);
                                 }
                         }
-
-                        is_asterisk_server_sync_rtc_data_force = false;
                 }
+                pthread_mutex_unlock(&sat_sync_lock);
                 usleep(500 * 1000);
         }
         return NULL;

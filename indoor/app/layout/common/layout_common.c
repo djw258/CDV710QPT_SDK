@@ -254,40 +254,6 @@ void layout_alarm_alarm_channel_set(int ch)
         alarm_ch = ch;
 }
 
-struct tm trigger_tm[9];
-/************************************************************
- ** 函数说明: 根据报警通道设置最近一次报警时间
- ** 作者: xiaoxiao
- ** 日期: 2023-05-06 23:06:39
- ** 参数说明:
- ** 注意事项:
- ************************************************************/
-bool alarm_occur_time_set(int ch, struct tm *tm)
-{
-        if ((ch >= 0) && (ch <= 8))
-        {
-                trigger_tm[ch] = *tm;
-                return true;
-        }
-        return false;
-}
-/************************************************************
- ** 函数说明: 根据报警通道获取最近一次报警时间
- ** 作者: xiaoxiao
- ** 日期: 2023-05-06 23:06:39
- ** 参数说明:
- ** 注意事项:
- ************************************************************/
-bool alarm_occur_time_get(int ch, struct tm *tm)
-{
-        if ((ch > 8) || (ch < 0))
-        {
-                return false;
-        }
-
-        *tm = trigger_tm[ch];
-        return true;
-}
 /************************************************************
 ** 函数说明: 警报处理函数
 ** 作者: xiaoxiao
@@ -327,12 +293,15 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                 }
                 if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 < ALM_LOW) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 > ALM_HIGHT))
                 {
+                        main_sync_lock_set(true);
+                        layout_common_call_log(security_emergency, arg1);
+                        asterisk_server_alarm_log_force(true);
+                        main_sync_lock_set(false);
                         layout_alarm_alarm_channel_set(arg1);
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
                         user_data_get()->alarm.emergency_mode = 1;
                         user_data_get()->alarm.alarm_ring_play = true;
                         user_data_save(true, true);
-                        layout_common_call_log(security_emergency, arg1);
                         sat_linphone_handup(0xFFFF);
                         sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
@@ -349,53 +318,69 @@ void layout_alarm_trigger_default(int arg1, int arg2)
 bool alarm_trigger_check(bool active)
 {
         bool alarm_occur = false;
+        int sort_arry[8] = {0};
+        sort_channels_by_time(sort_arry);
+        main_sync_lock_set(true);
+        if (sat_cur_layout_get() == sat_playout_get(alarm) && (user_data_get()->alarm.alarm_trigger[layout_alarm_alarm_channel_get()] == false))
+        {
+                if ((active) || ((user_data_get()->system_mode & 0x0f) == 0x01))
+                {
+                        layout_common_call_log(layout_alarm_alarm_channel_get() == 7 ? emergency_return : security_emergency_return, layout_alarm_alarm_channel_get());
+                        asterisk_server_alarm_log_force(true);
+                }
+        }
         for (int i = 0; i < 8; i++)
         {
-                if (i != 7)
+                if (sort_arry[i] != 7)
                 {
-                        if (user_data_get()->alarm.alarm_enable[i] == 0)
+                        if (user_data_get()->alarm.alarm_enable[sort_arry[i]] == 0)
                         {
-                                if ((user_data_get()->alarm.alarm_trigger[i]) || user_data_get()->alarm.alarm_trigger_enable[i])
+                                if ((user_data_get()->alarm.alarm_trigger[sort_arry[i]]) || user_data_get()->alarm.alarm_trigger_enable[sort_arry[i]])
                                 {
-                                        user_data_get()->alarm.alarm_trigger[i] = false;
-                                        user_data_get()->alarm.alarm_trigger_enable[i] = false;
+                                        user_data_get()->alarm.alarm_trigger[sort_arry[i]] = false;
+                                        user_data_get()->alarm.alarm_trigger_enable[sort_arry[i]] = false;
                                         user_data_save(true, true);
                                 }
                                 continue;
                         }
-                        if (((!user_data_get()->alarm.away_alarm_enable_list) & (0x01 << i)) && (!user_data_get()->alarm.security_alarm_enable_list) & (0x01 << i))
+                        if (((!user_data_get()->alarm.away_alarm_enable_list) & (0x01 << sort_arry[i])) && (!user_data_get()->alarm.security_alarm_enable_list) & (0x01 << sort_arry[i]))
                         {
                                 continue;
                         }
-                        if ((user_data_get()->alarm.alarm_trigger[i]))
+                        if ((user_data_get()->alarm.alarm_trigger[sort_arry[i]]))
                         {
-                                if ((user_data_get()->alarm.alarm_trigger_enable[i] && user_data_get()->alarm.away_alarm_enable) || user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.alarm_enable_always[i])
+                                if ((user_data_get()->alarm.alarm_trigger_enable[sort_arry[i]] && user_data_get()->alarm.away_alarm_enable) || user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.alarm_enable_always[sort_arry[i]])
                                 {
                                         alarm_occur = true;
                                         user_data_get()->alarm.emergency_mode = 1;
                                 }
                         }
-                        else if (user_data_get()->alarm.alarm_trigger_enable[i])
+                        else if (user_data_get()->alarm.alarm_trigger_enable[sort_arry[i]])
                         {
-                                user_data_get()->alarm.alarm_trigger_enable[i] = false;
+                                user_data_get()->alarm.alarm_trigger_enable[sort_arry[i]] = false;
                                 user_data_save(true, true);
                         }
                 }
-                else if (user_data_get()->alarm.alarm_trigger[i])
+                else if (user_data_get()->alarm.alarm_trigger[sort_arry[i]])
                 {
                         alarm_occur = true;
                         user_data_get()->alarm.emergency_mode = 0;
                 }
-
                 if ((alarm_occur) && (sat_cur_layout_get() != sat_playout_get(alarm) || (user_data_get()->alarm.alarm_trigger[layout_alarm_alarm_channel_get()] == false)))
                 {
-                        user_data_save(true, active);
-                        layout_common_call_log(i == 7 ? emergency_occur : security_emergency, i);
-                        layout_alarm_alarm_channel_set(i);
+                        if ((active))
+                        {
+                                layout_common_call_log(sort_arry[i] == 7 ? emergency_occur : security_emergency, sort_arry[i]);
+                                asterisk_server_alarm_log_force(true);
+                        }
+                        main_sync_lock_set(false);
+                        user_data_save(true, true);
+                        layout_alarm_alarm_channel_set(sort_arry[i]);
                         sat_linphone_handup(0xFFFF);
                         sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);
                 }
         }
+        main_sync_lock_set(false);
         return alarm_occur;
 }
 /***********************************************************************/
@@ -857,12 +842,10 @@ bool layout_common_call_log(int type, int ch)
         bool result = true;
         struct tm tm;
         user_time_read(&tm);
-        alarm_occur_time_set(ch, &tm);
+        alarm_list_add(type, ch, &tm);
+
         if ((user_data_get()->system_mode & 0x0f) == 0x01)
         {
-                alarm_list_add(type, ch, &tm);
-                asterisk_server_alarm_log_force(true);
-
                 int event = (user_data_get()->alarm.away_alarm_enable || user_data_get()->alarm.security_alarm_enable) ? 3 : 1;
                 char dong[5] = {0};
                 char ho[5] = {0};

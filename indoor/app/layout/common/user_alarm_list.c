@@ -116,26 +116,83 @@ bool alarm_list_total_get(int *total)
 	return true;
 }
 
-// /************************************************************
-// ** 函数说明: 根据报警通道获取最近一次报警时间
-// ** 作者: xiaoxiao
-// ** 日期: 2023-05-06 23:06:39
-// ** 参数说明:
-// ** 注意事项:
-// ************************************************************/
-// bool alarm_occur_time_get(int ch, struct tm *tm)
-// {
-// 	if ((ch > 8) || (ch < 0))
-// 	{
-// 		return false;
-// 	}
-// 	for (int i = user_alarm_list.alarm_list_total - 1; i >= 0; i--)
-// 	{
-// 		if (user_alarm_list.alarm_list[i].ch == ch)
-// 		{
-// 			*tm = user_alarm_list.alarm_list[i].time;
-// 			return true;
-// 		}
-// 	}
-// 	return false;
-// }
+/************************************************************
+** 函数说明: 根据报警通道获取最近一次报警时间
+** 作者: xiaoxiao
+** 日期: 2023-05-06 23:06:39
+** 参数说明:
+** 注意事项:
+************************************************************/
+bool alarm_occur_time_get(int ch, struct tm *tm)
+{
+	if ((ch > 8) || (ch < 0))
+	{
+		return false;
+	}
+	for (int i = user_alarm_list.alarm_list_total - 1; i >= 0; i--)
+	{
+		if (user_alarm_list.alarm_list[i].ch == ch)
+		{
+			*tm = user_alarm_list.alarm_list[i].time;
+			return true;
+		}
+	}
+	return false;
+}
+
+/************************************************************
+** 函数说明: 获得由报警时间先后次序对应的传感器下标
+** 作者: xiaoxiao
+** 日期：2024-04-03 23:06:05
+** 参数说明:
+** 注意事项：
+************************************************************/
+
+void sort_channels_by_time(int *sorted_channels)
+{
+#ifdef ALARM_COOUR_SORT
+	int had_sort[8] = {0};
+	for (int i = 0; i < 8; i++)
+	{
+		sorted_channels[i] = -1;
+		had_sort[i] = -1;
+	}
+	for (int i = 0; i < 8; i++)
+	{
+		struct tm tm;
+		int earliest_ch = -1;
+		time_t earliest_time = -1;
+
+		for (int j = 0; j < 8; j++)
+		{
+			if (had_sort[j] != -1)
+			{
+				continue;
+			}
+			if (alarm_occur_time_get(j, &tm))
+			{
+				tm.tm_year -= 1900;
+				tm.tm_mon -= 1;
+				time_t current_time = mktime(&tm);
+
+				if (earliest_ch == -1 || current_time < earliest_time)
+				{
+					earliest_ch = j;
+					earliest_time = current_time;
+				}
+			}
+		}
+		// Store the sorted channel index
+		if (earliest_ch != -1)
+		{
+			sorted_channels[i] = earliest_ch;
+			had_sort[earliest_ch] = i;
+		}
+	}
+#else
+	for (int i = 0; i < 8; i++)
+	{
+		sorted_channels[i] = i;
+	}
+#endif
+}

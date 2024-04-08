@@ -217,9 +217,8 @@ static void buzzer_call_trigger_ui_create(void)
 
 static void sync_data_alarm_trigger_check()
 {
-        if ((alarm_trigger_check(false) == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
+        if ((alarm_trigger_check((user_data_get()->system_mode & 0x0f) == 0x01 ? true : false) == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
         {
-
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
 }

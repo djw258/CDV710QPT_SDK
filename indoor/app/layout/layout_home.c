@@ -572,6 +572,11 @@ static void home_monitor_obj_click(lv_event_t *ev)
                         SAT_DEBUG("Invalid channel");
                         return;
                 }
+                if (is_channel_ipc_camera(channel) == 0)
+                {
+                        extern unsigned long long call_timestamp[15];
+                        call_timestamp[channel] = user_timestamp_get();
+                }
 
                 monitor_channel_set(channel);
                 monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);

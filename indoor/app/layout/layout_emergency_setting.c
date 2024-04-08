@@ -18,15 +18,20 @@ static void layout_emergeency_back_obj_click(lv_event_t *ev)
 
 static void emergency_setting_confirm_obj_click(lv_event_t *ev)
 {
+        main_sync_lock_set(true);
+        layout_common_call_log(emergency_occur, 7);
+        asterisk_server_alarm_log_force(true);
+        main_sync_lock_set(false);
         user_data_get()->alarm.emergency_mode = 0;
         if (user_data_get()->alarm.away_auto_record)
                 record_jpeg_start(REC_MODE_AUTO);
         layout_alarm_alarm_channel_set(7);
         user_data_get()->alarm.alarm_trigger[7] = true;
-        layout_common_call_log(emergency_occur, 7);
+
         user_data_get()->alarm.is_alarm_return = false;
         user_data_get()->alarm.alarm_ring_play = true;
         user_data_save(true, true);
+
         if ((user_data_get()->system_mode & 0x0f) != 0x01)
         {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);

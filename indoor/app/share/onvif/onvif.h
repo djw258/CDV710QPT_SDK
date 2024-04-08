@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "common/sat_ipcamera.h"
-#define XML_FILE_MAX (512 * 1024)
+#define XML_FILE_MAX (128 * 1024)
 /****************************************************************
 **@日期: 2022-09-16
 **@作者: leo.liu
