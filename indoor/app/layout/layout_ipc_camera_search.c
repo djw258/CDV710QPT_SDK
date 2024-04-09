@@ -1,4 +1,5 @@
 #include "layout_define.h"
+#include "onvif.h"
 #include "layout_ipc_camera.h"
 enum
 {
@@ -47,6 +48,7 @@ static void ipc_search_door_camera_modify_default_passwd_check()
 }
 static void ipc_camera_serarch_list_click(lv_event_t *ev)
 {
+
         lv_obj_t *parent = lv_event_get_current_target(ev);
         if (parent == NULL)
         {
@@ -55,12 +57,15 @@ static void ipc_camera_serarch_list_click(lv_event_t *ev)
         layout_ipc_camera_edit_index_set(parent->id);
         sat_ipcamera_device_status_reset();
         sat_ipcamera_user_password_set(parent->id, "admin", "123456789");
+        struct ipcamera_info *ipc_device = sat_ipcamera_node_data_get(parent->id);
         if (1)
         {
-
                 for (int i = 0; i < 1; i++)
                 {
-                        if (sat_ipcamera_device_name_get(parent->id, 2000) == true)
+                        char name[64] = {0};
+                        printf("ipc_device[parent->id].ipaddr is %s\n", ipc_device[parent->id].ipaddr);
+                        if (ipc_camera_device_name_get(name, ipc_device[parent->id].ipaddr, ipc_device[parent->id].port, ipc_device[parent->id].username, ipc_device[parent->id].password, ipc_device[parent->id].auther_flag, 1000) == true)
+
                         {
                                 ipc_search_door_camera_modify_default_passwd_check();
                                 return;

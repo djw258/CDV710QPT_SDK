@@ -1179,7 +1179,7 @@ void register_device_data_sync_timer(lv_timer_t *t)
                                         }
                                         char number[32] = {0};
                                         sprintf(number, "sip:20%d@%s", i + 1, ip);
-                                        sat_ipcamera_device_register(number, i, 2000);
+                                        sat_ipcamera_device_register(number, i, 2000, false);
                                         // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
                                 }
                         }

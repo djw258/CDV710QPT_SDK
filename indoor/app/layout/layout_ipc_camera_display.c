@@ -128,7 +128,7 @@ static bool ipc_camera_search_display_register_func(void)
                                 char ip[16] = {0};
                                 sat_ip_mac_addres_get("eth0", ip, NULL, NULL);
                                 sprintf(number, "sip:20%d@%s", i + 1, ip);
-                                if (sat_ipcamera_device_register(number, layout_ipc_camera_edit_index_get(), 5000) == true)
+                                if (sat_ipcamera_device_register(number, layout_ipc_camera_edit_index_get(), 5000, true) == true)
                                 {
                                         memcpy(&network_data_get()->door_device[i], sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get()), sizeof(struct ipcamera_info));
 

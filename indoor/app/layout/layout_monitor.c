@@ -452,7 +452,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
                         {
                                 type = CALL_LOG_IN_AND_NO_ANSWER;
                         }
-                        else if (flag == MON_ENTER_CALL_TALK_FLAG)
+                        else if ((flag == MON_ENTER_CALL_TALK_FLAG) || (flag == MON_ENTER_TUYA_CALL_TALK_FLAG))
                         {
                                 type = CALL_LOG_IN_AND_ANSWER;
                         }
@@ -845,7 +845,7 @@ static void monitor_obj_handup_click(lv_event_t *e)
                 {
                         type = CALL_LOG_IN_AND_NO_ANSWER;
                 }
-                else if (flag == MON_ENTER_CALL_TALK_FLAG)
+                else if ((flag == MON_ENTER_CALL_TALK_FLAG) || (flag == MON_ENTER_TUYA_CALL_TALK_FLAG))
                 {
                         type = CALL_LOG_IN_AND_ANSWER;
                 }
@@ -853,7 +853,6 @@ static void monitor_obj_handup_click(lv_event_t *e)
                 {
                         type = CALL_LOG_CALL_OUT;
                 }
-
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
         }
 
@@ -1964,6 +1963,7 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t *ev)
                 {
                         monitor_channel_set(index);
                         monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
+                        call_timestamp[index] = user_timestamp_get();
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
         }
@@ -2084,8 +2084,9 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
 
                                 layout_call_log_create(CALL_LOG_CALL_OUT, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
                         }
-                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == 0x01 ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
+                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == 0x01 ? MON_ENTER_MANUAL_CCTV_FLAG : MON_ENTER_MANUAL_DOOR_FLAG);
                         monitor_channel_set(ch);
+                        call_timestamp[ch] = user_timestamp_get();
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
         }
@@ -2102,8 +2103,9 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                                 layout_call_log_create(CALL_LOG_CALL_OUT, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
                         }
 
-                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == 0x01 ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
+                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == 0x01 ? MON_ENTER_MANUAL_CCTV_FLAG : MON_ENTER_MANUAL_DOOR_FLAG);
                         monitor_channel_set(ch);
+                        call_timestamp[ch] = user_timestamp_get();
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
         }
@@ -2123,7 +2125,7 @@ static void layout_monitor_door_call_btn_click(lv_event_t *ev)
                 {
                         type = CALL_LOG_IN_AND_NO_ANSWER;
                 }
-                else if (flag == MON_ENTER_CALL_TALK_FLAG)
+                else if ((flag == MON_ENTER_CALL_TALK_FLAG) || (flag == MON_ENTER_TUYA_CALL_TALK_FLAG))
                 {
                         type = CALL_LOG_IN_AND_ANSWER;
                 }
@@ -2175,7 +2177,7 @@ static void layout_monitor_intercom_call_btn_click(lv_event_t *ev)
                 {
                         type = CALL_LOG_IN_AND_NO_ANSWER;
                 }
-                else if (flag == MON_ENTER_CALL_TALK_FLAG)
+                else if ((flag == MON_ENTER_CALL_TALK_FLAG) || (flag == MON_ENTER_TUYA_CALL_TALK_FLAG))
                 {
                         type = CALL_LOG_IN_AND_ANSWER;
                 }
@@ -3251,7 +3253,7 @@ static bool monitor_doorcamera_end_process(char *arg)
                 {
                         type = CALL_LOG_IN_AND_NO_ANSWER;
                 }
-                else if (flag == MON_ENTER_CALL_TALK_FLAG)
+                else if ((flag == MON_ENTER_CALL_TALK_FLAG) || (flag == MON_ENTER_TUYA_CALL_TALK_FLAG))
                 {
                         type = CALL_LOG_IN_AND_ANSWER;
                 }
@@ -3355,11 +3357,42 @@ static bool tuya_event_cmd_ch_channge(int channel)
         }
         /*****  记录上次的通道 *****/
         tuya_monitor_channel_set(ch);
-        if (monitor_channel_get() == ch)
+        int cur_ch = monitor_channel_get();
+        if (cur_ch == ch)
         {
                 return layout_monitor_report_vaild_channel();
         }
         monitor_close(0x03);
+        if (is_channel_ipc_camera(ch))
+        {
+                monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
+        }
+        else
+        {
+                monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
+        }
+        if (is_channel_ipc_camera(ch) == 0)
+        {
+                call_timestamp[ch] = user_timestamp_get();
+        }
+        int index = (cur_ch >= 0 && cur_ch <= 5) ? cur_ch : (cur_ch == 16 || cur_ch == 17) ? cur_ch + 2
+                                                                                           : -1;
+        MON_ENTER_FLAG flag = monitor_enter_flag_get();
+        CALL_LOG_TYPE type = CALL_LOG_UNKNOW;
+        if (flag == MON_ENTER_CALL_FLAG)
+        {
+                type = CALL_LOG_IN_AND_NO_ANSWER;
+        }
+        else if ((flag == MON_ENTER_CALL_TALK_FLAG) || (flag == MON_ENTER_TUYA_CALL_TALK_FLAG))
+        {
+                type = CALL_LOG_IN_AND_ANSWER;
+        }
+        else if ((flag == MON_ENTER_MANUAL_TALK_FLAG) || (flag == MON_ENTER_MANUAL_DOOR_FLAG))
+        {
+                type = CALL_LOG_CALL_OUT;
+        }
+        layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
+
         int total = 0;
         linphone_incomming_info node_group[8];
         linphone_incomming_vaild_channel_get(true, node_group, &total);
@@ -3378,18 +3411,6 @@ static bool tuya_event_cmd_ch_channge(int channel)
                                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                         }
                 }
-        }
-        if (is_channel_ipc_camera(ch))
-        {
-                monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
-        }
-        else
-        {
-                monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
-        }
-        if (is_channel_ipc_camera(ch) == 0)
-        {
-                call_timestamp[ch] = user_timestamp_get();
         }
         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
@@ -3439,11 +3460,15 @@ static bool truye_event_cmd_audio_start(void)
 
                 monitor_timeout_sec = user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 2 * 60
                                                                                                                          : 3 * 60;
-                monitor_enter_flag_set(MON_ENTER_TUYA_TALK_FLAG);
+                monitor_enter_flag_set(monitor_enter_flag_get() == MON_ENTER_CALL_FLAG ? MON_ENTER_TUYA_CALL_TALK_FLAG : MON_ENTER_TUYA_MANUAL_TALK_FLAG);
                 if (is_alarm_trigger())
                 {
                         sat_linphone_alarm_backgound_sound(true);
                 }
+                int ch = monitor_channel_get();
+                int index = (ch >= 0 && ch <= 5) ? ch : (ch == 16 || ch == 17) ? ch + 2
+                                                                               : -1;
+                call_timestamp[index] = user_timestamp_get();
                 sat_linphone_answer(-1, true);
                 monitor_obj_talk_display();
                 monitor_obj_handup_display();
@@ -3456,7 +3481,7 @@ static bool truye_event_cmd_audio_start(void)
         else
         {
                 tuya_api_preview_quit();
-                if (monitor_enter_flag_get() != MON_ENTER_TUYA_TALK_FLAG)
+                if ((monitor_enter_flag_get() != MON_ENTER_TUYA_MANUAL_TALK_FLAG) && (monitor_enter_flag_get() != MON_ENTER_TUYA_CALL_TALK_FLAG))
                         tuya_api_monitor_handup();
         }
         return true;
@@ -3476,7 +3501,7 @@ static void tuya_event_cmd_video_stop(void)
         {
                 sat_ipcamera_device_channel_setting(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, network_data_get()->door_device[ch].auther_flag, 0, 1000);
         }
-        if ((is_monitor_door_camera_talk == false || monitor_enter_flag_get() == MON_ENTER_TUYA_TALK_FLAG) && (tuya_app_quit_status_active_get() == true))
+        if ((is_monitor_door_camera_talk == false || (monitor_enter_flag_get() == MON_ENTER_TUYA_MANUAL_TALK_FLAG) || (monitor_enter_flag_get() == MON_ENTER_TUYA_CALL_TALK_FLAG)) && (tuya_app_quit_status_active_get() == true))
         {
                 int ch = monitor_channel_get();
                 int index = (ch >= 0 && ch <= 5) ? ch : (ch == 16 || ch == 17) ? ch + 2
@@ -3489,11 +3514,11 @@ static void tuya_event_cmd_video_stop(void)
                         {
                                 type = CALL_LOG_IN_AND_NO_ANSWER;
                         }
-                        else if (flag == MON_ENTER_CALL_TALK_FLAG)
+                        else if ((flag == MON_ENTER_CALL_TALK_FLAG) || (flag == MON_ENTER_TUYA_CALL_TALK_FLAG))
                         {
                                 type = CALL_LOG_IN_AND_ANSWER;
                         }
-                        else if ((flag == MON_ENTER_MANUAL_TALK_FLAG) || (flag == MON_ENTER_MANUAL_DOOR_FLAG))
+                        else if ((flag == MON_ENTER_MANUAL_TALK_FLAG) || (flag == MON_ENTER_MANUAL_DOOR_FLAG) || (flag == MON_ENTER_TUYA_MANUAL_TALK_FLAG))
                         {
                                 type = CALL_LOG_CALL_OUT;
                         }
@@ -3518,7 +3543,7 @@ static bool tuya_event_cmd_video_start(void)
         tuya_api_monitor_talk_status_reset();
         tuya_app_quit_status_active_set(true);
         int ch = monitor_channel_get();
-        if ((is_monitor_door_camera_talk) && (monitor_enter_flag_get() != MON_ENTER_TUYA_TALK_FLAG))
+        if ((is_monitor_door_camera_talk) && ((monitor_enter_flag_get() != MON_ENTER_TUYA_MANUAL_TALK_FLAG) && (monitor_enter_flag_get() != MON_ENTER_TUYA_CALL_TALK_FLAG)))
         {
                 tuya_api_preview_quit();
                 tuya_api_monitor_handup();
@@ -3568,7 +3593,6 @@ static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg)
                 break;
         case TUYA_EVENT_CMD_CH_CHANGE:
                 SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_CH_CHANGE");
-                SAT_DEBUG("change tuya ch %d", arg);
                 return tuya_event_cmd_ch_channge(arg);
                 break;
         case TUYA_EVENT_CMD_MOTION_ENBALE:

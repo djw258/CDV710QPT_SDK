@@ -272,7 +272,7 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                                                 replace_ip_address(network_data_get()->door_device[i].sip_url, network_data_get()->network.ipaddr);
                                                 char number[32] = {0};
                                                 sprintf(number, "sip:20%d@%s", i + 1, network_data_get()->network.ipaddr);
-                                                sat_ipcamera_device_register(number, i, 5000);
+                                                sat_ipcamera_device_register(number, i, 5000, false);
                                                 // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
                                         }
                                 }
@@ -472,7 +472,7 @@ static void layout_setting_ipaddress_item_init_display()
                 {
                         char ip[32] = {0};
                         char mask[32] = {0};
-                        char gateway[32] = {0};
+                        char gateway[64] = {0};
                         char dns[32] = {0};
                         sat_ip_mac_addres_get("eth0", ip, NULL, mask);
                         sat_default_gateway_get("eth0", gateway, sizeof(gateway));

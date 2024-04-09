@@ -3,6 +3,7 @@
 #include "common/sat_ipcamera.h"
 #include "onvif.h"
 /*进入模式设置:door camera /ipc*/
+static bool result[8] = {0};
 static bool ipc_cmeara_is_doorcamera = true;
 bool layout_ipc_cmeara_is_doorcamera_get(void)
 {
@@ -238,11 +239,35 @@ static void layout_ipc_cameara_register_online_check_timer(lv_timer_t *timer)
                         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_detect.png"), LV_PART_MAIN);
                         continue;
                 }
-                char name[64] = {0};
-                result[i] = ipc_camera_device_name_get(name, ipc_device[i].ipaddr, ipc_device[i].port, ipc_device[i].username, ipc_device[i].password, ipc_device[i].auther_flag, 1000);
-
+                result[i] = sat_ipcamera_device_name_get(i, 2000);
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(result[i] ? "ic_detect.png" : "ic_error.png"), LV_PART_MAIN);
         }
+}
+
+static bool layout_ipcamera_register_online_check(int ch, int status, char *name)
+{
+        struct ipcamera_info *ipc_device = layout_ipc_cmeara_is_doorcamera_get() == false ? network_data_get()->cctv_device : network_data_get()->door_device;
+        result[ch] = status;
+        lv_obj_t *list = ipc_camera_registered_list_create();
+
+        if (ipc_device[ch].rtsp[0].rtsp_url[0] == 0)
+        {
+                return false;
+        }
+        lv_obj_t *obj = lv_obj_get_child_form_id(list, ch);
+        obj = lv_obj_get_child_form_id(obj, 2);
+        if (obj == NULL)
+        {
+                return false;
+        }
+        if (result[ch] == true)
+        {
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_detect.png"), LV_PART_MAIN);
+                return true;
+        }
+        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(result[ch] ? "ic_detect.png" : "ic_error.png"), LV_PART_MAIN);
+
+        return true;
 }
 
 static void sat_layout_enter(ipc_camera_register)
@@ -377,13 +402,14 @@ static void sat_layout_enter(ipc_camera_register)
         {
                 sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, DEVICE_MAX);
         }
-        static bool result[8] = {0};
+        ipcamera_online_check_func_register(layout_ipcamera_register_online_check);
         memset(result, false, sizeof(result));
         lv_timer_t *timer = lv_sat_timer_create(layout_ipc_cameara_register_online_check_timer, 1000, &result);
         lv_timer_set_repeat_count(timer, 3);
 }
 static void sat_layout_quit(ipc_camera_register)
 {
+        ipcamera_online_check_func_register(NULL);
 }
 
 sat_layout_create(ipc_camera_register);

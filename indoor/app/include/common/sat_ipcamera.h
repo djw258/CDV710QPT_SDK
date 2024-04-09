@@ -114,7 +114,7 @@ int sat_ipcamera_profile_token_num_get(int index);
 **@作者: leo.liu
 **@功能:向doorcamera 注册一个设备
 *****************************************************************/
-bool sat_ipcamera_device_register(char *loc_sip_uri, int index, int timeout);
+bool sat_ipcamera_device_register(char *loc_sip_uri, int index, int timeout, bool block);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
@@ -144,7 +144,7 @@ bool sat_ipcamera_device_password_set(char *new_pwd, int index, int timeout);
 **@作者: leo.liu
 **@功能:向doorcamera 修改密码
 *****************************************************************/
-bool sat_ipcamera_device_version_get(char *version, int index, int timeout);
+bool sat_ipcamera_device_version_get(int index, int timeout);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
@@ -270,4 +270,12 @@ bool sat_ipcamera_device_channel_setting(const char *ip, int port, const char *u
 **@功能: 更新门口机MAC
 *****************************************************************/
 bool sat_ipcamera_device_mac_update(const char *ip, int port, const char *user, const char *password, char auther_flag, char *mac, int timeout);
+// 门口版本检查回调函数
+void ipcamera_version_query_func_register(bool (*callback)(int ch, int status, char *buffer));
+
+// 门口版本检查回调函数
+void ipcamera_online_check_func_register(bool (*callback)(int ch, int status, char *buffer));
+
+// ipcamera注册检查回调函数
+void ipcamera_register_query_func_register(bool (*callback)(int status));
 #endif

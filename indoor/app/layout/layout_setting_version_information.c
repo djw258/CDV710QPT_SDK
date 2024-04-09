@@ -27,6 +27,8 @@ enum
         ssetting_version_information_obj_id_msgbox_parent,
         ssetting_version_information_obj_id_msgbox_text,
 };
+
+static bool result[8] = {0};
 static void setting_version_information_cancel_obj_click(lv_event_t *e)
 {
         sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
@@ -104,7 +106,6 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
 {
         char user[128] = {0};
         char ip[32] = {0};
-        char version_buf[128] = {0};
         bool *result = (bool *)ptimer->user_data;
 
         // if (network_data_get()->door_device_count > 0)
@@ -118,7 +119,6 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
 
                         memset(user, 0, sizeof(user));
                         memset(ip, 0, sizeof(ip));
-                        memset(version_buf, 0, sizeof(version_buf));
 
                         lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_version_information_obj_id_list);
                         lv_obj_t *item = lv_obj_get_child_form_id(list, i);
@@ -127,14 +127,10 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
                         {
                                 continue;
                         }
-                        result[i] = sat_ipcamera_device_version_get(version_buf, i, 500);
+                        result[i] = sat_ipcamera_device_version_get(i, 1500);
                         if (result[i] == false)
                         {
                                 lv_label_set_text(obj, "Version unknow");
-                        }
-                        else
-                        {
-                                lv_label_set_text_fmt(obj, "build time:%s", version_buf);
                         }
                 }
         }
@@ -145,7 +141,29 @@ static void setting_version_information_item_click(lv_event_t *e)
         ;
 }
 
-static void sat_layout_enter(setting_version_information)
+static bool layout_version_ipcamera_version_query_func(int ch, int status, char *buffer)
+{
+        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_version_information_obj_id_list);
+        lv_obj_t *item = NULL;
+        if (list)
+        {
+                item = lv_obj_get_child_form_id(list, ch);
+        }
+        if (item)
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(item, 1);
+                if (status)
+                {
+                        result[ch] = true;
+                        lv_label_set_text(obj, buffer);
+                }
+        }
+
+        return false;
+}
+
+static void
+sat_layout_enter(setting_version_information)
 {
         sat_ipcamera_initialization_parameters(&network_data_get()->door_device[0], DEVICE_MAX);
 
@@ -302,15 +320,16 @@ static void sat_layout_enter(setting_version_information)
                         }
                 }
         }
-
+        // 门口版本检查回调函数
+        ipcamera_version_query_func_register(layout_version_ipcamera_version_query_func);
         sd_state_channge_callback_register(setting_version_information_sd_status_callback);
-        static bool result[8] = {0};
         memset(result, false, sizeof(result));
         lv_timer_t *timer = lv_sat_timer_create(setting_version_information_version_get_timer, 3000, &result);
         lv_timer_set_repeat_count(timer, 3);
 }
 static void sat_layout_quit(setting_version_information)
 {
+        ipcamera_version_query_func_register(NULL);
         sd_state_channge_callback_register(sd_state_change_default_callback);
 }
 
