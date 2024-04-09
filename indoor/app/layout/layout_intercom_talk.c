@@ -18,7 +18,7 @@ enum
 
         intercom_talk_obj_id_buzzer_call_label
 };
-extern unsigned long long call_timestamp[15];
+extern unsigned long long call_timestamp[20];
 
 static int intercom_talk_timeout = 0;
 /*0:空闲，1：call outgoing 2:incomming 3:in_talk 4:out_talk*/
@@ -100,7 +100,7 @@ static void intercom_talk_call_time_timer(lv_timer_t *ptime)
                 int index = extern_index_get_by_user(intercom_call_user);
                 if (index != -1)
                 {
-                        index += 7;
+                        index += 8;
                         CALL_LOG_TYPE type = CALL_LOG_UNKNOW;
                         if (intercom_call_state == 0X01 || intercom_call_state == 0x04)
                         {
@@ -178,12 +178,12 @@ static void intercom_talk_handup_obj_click(lv_event_t *e)
         int index = extern_index_get_by_user(intercom_call_user);
         if (index != -1)
         {
-                index += 7;
+                index += 8;
                 layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
         }
         else if (strstr(intercom_call_user, lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION)))
         {
-                layout_call_log_create(type, (user_timestamp_get() - call_timestamp[7]) / 1000, 7);
+                layout_call_log_create(type, (user_timestamp_get() - call_timestamp[19]) / 1000, 7);
         }
         layout_monitor_goto_layout_process(true);
 }
@@ -253,7 +253,7 @@ static void intercom_talk_answer_obj_click(lv_event_t *e)
         int index = extern_index_get_by_user(intercom_call_user);
         if (index >= 0)
         {
-                index += 7;
+                index += 8;
                 call_timestamp[index] = user_timestamp_get();
         }
         sat_linphone_audio_play_stop();
@@ -460,16 +460,16 @@ static bool intercom_talk_call_failed_callback(char *arg)
                         printf("[%s:%d] get channel failed(%s)\n", __func__, __LINE__, arg);
                         return false;
                 }
-                index = index - 1 + 8;
+                index = index + 8;
         }
         else if (strstr(arg, "lobby") != NULL) /*lobby代表大厅设备*/
         {
 
-                index = 6;
+                index = 18;
         }
         else if (strstr(arg, "guard") || strstr(arg, network_data_get()->guard_number)) /*guard代表*/
         {
-                index = 7;
+                index = 19;
         }
         layout_call_log_create(CALL_LOG_CALL_OUT, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
         layout_monitor_goto_layout_process(true);

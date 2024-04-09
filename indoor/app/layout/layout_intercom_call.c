@@ -43,7 +43,7 @@ typedef enum
         call_log_list_cont_obj_duration_id,
 
 } call_log_list_cont_obj;
-
+extern unsigned long long call_timestamp[20];
 static int checkbox_s_num = 0;      // call记录被选中的个数
 static int enter_intercom_mode = 0; // 进入intercom_call界面的途径（0：通过点击call机按键；1：通过点击呼叫记录的按键）
 
@@ -185,14 +185,12 @@ static bool intercom_linphone_outgoing_callback(char *arg)
 
                 // intercom_call_username_setting(network_data_get()->guard_number);
                 intercom_call_username_setting(lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION));
-                extern unsigned long long call_timestamp[15];
-                call_timestamp[7] = user_timestamp_get();
+                call_timestamp[19] = user_timestamp_get();
         }
         else
         {
                 intercom_call_username_setting(arg);
-                extern unsigned long long call_timestamp[15];
-                call_timestamp[index - 1 + 8] = user_timestamp_get();
+                call_timestamp[index + 8] = user_timestamp_get();
         }
 
         if (user_data_get()->audio.ring_mute == false)
@@ -224,8 +222,7 @@ static bool intercom_linphone_outgoing_arly_media_register(char *arg)
         {
                 send_call_play(1, 0xfffff);
         }
-        extern unsigned long long call_timestamp[15];
-        call_timestamp[index - 1 + 8] = user_timestamp_get();
+        call_timestamp[index + 8] = user_timestamp_get();
         long call_id = 0;
         char *str = strstr(arg, " id:");
         if (str != NULL)

@@ -22,7 +22,7 @@ void tuya_app_quit_status_active_set(bool en)
 {
         tuya_app_quit_status_active = en;
 }
-
+extern unsigned long long call_timestamp[20];
 static bool tuya_event_cmd_video_start(void)
 {
 
@@ -41,12 +41,20 @@ static bool tuya_event_cmd_video_start(void)
                 {
                         monitor_channel_set(tuya_monitor_channel);
                         tuya_app_quit_status_active_set(true);
+                        if (is_channel_ipc_camera(tuya_monitor_channel) == 0)
+                        {
+                                call_timestamp[tuya_monitor_channel] = user_timestamp_get();
+                        }
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                 }
                 else if (monitor_door_first_valid_get(true) != -1)
                 {
                         monitor_channel_set(monitor_door_first_valid_get(true));
                         tuya_app_quit_status_active_set(true);
+                        if (is_channel_ipc_camera(tuya_monitor_channel) == 0)
+                        {
+                                call_timestamp[tuya_monitor_channel] = user_timestamp_get();
+                        }
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                 }
                 else if (monitor_door_first_valid_get(false) != -1)

@@ -574,7 +574,7 @@ static void home_monitor_obj_click(lv_event_t *ev)
                 }
                 if (is_channel_ipc_camera(channel) == 0)
                 {
-                        extern unsigned long long call_timestamp[15];
+                        extern unsigned long long call_timestamp[20];
                         call_timestamp[channel] = user_timestamp_get();
                 }
 
