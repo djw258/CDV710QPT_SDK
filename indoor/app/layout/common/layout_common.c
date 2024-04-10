@@ -294,7 +294,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                 if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 < ALM_LOW) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 > ALM_HIGHT))
                 {
                         main_sync_lock_set(true);
-                        layout_common_call_log(security_emergency, arg1);
+                        layout_common_alarm_log(security_emergency, arg1);
                         asterisk_server_alarm_log_force(true);
                         main_sync_lock_set(false);
                         layout_alarm_alarm_channel_set(arg1);
@@ -325,7 +325,7 @@ bool alarm_trigger_check(bool active)
         {
                 if ((active) || ((user_data_get()->system_mode & 0x0f) == 0x01))
                 {
-                        layout_common_call_log(layout_alarm_alarm_channel_get() == 7 ? emergency_return : security_emergency_return, layout_alarm_alarm_channel_get());
+                        layout_common_alarm_log(layout_alarm_alarm_channel_get() == 7 ? emergency_return : security_emergency_return, layout_alarm_alarm_channel_get());
                         asterisk_server_alarm_log_force(true);
                 }
         }
@@ -370,7 +370,7 @@ bool alarm_trigger_check(bool active)
                 {
                         if ((active))
                         {
-                                layout_common_call_log(sort_arry[i] == 7 ? emergency_occur : security_emergency, sort_arry[i]);
+                                layout_common_alarm_log(sort_arry[i] == 7 ? emergency_occur : security_emergency, sort_arry[i]);
                                 asterisk_server_alarm_log_force(true);
                         }
                         main_sync_lock_set(false);
@@ -837,7 +837,7 @@ static void *commax_alarm_event_report(void *arg)
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-bool layout_common_call_log(int type, int ch)
+bool layout_common_alarm_log(int type, int ch)
 {
         bool result = true;
         struct tm tm;

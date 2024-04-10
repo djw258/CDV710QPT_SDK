@@ -194,7 +194,7 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
                 if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 < ALM_LOW) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 > ALM_HIGHT)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
                 {
 
-                        layout_common_call_log(security_emergency, arg1);
+                        layout_common_alarm_log(security_emergency, arg1);
                         asterisk_server_alarm_log_force(true);
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
                         user_data_save(true, true);

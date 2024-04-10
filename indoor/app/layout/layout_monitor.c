@@ -2164,7 +2164,7 @@ static void layout_monitor_intercom_call_btn_click(lv_event_t *ev)
 }
 
 // 挂断其他设备的呼叫会话
-static void layout_monitor_other_call_handup_btn_click(lv_event_t *ev)
+static void layout_monitor_monitor_call_handup_btn_click(lv_event_t *ev)
 {
         lv_obj_t *obj = lv_event_get_current_target(ev);
         linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(lv_obj_get_parent(obj)->id);
@@ -2180,10 +2180,30 @@ static void layout_monitor_other_call_handup_btn_click(lv_event_t *ev)
 
                         layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
                 }
-                layout_monitor_current_call_end_log();
                 sat_linphone_handup(node->call_id);
                 linphone_incomming_node_release(node);
 
+                layout_monitor_door_ch_btn_create();
+        }
+}
+
+// 挂断其他设备的呼叫会话
+static void layout_monitor_extenssion_call_handup_btn_click(lv_event_t *ev)
+{
+        lv_obj_t *obj = lv_event_get_current_target(ev);
+        linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(lv_obj_get_parent(obj)->id);
+        if (node != NULL)
+        {
+                int index = node->channel;
+                if (index != -1)
+                {
+                        index += 8;
+                        CALL_LOG_TYPE type = CALL_LOG_IN_AND_NO_ANSWER;
+                        layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
+                }
+
+                sat_linphone_handup(node->call_id);
+                linphone_incomming_node_release(node);
                 layout_monitor_door_ch_btn_create();
         }
 }
@@ -2235,7 +2255,7 @@ static void layout_monitor_door_ch_btn_create(void)
                                                                      (const char *)resource_ui_src_get("btn_call_extension.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                 lv_obj_t *handup = lv_common_img_btn_create(obj_answer, 2, 205, 24, 32, 32,
-                                                            layout_monitor_other_call_handup_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                            layout_monitor_monitor_call_handup_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             (const char *)resource_ui_src_get("btn_call_extension_close.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
@@ -2264,7 +2284,7 @@ static void layout_monitor_door_ch_btn_create(void)
                                                               (const char *)resource_ui_src_get("btn_call_extension.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                 lv_common_img_btn_create(obj, 2, 205, 24, 32, 32,
-                                         layout_monitor_other_call_handup_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                         layout_monitor_extenssion_call_handup_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          (const char *)resource_ui_src_get("btn_call_extension_close.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
@@ -3196,7 +3216,15 @@ static bool monitor_doorcamera_end_process(char *arg)
 
                 if (call_id == linphone_call_id)
                 {
-                        layout_monitor_current_call_end_log();
+                        if (sat_cur_layout_get() == sat_playout_get(monitor))
+                        {
+                                layout_monitor_current_call_end_log();
+                        }
+                        else if (sat_cur_layout_get() == sat_playout_get(intercom_talk))
+                        {
+                                layout_intercom_talk_current_call_end_log();
+                        }
+
                         layout_monitor_goto_layout_process(false);
                 }
         }

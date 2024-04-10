@@ -19,7 +19,7 @@ static void layout_emergeency_back_obj_click(lv_event_t *ev)
 static void emergency_setting_confirm_obj_click(lv_event_t *ev)
 {
         main_sync_lock_set(true);
-        layout_common_call_log(emergency_occur, 7);
+        layout_common_alarm_log(emergency_occur, 7);
         asterisk_server_alarm_log_force(true);
         main_sync_lock_set(false);
         user_data_get()->alarm.emergency_mode = 0;

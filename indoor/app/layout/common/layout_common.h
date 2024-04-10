@@ -209,7 +209,7 @@ bool is_eth0_inserted(void);
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-bool layout_common_call_log(int type, int ch);
+bool layout_common_alarm_log(int type, int ch);
 /************************************************************
 ** 函数说明:ip变化后更新数据
 ** 作者: xiaoxiao
