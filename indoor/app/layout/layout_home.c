@@ -987,7 +987,6 @@ static void home_obj_top_icon_display_timer(lv_timer_t *ptimer)
 
 static void sat_layout_enter(home)
 {
-
         tuya_api_network_detect_enable(true);
         /***********************************************
          ** 作者: leo.liu

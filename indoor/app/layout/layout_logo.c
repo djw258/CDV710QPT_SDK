@@ -1179,7 +1179,7 @@ void register_device_data_sync_timer(lv_timer_t *t)
                                         }
                                         char number[32] = {0};
                                         sprintf(number, "sip:20%d@%s", i + 1, ip);
-                                        sat_ipcamera_device_register(number, i, 2000, false);
+                                        sat_ipcamera_device_register(number, i, 1500, false);
                                         // sat_ipcamera_device_update_server_ip(i, network_data_get()->network.ipaddr, 1000);
                                 }
                         }
@@ -1205,7 +1205,7 @@ void register_device_data_sync_timer(lv_timer_t *t)
         lv_timer_del(t);
 }
 
-// 主机重启后，ip改变要自动同步注册信息
+// 定期喂狗
 void watch_dog_alive_timer(lv_timer_t *t)
 {
         watch_dog_alive();
@@ -1213,8 +1213,6 @@ void watch_dog_alive_timer(lv_timer_t *t)
 
 static void sat_layout_quit(logo)
 {
-        // 开启可看门狗
-        watch_dog_start(10);
         /**
          * 原因：时间比标准时间每天快了大约6秒
          * 函数作用：每隔4.8分种让时间减少20豪秒(定时器时间也依赖系统时间，所以得减去相应的时间误差；公式：48/（24*60）*3 *1000 = 200)
@@ -1224,6 +1222,8 @@ static void sat_layout_quit(logo)
         lv_timer_ready(lv_timer_create(commax_pis_information_report_timer, 30 * 60 * 1000, NULL));
 
         lv_timer_ready(lv_timer_create(register_device_data_sync_timer, 1000, NULL));
+        // 开启可看门狗
+        watch_dog_start(10);
 
         lv_timer_ready(lv_timer_create(watch_dog_alive_timer, 1000, NULL));
 }
