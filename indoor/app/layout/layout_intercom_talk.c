@@ -29,6 +29,12 @@ void intercom_call_status_setting(int state)
 {
         intercom_call_state = state;
 }
+
+char *intercom_call_user_get()
+{
+        return intercom_call_user;
+}
+
 bool intercom_call_username_setting(const char *user)
 {
         if (user == NULL)
@@ -41,6 +47,34 @@ bool intercom_call_username_setting(const char *user)
         }
         intercom_call_user = lv_mem_alloc(strlen(user) + 1);
         strcpy(intercom_call_user, user);
+        return true;
+}
+
+bool layout_intercom_talk_current_call_end_log(void)
+{
+        CALL_LOG_TYPE type = CALL_LOG_UNKNOW;
+        if (intercom_call_state == 0X01 || intercom_call_state == 0x04)
+        {
+                type = CALL_LOG_CALL_OUT;
+        }
+        else if (intercom_call_state == 0X02)
+        {
+                type = CALL_LOG_IN_AND_NO_ANSWER;
+        }
+        else if (intercom_call_state == 0X03)
+        {
+                type = CALL_LOG_IN_AND_ANSWER;
+        }
+        int index = extern_index_get_by_user(intercom_call_user);
+        if (index != -1)
+        {
+                index += 8;
+                layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
+        }
+        else if (strstr(intercom_call_user, lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION)))
+        {
+                layout_call_log_create(type, (user_timestamp_get() - call_timestamp[19]) / 1000, 19);
+        }
         return true;
 }
 
@@ -97,25 +131,7 @@ static void intercom_talk_call_time_timer(lv_timer_t *ptime)
 {
         if (intercom_talk_timeout == 0)
         {
-                int index = extern_index_get_by_user(intercom_call_user);
-                if (index != -1)
-                {
-                        index += 8;
-                        CALL_LOG_TYPE type = CALL_LOG_UNKNOW;
-                        if (intercom_call_state == 0X01 || intercom_call_state == 0x04)
-                        {
-                                type = CALL_LOG_CALL_OUT;
-                        }
-                        else if (intercom_call_state == 0X02)
-                        {
-                                type = CALL_LOG_IN_AND_NO_ANSWER;
-                        }
-                        else if (intercom_call_state == 0X03)
-                        {
-                                type = CALL_LOG_IN_AND_ANSWER;
-                        }
-                        layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
-                }
+                layout_intercom_talk_current_call_end_log();
                 layout_monitor_goto_layout_process(true);
                 return;
         }
@@ -162,29 +178,7 @@ static void intercom_talk_call_status_icon_display(void)
 
 static void intercom_talk_handup_obj_click(lv_event_t *e)
 {
-        CALL_LOG_TYPE type = CALL_LOG_UNKNOW;
-        if (intercom_call_state == 0X01 || intercom_call_state == 0x04)
-        {
-                type = CALL_LOG_CALL_OUT;
-        }
-        else if (intercom_call_state == 0X02)
-        {
-                type = CALL_LOG_IN_AND_NO_ANSWER;
-        }
-        else if (intercom_call_state == 0X03)
-        {
-                type = CALL_LOG_IN_AND_ANSWER;
-        }
-        int index = extern_index_get_by_user(intercom_call_user);
-        if (index != -1)
-        {
-                index += 8;
-                layout_call_log_create(type, (user_timestamp_get() - call_timestamp[index]) / 1000, index);
-        }
-        else if (strstr(intercom_call_user, lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION)))
-        {
-                layout_call_log_create(type, (user_timestamp_get() - call_timestamp[19]) / 1000, 7);
-        }
+        layout_intercom_talk_current_call_end_log();
         layout_monitor_goto_layout_process(true);
 }
 

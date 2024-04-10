@@ -1,5 +1,7 @@
 #include "layout_define.h"
 #include "tuya_common.h"
+#include "layout_intercom_call.h"
+#include "layout_monitor.h"
 #include "tuya_api.h"
 static int tuya_monitor_channel = 0;
 void tuya_monitor_channel_set(int ch)
@@ -45,15 +47,23 @@ static bool tuya_event_cmd_video_start(void)
                         {
                                 call_timestamp[tuya_monitor_channel] = user_timestamp_get();
                         }
+                        if (sat_cur_layout_get() == sat_playout_get(intercom_talk))
+                        {
+                                layout_intercom_talk_current_call_end_log();
+                        }
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                 }
                 else if (monitor_door_first_valid_get(true) != -1)
                 {
                         monitor_channel_set(monitor_door_first_valid_get(true));
                         tuya_app_quit_status_active_set(true);
-                        if (is_channel_ipc_camera(tuya_monitor_channel) == 0)
+                        if (is_channel_ipc_camera(monitor_door_first_valid_get(true)) == 0)
                         {
-                                call_timestamp[tuya_monitor_channel] = user_timestamp_get();
+                                call_timestamp[monitor_door_first_valid_get(true)] = user_timestamp_get();
+                        }
+                        if (sat_cur_layout_get() == sat_playout_get(intercom_talk))
+                        {
+                                layout_intercom_talk_current_call_end_log();
                         }
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                 }
@@ -61,6 +71,10 @@ static bool tuya_event_cmd_video_start(void)
                 {
                         monitor_channel_set(monitor_door_first_valid_get(false));
                         tuya_app_quit_status_active_set(true);
+                        if (sat_cur_layout_get() == sat_playout_get(intercom_talk))
+                        {
+                                layout_intercom_talk_current_call_end_log();
+                        }
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                 }
         }

@@ -263,6 +263,7 @@ static void frame_show_media_thumb_display(const char *path)
 	sprintf(arry[0], "%s 0 0 %d %d", path, THUMB_WIDTH, THUMB_HIGHT);
 	sat_linphone_media_thumb_display(arry, 1, frame2_show_thumb_media_display_callback);
 }
+
 static void frame_show_delay_close_monitor_timer(lv_timer_t *ptimer)
 {
 	monitor_close(0x02);
