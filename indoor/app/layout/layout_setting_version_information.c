@@ -203,7 +203,7 @@ sat_layout_enter(setting_version_information)
                 struct tm tm;
                 if (platform_build_date_get(&tm) == true)
                 {
-                        sprintf(version_info, SYSTEM_VERSION "   build time:%04d-%02d-%02d %02d:%02d:%02d", 2024, 04, 11, 11, 28, 22 /* tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec */); // 客户要求编译时间和已生产产品保持一致
+                        sprintf(version_info, SYSTEM_VERSION "   build time:%04d-%02d-%02d %02d:%02d:%02d", /* 2024, 04, 11, 11, 28, 22  */ tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec); // 客户要求编译时间和已生产产品保持一致
                 }
                 else
                 {
@@ -325,8 +325,7 @@ sat_layout_enter(setting_version_information)
         ipcamera_version_query_func_register(layout_version_ipcamera_version_query_func);
         sd_state_channge_callback_register(setting_version_information_sd_status_callback);
         memset(result, false, sizeof(result));
-        lv_timer_t *timer = lv_sat_timer_create(setting_version_information_version_get_timer, 8000, &result);
-        lv_timer_ready(timer);
+        lv_timer_t *timer = lv_sat_timer_create(setting_version_information_version_get_timer, 3000, &result);
         lv_timer_set_repeat_count(timer, 3);
 }
 static void sat_layout_quit(setting_version_information)

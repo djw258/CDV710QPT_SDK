@@ -1,6 +1,7 @@
 indoor/gcc
 indoor/app/rootfs
 indoor/app/build
+indoor/app/upgrade_compression
 outdoor/gcc
 outdoor/tools
 outdoor/app/build

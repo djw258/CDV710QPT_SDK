@@ -790,7 +790,7 @@ static bool tcp_device_servrce_xml_get_version_name(int *tcp_socket_fd, const ch
         struct tm tm;
         if (platform_build_date_get(&tm) == true)
         {
-                sprintf(version, "%04d-%02d-%02d(%02d:%02d:%02d)%s-MAC:%s", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, SYSTEM_VERSION, mac);
+                sprintf(version, "%04d-%02d-%02d(%02d:%02d:%02d)%s-MAC:%s", 2024, 03, 29, 20, 00, 36 /* tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec */, SYSTEM_VERSION, mac);
                 tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, version);
         }
         else
