@@ -911,9 +911,6 @@ static void *monitor_unlock_ctrl_task(void *arg)
                 printf("[%s]:malloc failed\n", __func__);
                 return NULL;
         }
-
-        memcpy(info, arg, sizeof(door_lock_info));
-
         if ((info->mode == 0))
         {
                 if ((info->ch == MON_CH_DOOR1))

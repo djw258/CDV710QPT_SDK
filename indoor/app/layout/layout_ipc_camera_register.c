@@ -239,7 +239,7 @@ static void layout_ipc_cameara_register_online_check_timer(lv_timer_t *timer)
                         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_detect.png"), LV_PART_MAIN);
                         continue;
                 }
-                result[i] = sat_ipcamera_device_name_get(i, 2000);
+                result[i] = sat_ipcamera_device_name_get(i, 1000);
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(result[i] ? "ic_detect.png" : "ic_error.png"), LV_PART_MAIN);
         }
 }
@@ -259,11 +259,6 @@ static bool layout_ipcamera_register_online_check(int ch, int status, char *name
         if (obj == NULL)
         {
                 return false;
-        }
-        if (result[ch] == true)
-        {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_detect.png"), LV_PART_MAIN);
-                return true;
         }
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(result[ch] ? "ic_detect.png" : "ic_error.png"), LV_PART_MAIN);
 

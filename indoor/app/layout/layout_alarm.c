@@ -133,7 +133,7 @@ static void layout_alarm_ring_stop(lv_timer_t *ptimer)
         alarm_ring_close_timer = NULL;
 }
 
-static void alarm_ring_idel_check(lv_timer_t *ptimer)
+static void layout_alarm_ring_play(void)
 {
         ring_alarm_play();
         if (alarm_ring_close_timer)
@@ -142,6 +142,11 @@ static void alarm_ring_idel_check(lv_timer_t *ptimer)
                 alarm_ring_close_timer = NULL;
         }
         alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
+}
+
+static void alarm_ring_idel_check(lv_timer_t *ptimer)
+{
+        layout_alarm_ring_play();
         lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_passwd_cont);
         if (parent)
         {
@@ -332,13 +337,7 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                         lv_obj_add_flag(parent, LV_OBJ_FLAG_HIDDEN); // 错误三次键盘隐藏
                                                         layout_alarm_passwd_input_txt_reset();
 
-                                                        ring_alarm_play();
-                                                        if (alarm_ring_close_timer)
-                                                        {
-                                                                lv_timer_del(alarm_ring_close_timer);
-                                                                alarm_ring_close_timer = NULL;
-                                                        }
-                                                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
+                                                        layout_alarm_ring_play();
                                                         return;
                                                 }
                                         }
@@ -366,13 +365,7 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                 if ((alarm_passwd_input_error_count++) == 2)
                                 {
                                         alarm_passwd_input_error_count = 0;
-                                        ring_alarm_play();
-                                        if (alarm_ring_close_timer)
-                                        {
-                                                lv_timer_del(alarm_ring_close_timer);
-                                                alarm_ring_close_timer = NULL;
-                                        }
-                                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
+                                        layout_alarm_ring_play();
                                         lv_obj_add_flag(parent, LV_OBJ_FLAG_HIDDEN);
                                 }
                                 layout_alarm_passwd_input_txt_reset();
@@ -473,13 +466,7 @@ static void layout_alarm_password_input_keyboard_click(lv_event_t *ev)
 ************************************************************/
 static void layout_alarm_close_keyboard_obj_click(lv_event_t *ev)
 {
-        ring_alarm_play();
-        if (alarm_ring_close_timer)
-        {
-                lv_timer_del(alarm_ring_close_timer);
-                alarm_ring_close_timer = NULL;
-        }
-        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
+        layout_alarm_ring_play();
 
         lv_obj_t *passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_passwd_cont);
         lv_obj_add_flag(passwd_cont, LV_OBJ_FLAG_HIDDEN);
@@ -817,13 +804,7 @@ static void sat_layout_enter(alarm)
                 ** 参数说明:
                 ** 注意事项:
                 ************************************************************/
-                ring_alarm_play();
-                if (alarm_ring_close_timer)
-                {
-                        lv_timer_del(alarm_ring_close_timer);
-                        alarm_ring_close_timer = NULL;
-                }
-                alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
+                layout_alarm_ring_play();
         }
 
         {

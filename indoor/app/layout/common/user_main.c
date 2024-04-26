@@ -297,7 +297,7 @@ static void sigchld(int sign)
         // wait(NULL);
 }
 
-static void sigsegv(int sign)
+static void signal_handler(int sign)
 {
         watch_dog_close();
 }
@@ -312,7 +312,10 @@ int main(int argc, char *argv[])
         // system("sysctl -w kernel.printk=\"3 3 3 3\""); // 设置内核打印等级，忽略内核打印
         signal(SIGCHLD, sigchld);
         signal(SIGPIPE, SIG_IGN);
-        signal(SIGSEGV, sigsegv);
+        signal(SIGSEGV, signal_handler);
+        signal(SIGILL, signal_handler);
+        signal(SIGABRT, signal_handler);
+        signal(SIGFPE, signal_handler);
 
         /*先干掉asterik服务器*/
         remove("/tmp/.linphonerc");

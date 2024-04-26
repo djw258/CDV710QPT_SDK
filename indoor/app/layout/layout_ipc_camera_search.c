@@ -63,7 +63,6 @@ static void ipc_camera_serarch_list_click(lv_event_t *ev)
                 for (int i = 0; i < 1; i++)
                 {
                         char name[64] = {0};
-                        printf("ipc_device[parent->id].ipaddr is %s\n", ipc_device[parent->id].ipaddr);
                         if (ipc_camera_device_name_get(name, ipc_device[parent->id].ipaddr, ipc_device[parent->id].port, ipc_device[parent->id].username, ipc_device[parent->id].password, ipc_device[parent->id].auther_flag, 1000) == true)
 
                         {

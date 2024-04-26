@@ -202,7 +202,7 @@ sat_layout_enter(setting_version_information)
                 struct tm tm;
                 if (platform_build_date_get(&tm) == true)
                 {
-                        sprintf(version_info, SYSTEM_VERSION "   build time:%04d-%02d-%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+                        sprintf(version_info, SYSTEM_VERSION "   build time:%04d-%02d-%02d %02d:%02d:%02d", 2024, 04, 11, 11, 28, 22 /* tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec */); // 客户要求编译时间和已生产产品保持一致
                 }
                 else
                 {
