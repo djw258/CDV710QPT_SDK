@@ -104,6 +104,7 @@ static void setting_version_information_sd_status_callback(void)
 
 static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
 {
+        lv_timer_set_period(ptimer, 8000);
         char user[128] = {0};
         char ip[32] = {0};
         bool *result = (bool *)ptimer->user_data;
@@ -127,7 +128,7 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
                         {
                                 continue;
                         }
-                        result[i] = sat_ipcamera_device_version_get(i, 1500);
+                        result[i] = sat_ipcamera_device_version_get(i, 1000);
                         if (result[i] == false)
                         {
                                 lv_label_set_text(obj, "Version unknow");
@@ -324,7 +325,8 @@ sat_layout_enter(setting_version_information)
         ipcamera_version_query_func_register(layout_version_ipcamera_version_query_func);
         sd_state_channge_callback_register(setting_version_information_sd_status_callback);
         memset(result, false, sizeof(result));
-        lv_timer_t *timer = lv_sat_timer_create(setting_version_information_version_get_timer, 3000, &result);
+        lv_timer_t *timer = lv_sat_timer_create(setting_version_information_version_get_timer, 8000, &result);
+        lv_timer_ready(timer);
         lv_timer_set_repeat_count(timer, 3);
 }
 static void sat_layout_quit(setting_version_information)
