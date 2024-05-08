@@ -336,7 +336,7 @@ static bool ipc_camera_input_new_name_processing(void)
                 else
                 {
                         char doorname[128] = {0};
-                        sprintf(doorname, "CCTV%d(%s)", layout_ipc_camera_edit_index_get() + 1, input_name);
+                        sprintf(doorname, "CCTV%d(%s)", layout_ipc_camera_edit_index_get() + 1, lv_textarea_get_text(textarea));
                         memset(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name, 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name));
                         strcpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name, doorname);
                 }

@@ -171,42 +171,42 @@ static void alarm_stop_obj_click(lv_event_t *ev)
 }
 
 /************************************************************
-** 函数说明: 警报界面警报触发处理
-** 作者: xiaoxiao
-** 日期: 2023-05-06 21:33:07
-** 参数说明:
-** 注意事项:
-************************************************************/
-static void layout_alarm_trigger_func(int arg1, int arg2)
-{
-        main_sync_lock_set(true);
-        if ((arg1 == 7) && (arg2 < ALM_LOW))
-        {
-                if (user_data_get()->alarm.buzzer_alarm == false)
-                {
-                        user_data_get()->alarm.buzzer_alarm = true;
-                        user_data_save(true, true);
-                        buzzer_call_trigger_check();
-                }
-        }
-        else
-        {
-                if ((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1))) && (!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
-                {
-                        main_sync_lock_set(false);
-                        return;
-                }
-                if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 < ALM_LOW) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 > ALM_HIGHT)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
-                {
+// ** 函数说明: 警报界面警报触发处理
+// ** 作者: xiaoxiao
+// ** 日期: 2023-05-06 21:33:07
+// ** 参数说明:
+// ** 注意事项:
+// ************************************************************/
+// static void layout_alarm_trigger_func(int arg1, int arg2)
+// {
+//         main_sync_lock_set(true);
+//         if ((arg1 == 7) && (arg2 < ALM_LOW))
+//         {
+//                 if (user_data_get()->alarm.buzzer_alarm == false)
+//                 {
+//                         user_data_get()->alarm.buzzer_alarm = true;
+//                         user_data_save(true, true);
+//                         buzzer_call_trigger_check();
+//                 }
+//         }
+//         else
+//         {
+//                 if ((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1))) && (!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
+//                 {
+//                         main_sync_lock_set(false);
+//                         return;
+//                 }
+//                 if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 < ALM_LOW) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 > ALM_HIGHT)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
+//                 {
 
-                        layout_common_alarm_log(security_emergency, arg1);
-                        asterisk_server_alarm_log_force(true);
-                        user_data_get()->alarm.alarm_trigger[arg1] = true;
-                        user_data_save(true, true);
-                }
-        }
-        main_sync_lock_set(false);
-}
+//                         layout_common_alarm_log(security_emergency, arg1);
+//                         asterisk_server_alarm_log_force(true);
+//                         user_data_get()->alarm.alarm_trigger[arg1] = true;
+//                         user_data_save(true, true);
+//                 }
+//         }
+//         main_sync_lock_set(false);
+// }
 
 /************************************************************
 ** 函数说明: 警报时触发模式显示
@@ -664,15 +664,15 @@ static void sat_layout_enter(alarm)
         alarm_ring_close_timer = NULL;
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();
-        if (user_data_get()->alarm.away_alarm_enable)
-        {
-                extern void away_mode_alarm_trigger_callback(int arg1, int arg2);
-                alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报触发函数注册
-        }
-        else
-        {
-                alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
-        }
+        // if (user_data_get()->alarm.away_alarm_enable)
+        // {
+        //         extern void away_mode_alarm_trigger_callback(int arg1, int arg2);
+        //         alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报触发函数注册
+        // }
+        // else
+        // {
+        //         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
+        // }
 
         standby_timer_close();
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
@@ -930,17 +930,17 @@ static void sat_layout_quit(alarm)
 
         ring_play_event_cmd_register(NULL);
         user_linphone_call_streams_running_receive_register(NULL);
-        if (user_data_get()->alarm.away_alarm_enable)
-        {
+        // if (user_data_get()->alarm.away_alarm_enable)
+        // {
 
-                extern void away_mode_alarm_trigger_callback(int arg1, int arg2);
+        //         extern void away_mode_alarm_trigger_callback(int arg1, int arg2);
 
-                alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报触发函数注册
-        }
-        else
-        {
-                alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
-        }
+        //         alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报触发函数注册
+        // }
+        // else
+        // {
+        //         alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
+        // }
 
         record_video_stop();
         monitor_close(0x02);
