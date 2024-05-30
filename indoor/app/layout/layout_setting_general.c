@@ -849,7 +849,7 @@ static lv_obj_t *setting_sub_list_create(void)
             {0, 72 * 3, 622, 72, setting_general_obj_id_storage_space_cont, setting_general_obj_id_storage_space_title, -1, SETTING_GENERAL_XLS_LANG_ID_STORAGE_SPACE, lang_str_get, -1, NULL, setting_general_storage_space_obj_click},
             {0, 72 * 4, 622, 72, setting_general_obj_id_door_opening_method_cont, setting_general_obj_id_door_opening_method_title, setting_general_obj_id_door_opening_method_sub, SETTING_GENERAL_XLS_LANG_ID_DOOR_OPENING_METHOD, lang_str_get, SETTING_GENERAL_XLS_LANG_ID_OPEN_AFTER_CALL, lang_str_get, setting_general_door1_opening_moethod_obj_click},
             {0, 72 * 5, 622, 72, setting_general_obj_id_door_opener_module_cont, setting_general_obj_id_door_opener_module_title, setting_general_obj_id_door_opener_module_sub, SETTING_GENERAL_XLS_LANG_ID_DOOR_OPENER_MODULE, lang_str_get, SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_LOCK, lang_str_get, setting_general_door_opener_module_obj_click},
-            {0, 72 * 6, 622, 72, setting_general_obj_id_door_opener_num_cont, setting_general_obj_id_door_opener_num_title, setting_general_obj_id_door_opener_num_sub, SETTING_GENERAL_XLS_LANG_ID_TWO_DOOR_OPEN_BUTTONS, lang_str_get, SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM1, lang_str_get, setting_general_door2_opener_num_obj_click},
+            {0, 72 * 6, 622, 72, setting_general_obj_id_door_opener_num_cont, setting_general_obj_id_door_opener_num_title, setting_general_obj_id_door_opener_num_sub, SETTING_GENERAL_XLS_LANG_ID_TWO_DOOR_OPEN_BUTTONS, lang_str_get, SETTING_GENERAL_XLS_LANG_ID_TWO_DOOR_OPEN_APPLY, lang_str_get, setting_general_door2_opener_num_obj_click},
             {0, 72 * 7, 622, 72, setting_general_obj_id_call_time_count, setting_general_obj_id_call_time_title, setting_general_obj_id_call_time_sub, SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER, lang_str_get, SETTING_GENERAL_XLS_LANG_ID_1_MINUTE, lang_str_get, setting_general_call_time_obj_click},
             {0, 72 * 8, 622, 72, setting_general_obj_id_sensor_usage_setting_cont, setting_general_obj_id_sensor_usage_setting_title, -1, SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_USAGE_SETTINGS, lang_str_get, -1, NULL, setting_general_sensor_usage_setting_obj_click},
             {0, 72 * 9, 622, 72, setting_general_obj_id_download_mobile_app_cont, setting_general_obj_id_doornload_mobile_app_title, -1, SETTING_GENERAL_XLS_LANG_ID_DOWNLOAD_MOBILE_APP, lang_str_get, -1, NULL, setting_general_download_mobile_obj_click},
@@ -867,7 +867,7 @@ static lv_obj_t *setting_sub_list_create(void)
         {
 
                 // 此处请重新判断
-                if ((((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7) || (i == 8))))
+                if ((((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7) || (i == 8) || (i == 10))))
                 {
                         continue;
                 }

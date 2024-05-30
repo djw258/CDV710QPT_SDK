@@ -1197,14 +1197,6 @@ static void layout_away_passwd_check_success_cb(void)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-    if (layout_away_count_data_get()->away_release_time_countdown_timer != NULL)
-    {
-        lv_timer_del(layout_away_count_data_get()->away_release_time_countdown_timer);
-        layout_away_count_data_get()->away_release_time_countdown_timer = NULL;
-    }
-    memset(&layout_away_count_data_get()->away_release_time, 0, sizeof(layout_away_count_data_get()->away_release_time));
-    // alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
-
     sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 

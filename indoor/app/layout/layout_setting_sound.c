@@ -286,7 +286,7 @@ static void setting_sound_ring_msg_box_create(const char *title_sting, int s_ite
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       46, 8, 366 - 16, 32, 0,
-                                                      lang_str_get(SOUND_XLS_LANG_ID_RINGTONE_ONETIME + i), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                      lang_str_get(SOUND_XLS_LANG_ID_RINGTONE_KEEP_REPEAT), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                       0, 8, 32, 32, 1,
                                                       (const char *)resource_ui_src_get(i == s_item ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 }

@@ -750,13 +750,16 @@ static void sat_layout_enter(setting_ipaddress)
         }
 
         layout_setting_ipaddress_item_init_display();
-        if (layout_ipc_cmeara_is_doorcamera_get() == true)
+        if (layout_setting_ipaddress_info_get()->ip_setting_flag == 0x00)
         {
-                sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);
-        }
-        else
-        {
-                sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, DEVICE_MAX);
+                if (layout_ipc_cmeara_is_doorcamera_get() == true)
+                {
+                        sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);
+                }
+                else
+                {
+                        sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, DEVICE_MAX);
+                }
         }
 }
 static void sat_layout_quit(setting_ipaddress)

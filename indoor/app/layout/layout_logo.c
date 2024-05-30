@@ -326,7 +326,6 @@ static void away_countdown_enable_sync_check(void)
         }
         else
         {
-                // alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
                 if (sat_cur_layout_get() == sat_playout_get(away_count))
                 {
                         if (layout_away_count_data_get()->away_setting_time_countdown_timer)
@@ -875,10 +874,8 @@ static void logo_enter_system_timer(lv_timer_t *t)
                                 user_data_get()->alarm.alarm_trigger_enable[i] = true;
                         }
                 }
-                if (user_data_get()->alarm.away_alarm_enable)
-                {
-                        away_mode_alarm_trigger_timer_create();
-                }
+                extern void alarm_release_detetion_timer(lv_timer_t * tm);
+                lv_timer_create(alarm_release_detetion_timer, 1000, NULL);
         }
 #endif
 
@@ -893,16 +890,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
 
         buzzer_call_callback_register(buzzer_alarm_trigger_default);
 
-        alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报回调注册
-
-        // if (user_data_get()->alarm.away_alarm_enable)
-        // {
-        //         alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报回调注册
-        // }
-        // else
-        // {
-        //         alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
-        // }
+        alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
 
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
 
@@ -910,15 +898,14 @@ static void logo_enter_system_timer(lv_timer_t *t)
 
         sync_data_cmd_callback_register(asterisk_server_sync_data_callback);
 
+        language_id_set(user_data_get()->etc.language);
+
         if (user_data_get()->is_device_init == false)
         {
-                language_id_set(LANGUAGE_ID_ENGLISH);
                 sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
         else
         {
-
-                language_id_set(user_data_get()->etc.language);
                 user_data_save(false, false);
                 /************************************************************
                  ** 函数说明: 待机初始化

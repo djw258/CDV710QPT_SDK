@@ -801,6 +801,10 @@ static void monitor_obj_talk_click(lv_event_t *e)
                         sat_linphone_alarm_backgound_sound(true);
                 }
                 sat_linphone_answer(-1, false);
+                if (ch == MON_CH_LOBBY || ch == MON_CH_GUARD)
+                {
+                        sat_linphone_audio_input_volume_set(13);
+                }
                 int cur_volume = 0;
                 if (is_channel_ipc_camera(ch) == 0)
                 {

@@ -19,14 +19,6 @@ typedef enum
 
 static layout_away_count_info layout_away_count_default_info = {
     .away_setting_time_countdown_timer = NULL,
-    .away_release_time_countdown_timer = NULL,
-    .away_release_time[0] = 0,
-    .away_release_time[1] = 0,
-    .away_release_time[2] = 0,
-    .away_release_time[3] = 0,
-    .away_release_time[4] = 0,
-    .away_release_time[5] = 0,
-    .away_release_time[6] = 0,
     .away_count_sec = 0};
 
 layout_away_count_info *layout_away_count_data_get(void)
@@ -52,7 +44,7 @@ static void layout_away_count_passwd_check_success_cb(void)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-    // alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
+
     sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
@@ -85,146 +77,6 @@ static void layout_away_count_timer_obj_display(void)
         return;
     }
     lv_label_set_text_fmt(label_time, "%02d:%02d", layout_away_count_data_get()->away_count_sec / 60, layout_away_count_data_get()->away_count_sec % 60);
-}
-
-/************************************************************
-** 函数说明: 离家设防缓冲时间结束检查是否需要触发警报任务
-** 作者: xiaoxiao
-** 日期：2023-10-12 16:43:57
-** 参数说明:
-** 注意事项：
-************************************************************/
-static void layout_away_alarm_release_detetion_timer(lv_timer_t *ptimer)
-{
-    int release_time = 0;
-    if (user_data_get()->alarm.away_alarm_enable)
-    {
-        release_time = user_data_get()->alarm.away_release_time;
-    }
-    else if (user_data_get()->alarm.security_alarm_enable)
-    {
-        release_time = 0;
-    }
-    else
-    {
-        return;
-    }
-    for (int i = 0; i < 7; i++)
-    {
-        if (user_data_get()->alarm.alarm_trigger[i] == true && user_data_get()->alarm.alarm_trigger_enable[i] == false)
-        {
-            if (layout_away_count_data_get()->away_release_time[i]++ == release_time)
-            {
-                main_sync_lock_set(true);
-                layout_common_alarm_log(security_emergency, i);
-                asterisk_server_alarm_log_force(true);
-                main_sync_lock_set(false);
-                user_data_get()->alarm.alarm_trigger_enable[i] = true;
-                if (sat_cur_layout_get() != sat_playout_get(alarm))
-                {
-                    layout_alarm_alarm_channel_set(i);
-                    user_data_get()->alarm.emergency_mode = 1;
-                    user_data_get()->alarm.alarm_ring_play = true;
-                    user_data_save(true, true);
-                    sat_linphone_handup(0xFFFF);
-                    sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-                }
-                user_data_save(true, true);
-            }
-        }
-    }
-}
-/************************************************************
-** 函数说明: 离家模式下的传感器回调事件
-** 作者: xiaoxiao
-** 日期：2023-11-02 09:33:38
-** 参数说明:
-** 注意事项：
-************************************************************/
-void away_mode_alarm_trigger_callback(int arg1, int arg2)
-{
-    if ((arg1 == 7) && (arg2 < ALM_LOW))
-    {
-        if (user_data_get()->alarm.buzzer_alarm == false)
-        {
-            user_data_get()->alarm.buzzer_alarm = true;
-            user_data_save(true, true);
-            buzzer_call_trigger_check();
-        }
-    }
-    else
-    {
-        if ((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1))) && (!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
-        {
-            return;
-        }
-        if ((user_data_get()->alarm.alarm_enable_always[arg1] == false))
-        {
-            if (user_data_get()->alarm.away_alarm_enable == false && user_data_get()->alarm.security_alarm_enable == false)
-            {
-                return;
-            }
-        }
-        if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 < ALM_LOW) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 > ALM_HIGHT))
-        {
-            if (user_data_get()->alarm.alarm_trigger[arg1] == false)
-            {
-                main_sync_lock_set(true);
-                user_data_get()->alarm.alarm_trigger[arg1] = true;
-                if (user_data_get()->alarm.alarm_enable_always[arg1])
-                {
-                    layout_common_alarm_log(security_emergency, arg1);
-                    asterisk_server_alarm_log_force(true);
-                    main_sync_lock_set(false);
-                    if (sat_cur_layout_get() != sat_playout_get(alarm))
-                    {
-                        layout_alarm_alarm_channel_set(arg1);
-                        user_data_get()->alarm.emergency_mode = 1;
-                        user_data_get()->alarm.alarm_ring_play = true;
-                        user_data_save(true, true);
-                        sat_linphone_handup(0xFFFF);
-                        sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-                    }
-                }
-                else
-                {
-
-                    main_sync_lock_set(false);
-                    layout_away_count_data_get()->away_release_time[arg1] = 0;
-                    if (user_data_get()->alarm.away_release_time == 0)
-                    {
-                        layout_away_alarm_release_detetion_timer(NULL);
-                    }
-                }
-                user_data_save(true, true);
-            }
-        }
-    }
-}
-
-/************************************************************
-** 函数说明: 离家模式设防检测任务创建
-** 作者: xiaoxiao
-** 日期：2023-11-02 18:13:36
-** 参数说明:
-** 注意事项：
-************************************************************/
-void away_mode_alarm_trigger_timer_create(void)
-{
-    if ((user_data_get()->system_mode & 0x1f) == 0x01)
-    {
-        if (layout_away_count_data_get()->away_release_time_countdown_timer == NULL)
-        {
-            if (user_data_get()->alarm.away_release_time)
-            {
-                lv_timer_ready(layout_away_count_data_get()->away_release_time_countdown_timer = lv_timer_create(layout_away_alarm_release_detetion_timer, 1000, NULL));
-            }
-            else
-            {
-                layout_away_alarm_release_detetion_timer(NULL);
-            }
-        }
-    }
 }
 
 static void layout_away_count_sensor_status_check(void)
@@ -267,7 +119,6 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
 
         layout_away_count_sensor_status_check();
         user_data_save(true, true);
-        away_mode_alarm_trigger_timer_create();
         if (sat_cur_layout_get() == sat_playout_get(away_count))
         {
             sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -284,23 +135,15 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
 ************************************************************/
 static void layout_alarm_count_param_init(void)
 {
-
-    if (layout_away_count_data_get()->away_release_time_countdown_timer != NULL)
-    {
-        lv_timer_del(layout_away_count_data_get()->away_release_time_countdown_timer);
-        layout_away_count_data_get()->away_release_time_countdown_timer = NULL;
-    }
     if (layout_away_count_data_get()->away_count_sec == 0)
     {
-        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 60;
+        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 10;
     }
 }
 
 static void sat_layout_enter(away_count)
 {
     memset(&user_data_get()->alarm.alarm_trigger_enable, 0, sizeof(user_data_get()->alarm.alarm_trigger_enable));
-
-    // alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报回调注册
 
     standby_timer_close();
     /************************************************************

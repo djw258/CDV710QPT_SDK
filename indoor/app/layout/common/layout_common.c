@@ -254,19 +254,53 @@ void layout_alarm_alarm_channel_set(int ch)
         alarm_ch = ch;
 }
 
+static int alarm_delay_count[8] = {0};
 /************************************************************
-** 函数说明: 警报处理函数
+** 函数说明: 离家设防缓冲时间结束检查是否需要触发警报任务
 ** 作者: xiaoxiao
-** 日期: 2023-04-28 17:07:39
+** 日期：2023-10-12 16:43:57
 ** 参数说明:
-** 注意事项:
+** 注意事项：
+************************************************************/
+void alarm_release_detetion_timer(lv_timer_t *ptimer)
+{
+        int release_time = user_data_get()->alarm.away_alarm_enable ? user_data_get()->alarm.away_release_time : 0;
+        for (int i = 0; i < 7; i++)
+        {
+                if (user_data_get()->alarm.alarm_trigger[i] == true && user_data_get()->alarm.alarm_trigger_enable[i] == false)
+                {
+                        if ((alarm_delay_count[i]++ == release_time) || (user_data_get()->alarm.alarm_enable_always[i] == true))
+                        {
+                                main_sync_lock_set(true);
+                                layout_common_alarm_log(security_emergency, i);
+                                asterisk_server_alarm_log_force(true);
+                                user_data_get()->alarm.alarm_trigger_enable[i] = true;
+                                if (sat_cur_layout_get() != sat_playout_get(alarm))
+                                {
+                                        layout_alarm_alarm_channel_set(i);
+                                        user_data_get()->alarm.emergency_mode = 1;
+                                        user_data_get()->alarm.alarm_ring_play = true;
+                                        user_data_save(true, true);
+                                        main_sync_lock_set(false);
+                                        sat_linphone_handup(0xFFFF);
+                                        sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                                }
+                                user_data_save(true, true);
+                                main_sync_lock_set(false);
+                        }
+                }
+        }
+}
+
+/************************************************************
+** 函数说明: 离家模式下的传感器回调事件
+** 作者: xiaoxiao
+** 日期：2023-11-02 09:33:38
+** 参数说明:
+** 注意事项：
 ************************************************************/
 void layout_alarm_trigger_default(int arg1, int arg2)
 {
-        if (user_data_get()->is_device_init == false)
-        {
-                return;
-        }
         if ((arg1 == 7) && (arg2 < ALM_LOW))
         {
                 if (user_data_get()->alarm.buzzer_alarm == false)
@@ -293,21 +327,22 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                 }
                 if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 < ALM_LOW) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 > ALM_HIGHT))
                 {
-                        main_sync_lock_set(true);
-                        layout_common_alarm_log(security_emergency, arg1);
-                        asterisk_server_alarm_log_force(true);
-                        main_sync_lock_set(false);
-                        layout_alarm_alarm_channel_set(arg1);
-                        user_data_get()->alarm.alarm_trigger[arg1] = true;
-                        user_data_get()->alarm.emergency_mode = 1;
-                        user_data_get()->alarm.alarm_ring_play = true;
-                        user_data_save(true, true);
-                        sat_linphone_handup(0xFFFF);
-                        sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                        if (user_data_get()->alarm.alarm_trigger[arg1] == false)
+                        {
+                                user_data_get()->alarm.alarm_trigger[arg1] = true;
+                                user_data_get()->alarm.alarm_trigger_enable[arg1] = false;
+                                alarm_delay_count[arg1] = 0;
+                                user_data_save(true, true);
+
+                                int release_time = user_data_get()->alarm.away_alarm_enable ? user_data_get()->alarm.away_release_time : 0;
+                                if ((release_time == 0) || user_data_get()->alarm.alarm_enable_always[arg1] == true)
+                                {
+                                        alarm_release_detetion_timer(NULL);
+                                }
+                        }
                 }
         }
 }
-
 /************************************************************
 ** 函数说明: 检测是否需要触发警报
 ** 作者: xiaoxiao

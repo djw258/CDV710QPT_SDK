@@ -256,7 +256,6 @@ static void slave_type_setting_cancel_display()
 
 static void sat_layout_enter(slave_type_setting)
 {
-        printf("user_data_get()->mastar_wallpad_ip is %s\n", user_data_get()->mastar_wallpad_ip);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56

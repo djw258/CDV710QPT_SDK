@@ -395,6 +395,7 @@ void user_data_reset(void)
 
         user_data = user_data_default;
         user_data.etc.language = language;
+        system("rm -rf " NETWORK_DATA_PATH);
         user_data_save(true, true);
         system("sync");
 }

@@ -124,7 +124,6 @@ static void layout_setting_time_save_time(void)
                         }
                 }
                 main_sync_lock_set(false);
-                printf("year is %d\n", tm.tm_year);
                 sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1500, NULL);
         }
 }
@@ -182,7 +181,6 @@ static void setting_time_set_date_automatically_click(lv_event_t *ev)
                                         }
                                 }
                         }
-                        main_sync_lock_set(false);
                         sat_ipcamera_data_sync(0x03, 0x01, (char *)&tm, sizeof(struct tm), 20, 1500, NULL);
                 }
                 main_sync_lock_set(false);

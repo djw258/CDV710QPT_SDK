@@ -190,17 +190,8 @@ static void sat_layout_enter(sensors_test)
 static void sat_layout_quit(sensors_test)
 {
     standby_timer_restart(true, true);
-    extern void away_mode_alarm_trigger_callback(int arg1, int arg2);
-    alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报触发函数注册
-    // if (user_data_get()->alarm.away_alarm_enable)
-    // {
-    //     extern void away_mode_alarm_trigger_callback(int arg1, int arg2);
-    //     alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报触发函数注册
-    // }
-    // else
-    // {
-    //     alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
-    // }
+
+    alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
 }
 
 sat_layout_create(sensors_test);

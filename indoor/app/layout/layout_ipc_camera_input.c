@@ -254,12 +254,6 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
         lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
         if (strcmp(ipc_camera_password_input_password_temp, lv_textarea_get_text(textarea)) == 0)
         {
-                // struct ipcamera_info *node = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());
-                // printf("node passwd is %s\n", node->password);
-                // printf("node ipaddr is %s\n", node->ipaddr);
-                // printf("node username is %s\n", node->username);
-                // printf("node port is %d\n", node->port);
-                // printf("node auther_flag is %d\n", node->auther_flag);
                 if (sat_ipcamera_device_password_set(ipc_camera_password_input_password_temp, layout_ipc_camera_edit_index_get(), 1200) == true)
                 {
 

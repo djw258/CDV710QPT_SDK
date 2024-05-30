@@ -15,7 +15,6 @@ void audio_output_event_default_process(int arg);
 ** 注意事项:
 ************************************************************/
 void layout_alarm_trigger_default(int arg1, int arg2);
-
 /************************************************************
 ** 函数说明: 获取警报通道
 ** 作者: xiaoxiao

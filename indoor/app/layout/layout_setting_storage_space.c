@@ -341,13 +341,13 @@ static void sat_layout_enter(setting_storage_space)
          ** 说明: internal storage
          ***********************************************/
         {
-                lv_common_text_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_internal, 168, 93, 177, 36,
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_internal, 118, 93, 277, 36,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(SETTING_STORAGE_XLS_LANG_ID_INTERNAL_STORAGE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
-                lv_common_text_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_external, 680, 93, 177, 36,
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_external, 630, 93, 277, 36,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

@@ -664,15 +664,6 @@ static void sat_layout_enter(alarm)
         alarm_ring_close_timer = NULL;
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();
-        // if (user_data_get()->alarm.away_alarm_enable)
-        // {
-        //         extern void away_mode_alarm_trigger_callback(int arg1, int arg2);
-        //         alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报触发函数注册
-        // }
-        // else
-        // {
-        //         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
-        // }
 
         standby_timer_close();
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
@@ -930,18 +921,6 @@ static void sat_layout_quit(alarm)
 
         ring_play_event_cmd_register(NULL);
         user_linphone_call_streams_running_receive_register(NULL);
-        // if (user_data_get()->alarm.away_alarm_enable)
-        // {
-
-        //         extern void away_mode_alarm_trigger_callback(int arg1, int arg2);
-
-        //         alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报触发函数注册
-        // }
-        // else
-        // {
-        //         alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
-        // }
-
         record_video_stop();
         monitor_close(0x02);
         standby_timer_restart(true, true);

@@ -418,7 +418,7 @@ static void home_latest_call_obj_click(lv_event_t *ev)
         layout_last_call_new_flag_set(false);
         sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
-
+#if 0
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -501,6 +501,7 @@ static void home_monitoring_msgbox_confirm_click(lv_event_t *ev)
         monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
+
 static lv_obj_t *home_monitoring_msgbox_create(void)
 {
         lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_the_monitoring_msgbox_parent, 0, 0, 1024, 600,
@@ -553,6 +554,7 @@ static lv_obj_t *home_monitoring_msgbox_create(void)
 
         return parent;
 }
+#endif
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -560,11 +562,11 @@ static lv_obj_t *home_monitoring_msgbox_create(void)
  ***********************************************/
 static void home_monitor_obj_click(lv_event_t *ev)
 {
-        if (0 /*(user_data_get()->system_mode & 0xF0) == 0x10*/) // 室内机不允许监控大厅
-        {
-                home_monitoring_msgbox_create();
-        }
-        else
+        // if (0 /*(user_data_get()->system_mode & 0xF0) == 0x10*/) // 室内机不允许监控大厅
+        // {
+        //         home_monitoring_msgbox_create();
+        // }
+        // else
         {
                 int channel = monitor_door_first_valid_get(true);
                 if (channel < 0)

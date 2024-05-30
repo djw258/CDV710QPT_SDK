@@ -322,12 +322,7 @@ int main(int argc, char *argv[])
         sat_kill_task_process("{safe_asterisk} /bin/sh /app/asterisk/sbin/safe_asterisk");
         sat_kill_task_process("/app/asterisk/sbin/asterisk -f -vvvg -c");
         user_data_init();
-        if (user_data_get()->is_device_init == false)
-        {
-                system("rm -rf /app/data/user_data.cfg");
-                system("rm -rf /app/data/network_data.cfg");
-                user_data_init();
-        }
+
         network_data_init();
 
         linux_kerner_init();

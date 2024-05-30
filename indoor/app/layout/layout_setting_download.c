@@ -54,19 +54,19 @@ static void sat_layout_enter(setting_download)
          ** 说明: google store
          ***********************************************/
         {
-                lv_common_text_create(sat_cur_layout_screen_get(), setting_download_obj_id_google_play_store, 157, 94, 198, 35,
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_download_obj_id_google_play_store, 107, 94, 298, 35,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(SETTING_DOWNLOAD_XLS_LANG_ID_GOOGLE_PLAY_STORE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
-                lv_common_text_create(sat_cur_layout_screen_get(), setting_download_obj_id_apple_app_store, 680, 94, 198, 35,
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_download_obj_id_apple_app_store, 630, 94, 298, 35,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(SETTING_DOWNLOAD_XLS_LANG_ID_GOOGLE_APP_STORE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
-                lv_common_text_create(sat_cur_layout_screen_get(), setting_download_obj_id_apple_app_qrcode, 299, 428, 426, 80,
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_download_obj_id_apple_app_qrcode, 299, 428, 426, 120,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
