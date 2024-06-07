@@ -328,6 +328,11 @@ static void user_data_check_valid(void)
         user_data_etc_check_range_out(call_time, 1, 3);
         user_data_etc_check_range_out(tuya_connect_mode, 0, 1);
 
+        for (int i = 0; i < 8; i++)
+        {
+                user_data_etc_check_range_out(open_duration_time[i], 0, 6);
+        }
+
         /*****	alarm *****/
         user_data_alarm_check_range_out(away_save_photo, 0, 1);
 

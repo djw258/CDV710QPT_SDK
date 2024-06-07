@@ -99,6 +99,8 @@ typedef struct
 
         char tuya_connect_mode; /****** 涂鸦联网模式 0 ：wifi联网 1：有线联网***/
 
+        float open_duration_time[8];
+
 } user_etc_info;
 
 typedef struct

@@ -912,6 +912,7 @@ static void *monitor_unlock_ctrl_task(void *arg)
         door_lock_info *info = (door_lock_info *)arg;
         if (info == NULL)
         {
+                pthread_mutex_unlock(&door_lock_mutex);
                 printf("[%s]:malloc failed\n", __func__);
                 return NULL;
         }
@@ -1019,6 +1020,7 @@ static bool monitor_obj_unlock_icon_display(int ch, int mode)
         info->ch = ch;
         info->en = false;
         info->mode = mode;
+
         lv_timer_reset(unlock_timer = lv_timer_create(monitor_obj_unlock_open_timer, 1500, (void *)info));
         return true;
 }
