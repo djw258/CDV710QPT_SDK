@@ -1020,8 +1020,14 @@ static bool monitor_obj_unlock_icon_display(int ch, int mode)
         info->ch = ch;
         info->en = false;
         info->mode = mode;
-
-        lv_timer_reset(unlock_timer = lv_timer_create(monitor_obj_unlock_open_timer, 1500, (void *)info));
+        int duration_index = user_data_get()->etc.open_duration_time[ch];
+        int open_duration_time = duration_index == 0 ? 1.5 : duration_index == 1 ? 3
+                                                         : duration_index == 2   ? 5
+                                                         : duration_index == 3   ? 7
+                                                         : duration_index == 4   ? 10
+                                                         : duration_index == 5   ? 15
+                                                                                 : 20;
+        lv_timer_reset(unlock_timer = lv_timer_create(monitor_obj_unlock_open_timer, is_channel_ipc_camera(ch) == 0 ? open_duration_time * 1000 : 1500, (void *)info));
         return true;
 }
 
