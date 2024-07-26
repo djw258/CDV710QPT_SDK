@@ -1,0 +1,107 @@
+{
+	"kind" : "toolchains",
+	"toolchains" : 
+	[
+		{
+			"compiler" : 
+			{
+				"id" : "GNU",
+				"implicit" : 
+				{
+					"includeDirectories" : 
+					[
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include"
+					],
+					"linkDirectories" : 
+					[
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/lib",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib"
+					],
+					"linkFrameworkDirectories" : [],
+					"linkLibraries" : 
+					[
+						"gcc",
+						"gcc_s",
+						"c",
+						"gcc",
+						"gcc_s"
+					]
+				},
+				"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-gcc",
+				"version" : "4.9.4"
+			},
+			"language" : "C",
+			"sourceFileExtensions" : 
+			[
+				"c",
+				"m"
+			]
+		},
+		{
+			"compiler" : 
+			{
+				"id" : "GNU",
+				"implicit" : 
+				{
+					"includeDirectories" : 
+					[
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/arm-anykav500-linux-uclibcgnueabi",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/backward",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include"
+					],
+					"linkDirectories" : 
+					[
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/lib",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib",
+						"/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib"
+					],
+					"linkFrameworkDirectories" : [],
+					"linkLibraries" : 
+					[
+						"stdc++",
+						"m",
+						"gcc_s",
+						"gcc",
+						"c",
+						"gcc_s",
+						"gcc"
+					]
+				},
+				"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++",
+				"version" : "4.9.4"
+			},
+			"language" : "CXX",
+			"sourceFileExtensions" : 
+			[
+				"C",
+				"M",
+				"c++",
+				"cc",
+				"cpp",
+				"cxx",
+				"mm",
+				"mpp",
+				"CPP",
+				"ixx",
+				"cppm"
+			]
+		}
+	],
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 0
+	}
+}

@@ -515,6 +515,11 @@ int main(int argc, char *argv[])
         pthread_create(&thread_id, sat_pthread_attr_get(), outdoor_call_task, NULL);
         pthread_detach(thread_id);
 #endif
+
+        usleep(100 * 1000); // 等待linphone线程启动
+
+        // 系统启动以后手动打开vi
+        sat_linphone_media_open_cmd_send(false);
         /*
          * @日期: 2022-08-08
          * @作者: leo.liu

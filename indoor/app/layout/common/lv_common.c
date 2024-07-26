@@ -652,7 +652,7 @@ lv_obj_t *setting_msgdialog_msg_bg_create(int parent_id, int id, int x, int y, i
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
         cont = lv_common_img_btn_create(cont, id, x, y, w, h,
-                                        NULL, true, LV_OPA_COVER, 0X242526, LV_OPA_COVER, 0X242526,
+                                        NULL, false, LV_OPA_COVER, 0X242526, LV_OPA_COVER, 0X242526,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
@@ -669,11 +669,16 @@ lv_obj_t *setting_msgdialog_msg_bg_create(int parent_id, int id, int x, int y, i
 ************************************************************/
 lv_obj_t *setting_msgdialog_msg_create(lv_obj_t *parent, int id, const char *msg_string, int x, int y, int w, int h, bool title)
 {
-        lv_obj_t *obj = lv_common_text_create(parent, id, x, y, w, h,
+        int pos_x = 0;
+        int pos_y = 0;
+        int width = lv_obj_get_style_width(parent, LV_PART_MAIN);
+        int height = title ? 80 : lv_obj_get_style_height(parent, LV_PART_MAIN) - 72;
+        lv_obj_t *obj = lv_common_text_create(parent, id, pos_x, pos_y, width, height,
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 2, title ? LV_BORDER_SIDE_BOTTOM : LV_BORDER_SIDE_NONE, LV_OPA_COVER, 0x323237,
                                               0, 2, title ? LV_BORDER_SIDE_BOTTOM : LV_BORDER_SIDE_NONE, LV_OPA_COVER, 0x323237,
-                                              msg_string, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                              msg_string, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER_CENTER, lv_font_normal);
+        // lv_obj_align(obj, LV_ALIGN_CENTER, 0, -80);
         return obj;
 }
 

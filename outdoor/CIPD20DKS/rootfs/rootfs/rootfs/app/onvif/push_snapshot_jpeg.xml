@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+Server: IMCP
+Content-Type: image/jpeg
+Accept-Ranges: bytes
+Connection: close
+Content-Length: %d
+Cache-Control: max-age=-1
+

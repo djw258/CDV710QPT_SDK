@@ -1,0 +1,3 @@
+/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/SAT_ANYKA3918.BIN.dir
+/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/edit_cache.dir
+/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/rebuild_cache.dir

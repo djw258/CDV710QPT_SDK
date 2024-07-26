@@ -381,6 +381,7 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
         {
                 return;
         }
+
         int flag = (int)mask;
         static bool sync_ing[5] = {0};
         static char *recv_data[5] = {NULL};
@@ -416,6 +417,7 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
 
         if ((size + pos) == max)
         {
+                SAT_DEBUG("MAX i %d", max);
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
                         user_data_info *info = (user_data_info *)recv_data[flag];
@@ -447,6 +449,7 @@ static void asterisk_server_sync_data_callback(char mask, char *data, int size, 
                                 user_data_get()->etc.open_the_door = info->etc.open_the_door;
                                 user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
                                 user_data_get()->etc.door_lock_num = info->etc.door_lock_num;
+                                memcpy(&user_data_get()->etc.open_duration_time, &info->etc.open_duration_time, sizeof(user_data_get()->etc.open_duration_time));
                                 strncpy(user_data_get()->etc.password, info->etc.password, sizeof(user_data_get()->etc.password));
                                 strncpy(user_data_get()->etc.comm_ent_password, info->etc.comm_ent_password, sizeof(user_data_get()->etc.comm_ent_password));
                                 memcpy(&user_data_get()->alarm.cctv_sensor, &info->alarm.cctv_sensor, sizeof(user_data_get()->alarm.cctv_sensor));

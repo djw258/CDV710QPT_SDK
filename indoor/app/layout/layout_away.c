@@ -223,6 +223,47 @@ static void layout_away_msgbox_cancel_click(lv_event_t *ev)
     setting_msgdialog_msg_del(layout_away_obj_id_msgbox_bg);
 }
 
+void replaceString(char *source, const char *search, const char *replace)
+{
+    int searchLen = strlen(search);
+    int replaceLen = strlen(replace);
+    int sourceLen = strlen(source);
+
+    char newString[256]; // 假设最大长度为100，根据实际情况调整
+
+    int i = 0, j = 0, k = 0;
+    while (i <= sourceLen - searchLen)
+    {
+        // 检查当前位置开始是否匹配 search
+        if (strncmp(source + i, search, searchLen) == 0)
+        {
+            // 如果匹配，复制 replace 到新字符串中
+            for (k = 0; k < replaceLen; k++)
+            {
+                newString[j++] = replace[k];
+            }
+            i += searchLen; // 跳过 search
+        }
+        else
+        {
+            // 如果不匹配，复制 source 中的字符到新字符串中
+            newString[j++] = source[i++];
+        }
+    }
+
+    // 复制剩余的字符
+    while (i <= sourceLen)
+    {
+        newString[j++] = source[i++];
+    }
+
+    // 在新字符串末尾添加 null 终止符
+    newString[j] = '\0';
+
+    // 将新字符串复制回源字符串
+    strcpy(source, newString);
+}
+
 /************************************************************
 ** 函数说明: 安防设置不正常提示
 ** 作者: xiaoxiao
@@ -256,8 +297,11 @@ static void layout_away_execution_normal_msgbox_create(char normal_select)
             strcat(sensors_str, index);
         }
     }
-    char abnormal_str[128] = {0};
-    sprintf(abnormal_str, "%s%s%s", lang_str_get(SENSOR_SETTING_XLS_LANG_ID_CANNOT), sensors_str, lang_str_get(SENSOR_SETTING_XLS_LANG_ID_SENSOR_IS_NORMAL));
+    char abnormal_str1[256] = {0};
+    strcpy(abnormal_str1, lang_str_get(SENSOR_SETTING_XLS_LANG_ID_SENSOR_IS_NORMAL));
+    replaceString(abnormal_str1, "(N)", sensors_str);
+    char abnormal_str[256] = {0};
+    snprintf(abnormal_str, sizeof(abnormal_str), "%s%s", lang_str_get(SENSOR_SETTING_XLS_LANG_ID_CANNOT), abnormal_str1);
     setting_msgdialog_msg_create(masgbox, layout_away_obj_id_msgbox_title, abnormal_str, 0, 70, 460, 120, false);
     setting_msgdialog_msg_confirm_btn_create(masgbox, layout_away_obj_id_msgbox_confirm, layout_away_msgbox_cancel_click);
 }
@@ -333,7 +377,6 @@ static bool layout_away_sensor_cctv_binding_status_valid(void)
     bool cctv_linkage = false;
     // 判断是否所选中的传感器有绑定CCTV
     char sensor_select_list = layout_away_sensor_enable_flag();
-    SAT_DEBUG("=====sensor_select_list is 0x%x\n", sensor_select_list);
     for (int i = 0; i < 7; i++)
     {
         if (sensor_select_list & 0x01 << i)
@@ -944,7 +987,7 @@ static void layout_away_release_time_msgbox_option_create(lv_obj_t *msgbox, lv_e
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       46, 8, 460 - 27 - 16, 32, 0,
                                       lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_RELEASE_TIME_SECOND_0 + i), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                      away_obj_id_t_msgbox_checkbox_img, 8, 32, 32, 1,
+                                      0, 8, 32, 32, 1,
                                       i == user_data_get()->alarm.away_release_time / 10 ? (const char *)resource_ui_src_get("btn_radio_s.png") : (const char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
     }
 }
@@ -1018,7 +1061,6 @@ static void layout_away_cctv_auto_record_init_display(void)
     }
     else
     {
-        SAT_DEBUG("============++++++++++=====");
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
     }
 }
@@ -1114,39 +1156,39 @@ static void layout_away_func_setting_create()
                                                     layout_away_setting_time_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                    0, 17, 300, 43, layout_away_obj_id_setting_time_title,
-                                                    lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_FUNCRION_SETTING_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                    370, 17, 120, 40, layout_away_obj_id_setting_time_sub,
-                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    0, 0, 350, 72, layout_away_obj_id_setting_time_title,
+                                                    lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_FUNCRION_SETTING_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal,
+                                                    370, 0, 120, 72, layout_away_obj_id_setting_time_sub,
+                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal,
                                                     0, 42, 576, 29, -1,
                                                     NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                     0, 0, 80, 48, -1,
                                                     NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_RIGHT_MID);
     layout_away_setting_time_display();
 
-    lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_release_time, 514, 72 * 2, 510, 72,
+    lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_release_time, 514, 80 + 72 * 1, 510, 72,
                                                     layout_away_release_time_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                    0, 17, 300, 43, layout_away_obj_id_release_time_title,
-                                                    lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_FUNCRION_RELEASE_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                    370, 17, 120, 40, layout_away_obj_id_release_time_sub,
-                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    0, 0, 370, 72, layout_away_obj_id_release_time_title,
+                                                    lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_FUNCRION_RELEASE_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal,
+                                                    370, 0, 120, 72, layout_away_obj_id_release_time_sub,
+                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal,
                                                     0, 42, 576, 29, -1,
-                                                    NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                    NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_small,
                                                     0, 0, 80, 48, -1,
                                                     NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_RIGHT_MID);
     layout_away_release_time_display();
     if (0)
     {
-        lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_save_photo, 514, 72 * 3, 510, 72,
+        lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_save_photo, 514, 80 + 72 * 2, 510, 72,
                                                         away_alarm_save_photo_enable_btn_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                         0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                         0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                        0, 17, 300, 43, layout_away_obj_id_save_photo_title,
-                                                        lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SAVE_VISITORS_PHORO), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                        0, 17, 120, 40, -1,
-                                                        "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                        0, 0, 350, 72, layout_away_obj_id_save_photo_title,
+                                                        lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SAVE_VISITORS_PHORO), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal,
+                                                        0, 0, 120, 72, -1,
+                                                        "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal,
                                                         0, 42, 576, 29, -1,
                                                         NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                         370, 12, 80, 48, layout_away_save_photo_switch_id,
@@ -1156,14 +1198,14 @@ static void layout_away_func_setting_create()
 
     if (0)
     {
-        lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_bypass_call, 514, 72 * 3, 510, 72,
+        lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_bypass_call, 514, 80 + 72 * 2, 510, 72,
                                                         away_bypass_call_enable_btn_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                         0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                         0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                        0, 17, 300, 43, layout_away_obj_id_bypass_call_title,
-                                                        lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_BYPASS_CALL), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                        0, 0, 300, 72, layout_away_obj_id_bypass_call_title,
+                                                        lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_BYPASS_CALL), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal,
                                                         0, 17, 120, 40, -1,
-                                                        "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                        "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal,
                                                         0, 42, 576, 29, -1,
                                                         NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                         370, 12, 80, 48, layout_away_bypass_call_img_id,
@@ -1171,14 +1213,14 @@ static void layout_away_func_setting_create()
         layout_away_bypass_call_display();
     }
 
-    lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record, 514, 72 * 3, 510, 72,
+    lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record, 514, 80 + 72 * 2, 510, 72,
                                                     away_cctv_record_enable_btn_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                    0, 17, 300, 43, layout_away_obj_id_auto_record_title,
-                                                    lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_AUTO_RECORD), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                    0, 17, 120, 40, -1,
-                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    0, 0, 300, 72, layout_away_obj_id_auto_record_title,
+                                                    lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_AUTO_RECORD), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal,
+                                                    0, 0, 120, 72, -1,
+                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal,
                                                     0, 42, 576, 29, -1,
                                                     NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                     370, 12, 80, 48, layout_away_auto_record_img_id,

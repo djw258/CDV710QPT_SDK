@@ -12,10 +12,7 @@
 ***********************************************/
 bool ring_touch_play(void)
 {
-        if (user_data_get()->audio.touch_notification_volume == 0)
-        {
-                return false;
-        }
+
         sat_linphone_audio_play_start(RESOURCE_RING_PATH "keysound/touch.mp3", 1); // touch.wav
         sat_linphone_audio_play_volume_set(user_data_get()->audio.touch_notification_volume);
         return true;
@@ -28,10 +25,7 @@ bool ring_touch_play(void)
 ***********************************************/
 bool ring_door_call_play(int index, int count)
 {
-        if (user_data_get()->audio.entrance_volume == 0)
-        {
-                return false;
-        }
+
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "door_camera/call_door%d.mp3", index);
@@ -62,10 +56,7 @@ bool ring_unlock_play(void)
 ***********************************************/
 bool ring_intercom_play(int index, int count)
 {
-        if (user_data_get()->audio.extension_volume == 0)
-        {
-                return false;
-        }
+
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "extension/extension_call_%d.mp3", index);
@@ -98,10 +89,7 @@ bool ring_alarm_play(void)
 ************************************************************/
 bool ring_buzzer_play(int index)
 {
-        if (user_data_get()->audio.buzzer_volume == 0)
-        {
-                return false;
-        }
+
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "buzzer/buzzer_%d.mp3", index);
@@ -120,10 +108,7 @@ bool ring_buzzer_play(int index)
 ************************************************************/
 bool ring_common_door_play(int index, int count)
 {
-        if (user_data_get()->audio.common_entrance_volume == 0)
-        {
-                return false;
-        }
+
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "common_entrance/Common_entrance_%d.mp3", index);
@@ -142,10 +127,7 @@ bool ring_common_door_play(int index, int count)
 ************************************************************/
 bool ring_guard_play(int index, int count)
 {
-        if (user_data_get()->audio.guard_station_volume == 0)
-        {
-                return false;
-        }
+
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "security_office/security_office_%d.mp3", index);
@@ -176,15 +158,13 @@ bool ring_busy_play(int index)
 ************************************************************/
 bool send_call_play(int index, int count)
 {
-        if (user_data_get()->audio.guard_station_volume == 0)
-        {
-                return false;
-        }
+
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "send_call/req_call.mp3");
         sat_linphone_audio_play_start(cmd, count);
 
-        sat_linphone_audio_play_volume_set(100);
+        sat_linphone_audio_play_volume_set(user_data_get()->audio.extension_volume);
+
         return false;
 }

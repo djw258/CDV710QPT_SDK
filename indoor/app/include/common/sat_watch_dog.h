@@ -4,7 +4,7 @@
 bool watch_dog_start(int timeout);
 
 // 喂狗
-void watch_dog_alive(void);
+bool watch_dog_alive(void);
 
 // 关闭看门狗
 bool watch_dog_close(void);

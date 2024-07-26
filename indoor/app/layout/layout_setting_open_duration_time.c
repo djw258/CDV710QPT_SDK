@@ -251,7 +251,7 @@ static void layout_setting_open_duration_time_click(lv_event_t *e)
   item[5] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_DURATION_TIME_15_SEC);
   item[6] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_DURATION_TIME_20_SEC);
 
-  layout_setting_open_duration_time_msgbox_creat(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_DURATION_TIME),
+  layout_setting_open_duration_time_msgbox_creat(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DURATION_TIME),
                                                  setting_open_duration_time_msgbox_cancel_click, setting_open_duration_time_msgbox_confirm_click, setting_open_duration_time_msgbox_click,
                                                  item);
   setting_open_duration_times_option_display();

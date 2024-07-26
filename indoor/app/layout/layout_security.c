@@ -249,9 +249,13 @@ static void layout_security_execution_normal_msgbox_create(char normal_select)
             strcat(sensors_str, index);
         }
     }
-    SAT_DEBUG("sensors_str is %s", sensors_str);
-    char abnormal_str[128] = {0};
-    sprintf(abnormal_str, "Cannot run.%s sensor is not normal. Please check the sensor.", sensors_str);
+    char abnormal_str1[256] = {0};
+    strcpy(abnormal_str1, lang_str_get(SENSOR_SETTING_XLS_LANG_ID_SENSOR_IS_NORMAL));
+    extern void replaceString(char *source, const char *search, const char *replace);
+    replaceString(abnormal_str1, "(N)", sensors_str);
+    char abnormal_str[256] = {0};
+    snprintf(abnormal_str, sizeof(abnormal_str), "%s%s", lang_str_get(SENSOR_SETTING_XLS_LANG_ID_CANNOT), abnormal_str1);
+
     setting_msgdialog_msg_create(masgbox, layout_security_obj_id_msgbox_title, abnormal_str, 0, 70, 460, 120, false);
     setting_msgdialog_msg_confirm_btn_create(masgbox, layout_security_obj_id_msgbox_confirm_btn, layout_security_msgbox_cancel_click);
 }

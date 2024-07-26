@@ -302,10 +302,10 @@ static void home_slave_sync_time_request_timer(lv_timer_t *ptimer)
                         lv_timer_del(ptimer);
                 }
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                standby_timer_close();
+                // standby_timer_close();
                 user_time_set(&tm);
 
-                standby_timer_restart(true, true);
+                // standby_timer_restart(true, true);
         }
 }
 
@@ -387,6 +387,10 @@ static void home_date_obj_display(void)
                 lv_label_set_text_fmt(label_date, "%s %d %s %04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
         }
         else if (lang == LANGUAGE_ID_ALABOYU)
+        {
+                lv_label_set_text_fmt(label_date, "%d %s %04d %s", tm.tm_mday, mon_str, tm.tm_year, week_str);
+        }
+        else if (lang == LANGUAGE_ID_BOLAN)
         {
                 lv_label_set_text_fmt(label_date, "%d %s %04d %s", tm.tm_mday, mon_str, tm.tm_year, week_str);
         }
@@ -1302,7 +1306,7 @@ static void sat_layout_enter(home)
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 83, 103, 27, home_obj_id_elevator_label,
-                                                      lang_str_get(HOME_XLS_LANG_ID_ELEVATOR), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                      "lang_str_get(HOME_XLS_LANG_ID_ELEVATOR)", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                       13, 0, 77, 77, home_obj_id_elevator_img,
                                                       (const char *)resource_ui_src_get("btn_main_elevator_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         sec_x += unit_offset;

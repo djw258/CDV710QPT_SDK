@@ -647,12 +647,13 @@ static void *sat_socket_tcp_receive_task(void *arg)
         int read_len = 0;
         int remain_len = TCP_RECEIVE_BUFFER_SIZE;
         int recv_len = 0;
-        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 200)) > 0)
+        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 500)) > 0)
         {
                 // printf("%s\n", receive_data);
                 read_len += recv_len;
                 remain_len -= recv_len;
         }
+
         if (read_len > 0)
         {
                 tcp_receive_data_parsing_processing(client_fd, receive_data, recv_len);

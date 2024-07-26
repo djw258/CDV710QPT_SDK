@@ -141,7 +141,6 @@ static bool ipc_camera_search_display_register_func(void)
                                         sprintf(fullname, "Door%d(%s)", i + 1, doorname);
                                         memset(network_data_get()->door_device[i].door_name, 0, sizeof(network_data_get()->door_device[i].door_name));
                                         strncpy(network_data_get()->door_device[i].door_name, fullname, strlen(fullname));
-
                                         network_data_save();
 
                                         // SAT_DEBUG("%s %s", number, network_data_get()->door_device[i].sip_url);

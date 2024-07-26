@@ -690,11 +690,11 @@ static void sat_layout_enter(server_operation_network)
                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                         {
-                                lv_common_text_create(cont, server_operation_network_obj_id_building_number_text, 32, 16, 204, 40,
+                                lv_common_text_create(cont, server_operation_network_obj_id_building_number_text, 32, 0, 204, 72,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_BUILD_NUMBER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_BUILD_NUMBER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal);
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_building_number_textarea, 298, 9, 262, 54,
                                                           server_operating_network_textarea_focus_state_clear, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
@@ -717,11 +717,11 @@ static void sat_layout_enter(server_operation_network)
                                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                         {
 
-                                lv_common_text_create(cont, server_operation_network_obj_id_building_household_number_text, 32, 16, 204, 40,
+                                lv_common_text_create(cont, server_operation_network_obj_id_building_household_number_text, 32, 0, 204, 72,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_HOUSEHOLD_NUMBER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_HOUSEHOLD_NUMBER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal);
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_building_household_number_textarea, 298, 9, 262, 54,
                                                           server_operating_network_textarea_focus_state_clear, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
@@ -760,11 +760,11 @@ static void sat_layout_enter(server_operation_network)
                                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                         {
 
-                                lv_common_text_create(cont, server_operation_network_obj_id_product_ip_text, 32, 16, 204, 40,
+                                lv_common_text_create(cont, server_operation_network_obj_id_product_ip_text, 32, 0, 204, 72,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_IP), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                                      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_IP), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal);
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_product_ip_textarea, 298, 9, 262, 54,
                                                           server_operating_network_textarea_focus_state_clear, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
@@ -785,11 +785,11 @@ static void sat_layout_enter(server_operation_network)
                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                         {
-                                lv_common_text_create(cont, server_operation_network_obj_id_gateway_text, 32, 16, 204, 40,
+                                lv_common_text_create(cont, server_operation_network_obj_id_gateway_text, 32, 0, 204, 72,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_GATEWAY), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                                      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_GATEWAY), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal);
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_gateway_textarea, 298, 9, 262, 54,
                                                           server_operating_network_textarea_focus_state_clear, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
@@ -810,11 +810,11 @@ static void sat_layout_enter(server_operation_network)
                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                         {
-                                lv_common_text_create(cont, server_operation_network_obj_id_mask_text, 32, 16, 204, 40,
+                                lv_common_text_create(cont, server_operation_network_obj_id_mask_text, 32, 0, 204, 72,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_MASK), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                                      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_MASK), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal);
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_mask_textarea, 298, 9, 262, 54,
                                                           server_operating_network_textarea_focus_state_clear, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
@@ -837,11 +837,11 @@ static void sat_layout_enter(server_operation_network)
                                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                         {
 
-                                lv_common_text_create(cont, server_operation_network_obj_id_dns_text, 32, 16, 204, 40,
+                                lv_common_text_create(cont, server_operation_network_obj_id_dns_text, 32, 0, 204, 72,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_DNS), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                                      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_DNS), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal);
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_dns_textarea, 298, 9, 262, 54,
                                                           server_operating_network_textarea_focus_state_clear, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
@@ -880,11 +880,11 @@ static void sat_layout_enter(server_operation_network)
                                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                         {
 
-                                lv_common_text_create(cont, server_operation_network_obj_id_product_ip_text, 32, 16, 204, 40,
+                                lv_common_text_create(cont, server_operation_network_obj_id_product_ip_text, 32, 0, 204, 72,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_LOCAL_SERVER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_LOCAL_SERVER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal);
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_local_server_textarea, 298, 9, 262, 54,
                                                           server_operating_network_textarea_focus_state_clear, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
@@ -907,11 +907,11 @@ static void sat_layout_enter(server_operation_network)
                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                         {
-                                lv_common_text_create(cont, server_operation_network_obj_id_sip_server_text, 32, 16, 204, 40,
+                                lv_common_text_create(cont, server_operation_network_obj_id_sip_server_text, 32, 0, 204, 72,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_SIP_SERVER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_SIP_SERVER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal);
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_sip_server_textarea, 298, 9, 262, 54,
                                                           server_operating_network_textarea_focus_state_clear, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
@@ -961,11 +961,11 @@ static void sat_layout_enter(server_operation_network)
                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                         {
-                                lv_common_text_create(cont, server_operation_network_obj_id_cctv_server_text, 32, 16, 204, 40,
+                                lv_common_text_create(cont, server_operation_network_obj_id_cctv_server_text, 32, 0, 204, 72,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_CCTV_SERVER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_CCTV_SERVER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal);
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_cctv_server_textarea, 298, 9, 262, 54,
                                                           server_operating_network_textarea_focus_state_clear, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
@@ -1002,11 +1002,11 @@ static void sat_layout_enter(server_operation_network)
                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                         NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                         {
-                                lv_common_text_create(cont, server_operation_network_obj_id_guard_statioon_text, 32, 16, 266, 40,
+                                lv_common_text_create(cont, server_operation_network_obj_id_guard_statioon_text, 32, 0, 266, 72,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_GUARD_STATION_NUMBER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_GUARD_STATION_NUMBER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal);
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_guard_statioon_textarea, 298, 9, 262, 54,
                                                           server_operating_network_textarea_focus_state_clear, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,

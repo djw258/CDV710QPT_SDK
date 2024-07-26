@@ -153,37 +153,37 @@ static void setting_standby_wait_display_time_confirm_click(lv_event_t *ev)
 static void setting_standby_screen_off_msgbox_option_create(lv_obj_t *msgbox, lv_event_cb_t checkbox_cb)
 {
 
-        lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox1_cont, 48, 46, 365, 48,
+        lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox1_cont, 48, 46, 412, 48,
                                       checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox1_label,
+                                      48, 8, 412 - 48, 32, setting_standby_screen_off_checkbox1_label,
                                       lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                       0, 8, 32, 32, setting_standby_screen_off_checkbox1_img,
                                       user_data_get()->display.screen_off_time == 15 ? (char *)resource_ui_src_get("btn_radio_s.png") : (char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-        lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox2_cont, 48, 102, 365, 48,
+        lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox2_cont, 48, 102, 412, 48,
                                       checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox2_label,
+                                      48, 8, 412 - 48, 32, setting_standby_screen_off_checkbox2_label,
                                       lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_30SEC), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                       0, 8, 32, 32, setting_standby_screen_off_checkbox2_img,
                                       user_data_get()->display.screen_off_time == 30 ? (char *)resource_ui_src_get("btn_radio_s.png") : (char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-        lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox3_cont, 48, 158, 365, 48,
+        lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox3_cont, 48, 158, 412, 48,
                                       checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox3_label,
+                                      48, 8, 412 - 48, 32, setting_standby_screen_off_checkbox3_label,
                                       lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_60SEC), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                       0, 8, 32, 32, setting_standby_screen_off_checkbox3_img,
                                       user_data_get()->display.screen_off_time == 60 ? (char *)resource_ui_src_get("btn_radio_s.png") : (char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-        lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox4_cont, 48, 214, 365, 48,
+        lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox4_cont, 48, 214, 412, 48,
                                       checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox4_label,
+                                      48, 8, 412 - 48, 32, setting_standby_screen_off_checkbox4_label,
                                       lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_180SEC), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                       0, 8, 32, 32, setting_standby_screen_off_checkbox4_img,
                                       user_data_get()->display.screen_off_time == 180 ? (char *)resource_ui_src_get("btn_radio_s.png") : (char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);

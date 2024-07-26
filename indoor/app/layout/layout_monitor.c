@@ -107,7 +107,7 @@ static int monitor_contrast[3] = {0};
 
 void layout_monitor_goto_layout_process(bool active)
 {
-        if (is_channel_ipc_camera(monitor_channel_get()) == 1)
+        if ((is_channel_ipc_camera(monitor_channel_get()) == 1) && sat_cur_layout_get() == sat_playout_get(monitor))
         {
                 monitor_close(0x02);
         }
@@ -268,26 +268,50 @@ static void monitior_obj_channel_info_obj_display(void)
                 lv_obj_set_x(obj, 60);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
                 channel -= 8;
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%04d-%02d-%02d  %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_obj_t *obj = monitor_top_child_obj_get(7);
+                if (obj == NULL)
+                {
+                        return;
+                }
+                lv_label_set_text_fmt(obj, "%s", network_data_get()->cctv_device[channel].door_name);
         }
         else if (is_channel_ipc_camera(channel) == 0x00)
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
+                lv_label_set_text_fmt(obj, "%04d-%02d-%02d  %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_obj_t *obj = monitor_top_child_obj_get(7);
+                if (obj == NULL)
+                {
+                        return;
+                }
+                lv_label_set_text_fmt(obj, "%s", network_data_get()->door_device[channel].door_name);
                 // lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
         else if (channel == 16)
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", lang_str_get(HOME_XLS_LANG_ID_COMMON_ENTRANCE), tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%04d-%02d-%02d  %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_obj_t *obj = monitor_top_child_obj_get(7);
+                if (obj == NULL)
+                {
+                        return;
+                }
+                lv_label_set_text_fmt(obj, "%s", lang_str_get(HOME_XLS_LANG_ID_COMMON_ENTRANCE));
         }
         else if (channel == 17)
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION), tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%04d-%02d-%02d  %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_obj_t *obj = monitor_top_child_obj_get(7);
+                if (obj == NULL)
+                {
+                        return;
+                }
+                lv_label_set_text_fmt(obj, "%s", lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION));
         }
 }
 /***********************************************
@@ -921,44 +945,37 @@ static void *monitor_unlock_ctrl_task(void *arg)
                 if ((info->ch == MON_CH_DOOR1))
                         door1_lock1_pin_ctrl(info->en);
         }
-        else if (/* (info->ch == MON_CH_DOOR2) && */ (info->mode == 2))
+        else if ((is_channel_ipc_camera(info->ch) == 0) && (info->en == true))
         {
                 // const char *user = monitor_channel_get_url(ch, false);
-                char *cmd[3] = {
-                    "echo 32 > /sys/class/gpio/export",
-                    "echo out > /sys/class/gpio/gpio32/direction",
-                    "echo 1 > /sys/class/gpio/gpio32/value"};
+                int gpio_id = info->mode == 2 ? 32 : 33;
 
-                if (info->en == false)
-                {
-                        cmd[2] = "echo 0 > /sys/class/gpio/gpio32/value";
-                }
+                char cmd[256] = {0};
 
-                for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
+                sprintf(cmd, "echo %d > /sys/class/gpio/export;echo out > /sys/class/gpio/gpio%d/direction;echo 1 > /sys/class/gpio/gpio%d/value;", gpio_id, gpio_id, gpio_id);
+                char lock_cmd_buff[256] = {0};
+                int duration_index = user_data_get()->etc.open_duration_time[info->ch];
+                double open_duration_time = duration_index == 0 ? 10.5 : duration_index == 1 ? 3
+                                                                     : duration_index == 2   ? 5
+                                                                     : duration_index == 3   ? 7
+                                                                     : duration_index == 4   ? 10
+                                                                     : duration_index == 5   ? 15
+                                                                                             : 20;
+
+                sprintf(lock_cmd_buff, "(sleep %.1f; echo 0 > /sys/class/gpio/gpio%d/value)&", open_duration_time, gpio_id);
+                SAT_DEBUG("lock_cmd_buff is %s", lock_cmd_buff);
+                strcat(cmd, lock_cmd_buff);
+                // cmd[1] = lock_cmd_buff;
+
+                for (int i = 0; i < sizeof(cmd) / sizeof(cmd); i++)
                 {
 
-                        sat_ipcamera_report_shellcmd(network_data_get()->door_device[info->ch].ipaddr, network_data_get()->door_device[info->ch].port, network_data_get()->door_device[info->ch].username, network_data_get()->door_device[info->ch].password, cmd[i], 2000);
-                }
-        }
-        else if (info->ch >= MON_CH_DOOR1 && info->ch <= MON_CH_DOOR8)
-        {
-                // const char *user = monitor_channel_get_url(ch, false);
-                char *cmd[3] = {
-                    "echo 33 > /sys/class/gpio/export",
-                    "echo out > /sys/class/gpio/gpio33/direction",
-                    "echo 1 > /sys/class/gpio/gpio33/value"};
-
-                if (info->en == false)
-                {
-                        cmd[2] = "echo 0 > /sys/class/gpio/gpio33/value";
-                }
-                for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
-                {
-                        printf("cmd[%d] is %s\n", i, cmd[i]);
-                        sat_ipcamera_report_shellcmd(network_data_get()->door_device[info->ch].ipaddr, 80, "admiin", network_data_get()->door_device[info->ch].password, cmd[i], 2000);
+                        unsigned long long timestamp = user_timestamp_get();
+                        sat_ipcamera_report_shellcmd(network_data_get()->door_device[info->ch].ipaddr, 80, "admiin", network_data_get()->door_device[info->ch].password, cmd, 1000);
+                        SAT_DEBUG("duration is %llu", user_timestamp_get() - timestamp);
                 }
         }
-        else if (info->ch == MON_CH_LOBBY)
+        else if (info->ch == MON_CH_LOBBY && info->en == true)
         {
                 commax_https_lobbyphone_open_the_door(commax_transport_ip_get(), "29752", 2000);
         }
@@ -1013,21 +1030,14 @@ static bool monitor_obj_unlock_icon_display(int ch, int mode)
                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                        resource_ui_src_get("btn_call_notice_door.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
-
         monitor_unlock_ctrl(ch, mode, true);
         door_lock_info *info = (door_lock_info *)malloc(sizeof(door_lock_info));
         obj->user_data = info;
         info->ch = ch;
         info->en = false;
         info->mode = mode;
-        int duration_index = user_data_get()->etc.open_duration_time[ch];
-        int open_duration_time = duration_index == 0 ? 1.5 : duration_index == 1 ? 3
-                                                         : duration_index == 2   ? 5
-                                                         : duration_index == 3   ? 7
-                                                         : duration_index == 4   ? 10
-                                                         : duration_index == 5   ? 15
-                                                                                 : 20;
-        lv_timer_reset(unlock_timer = lv_timer_create(monitor_obj_unlock_open_timer, is_channel_ipc_camera(ch) == 0 ? open_duration_time * 1000 : 1500, (void *)info));
+
+        lv_timer_reset(unlock_timer = lv_timer_create(monitor_obj_unlock_open_timer, 1500, (void *)info));
         return true;
 }
 
@@ -1454,7 +1464,7 @@ static bool layout_monitor_other_call_list_display(void)
 
                 return false;
         }
-        if (is_channel_ipc_camera(monitor_channel_get()) == 0x01)
+        if ((is_channel_ipc_camera(monitor_channel_get()) == 0x01) && sat_cur_layout_get() == sat_playout_get(monitor))
         {
                 lv_obj_add_flag(list, LV_OBJ_FLAG_HIDDEN);
         }
@@ -2248,11 +2258,11 @@ static void layout_monitor_door_ch_btn_create(void)
                 }
                 else if (ch == 16)
                 {
-                        strcpy(ch_name, lang_str_get(HOME_XLS_LANG_ID_COMMON_ENTRANCE));
+                        strncpy(ch_name, lang_str_get(HOME_XLS_LANG_ID_COMMON_ENTRANCE), sizeof(ch_name) - 1);
                 }
                 else if (ch == 17)
                 {
-                        strcpy(ch_name, lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION));
+                        strncpy(ch_name, lang_str_get(SOUND_XLS_LANG_ID_GUARD_STATION), sizeof(ch_name) - 1);
                 }
                 lv_obj_t *obj_answer = lv_common_img_text_btn_create(list, node[i].call_id, sec_x, sec_y, 253, 80,
                                                                      layout_monitor_door_call_btn_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
@@ -2440,16 +2450,11 @@ static void sat_layout_enter(monitor)
                  ** 说明: 通道显示
                  ***********************************************/
                 {
-                        lv_obj_t *obj = lv_common_text_create(parent, 1, 37, 23, 950, 42,
-                                                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                              NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
-                        if (obj != NULL)
-                        {
-                                lv_label_set_long_mode(obj, LV_LABEL_LONG_SCROLL_CIRCULAR);
-                        }
-                        monitior_obj_channel_info_obj_display();
+                        lv_common_text_create(parent, 1, 37, 23, 200, 42,
+                                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
                 }
                 /***********************************************
                  ** 作者: leo.liu
@@ -2514,6 +2519,23 @@ static void sat_layout_enter(monitor)
                                               NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
 
                         lv_timer_ready(lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL));
+                }
+                /***********************************************
+                 ** 作者: leo.liu
+                 ** 日期: 2023-2-2 13:42:25
+                 ** 说明: 倒计时
+                 ***********************************************/
+                {
+                        lv_obj_t *obj = lv_common_text_create(parent, 7, 273, 23, 478, 42,
+                                                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                              NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                        if (obj != NULL)
+                        {
+                                lv_label_set_long_mode(obj, LV_LABEL_LONG_SCROLL_CIRCULAR);
+                        }
+                        monitior_obj_channel_info_obj_display();
                 }
         }
 

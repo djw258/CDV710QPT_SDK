@@ -90,12 +90,12 @@ static void setting_password_modiy_confirm_enable(bool en)
         lv_obj_t *apple = lv_obj_get_child_form_id(parent, setting_password_obj_id_modiy_apply_btn);
         if (en == true)
         {
-                lv_obj_add_flag(apple, LV_OBJ_FLAG_CHECKABLE);
+                lv_obj_add_flag(apple, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_set_style_bg_color(apple, lv_color_hex(0x00a8ff), LV_PART_MAIN);
         }
         else
         {
-                lv_obj_clear_flag(apple, LV_OBJ_FLAG_CHECKABLE);
+                lv_obj_clear_flag(apple, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_set_style_bg_color(apple, lv_color_hex(0x47494a), LV_PART_MAIN);
         }
 }
@@ -142,7 +142,7 @@ static void setting_password_modiy_confirm_click(lv_event_t *ev)
         }
         else
         {
-                if (setting_password_check_passowrd_easy(verify_buffer) == true)
+                if ((setting_password_check_passowrd_easy(verify_buffer) == true) || strlen(verify_buffer) != 4)
                 {
                         lv_obj_t *msgbox = setting_msgdialog_msg_bg_create(setting_password_obj_id_easy_msgbox_bg, 0, 282, 143, 460, 283);
                         setting_msgdialog_msg_create(msgbox, 1, lang_str_get(POWER_SETTING_XLS_LASETTING_PASSWORD_XLS_LANG_ID_EASY_PASSWD), 0, 60, 460, 120, false);
@@ -358,6 +358,7 @@ static void setting_password_modiy_obj_create(void)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+
                                       lang_str_get(reset_unit ? SETTING_PASSWORD_XLS_LANG_ID_RESET_HOUSEHOLD_PASSWORD : SETTING_PASSWORD_XLS_LANG_ID_RESET_COMMON_ENTRANCE_PASSWORD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                 /***********************************************
                 ** 作者: leo.liu
@@ -396,7 +397,7 @@ static void setting_password_modiy_obj_create(void)
                 ** 说明:password reset
                 ***********************************************/
                 {
-                        lv_common_text_create(parent, setting_password_obj_id_modiy_password_reset_label, 652, 80, 211, 43,
+                        lv_common_text_create(parent, setting_password_obj_id_modiy_password_reset_label, 552, 80, 411, 80,
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -408,7 +409,7 @@ static void setting_password_modiy_obj_create(void)
                  ** 说明:password new password
                  ***********************************************/
                 {
-                        lv_common_text_create(parent, setting_password_obj_id_modiy_password_new_label, 674, 147, 164, 35,
+                        lv_common_text_create(parent, setting_password_obj_id_modiy_password_new_label, 574, 147, 364, 35,
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -421,7 +422,7 @@ static void setting_password_modiy_obj_create(void)
                  ** 说明:password verify password
                  ***********************************************/
                 {
-                        lv_common_text_create(parent, setting_password_obj_id_modiy_passowrd_verify_label, 668, 322, 177, 35,
+                        lv_common_text_create(parent, setting_password_obj_id_modiy_passowrd_verify_label, 567, 322, 377, 35,
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -459,6 +460,7 @@ static void setting_password_modiy_obj_create(void)
                                 {
                                         lv_obj_add_state(obj, LV_STATE_FOCUSED);
                                 }
+                                lv_obj_set_style_anim_time(obj, 0, LV_PART_CURSOR | LV_STATE_FOCUSED);
                         }
                 }
 

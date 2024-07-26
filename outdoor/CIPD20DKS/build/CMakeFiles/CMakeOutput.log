@@ -1,0 +1,496 @@
+The system is: Linux - 5.19.0-40-generic - x86_64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-gcc 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+
+The C compiler identification is GNU, found in "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/3.22.1/CompilerIdC/a.out"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++ 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+
+The CXX compiler identification is GNU, found in "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/3.22.1/CompilerIdCXX/a.out"
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_84e54/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_84e54.dir/build.make CMakeFiles/cmTC_84e54.dir/build
+gmake[1]: Entering directory '/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o
+/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-gcc   -v -o CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-3.22/Modules/CMakeCCompilerABI.c
+Using built-in specs.
+COLLECT_GCC=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-gcc.br_real
+Target: arm-anykav500-linux-uclibcgnueabi
+Configured with: ./configure --prefix=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --sysconfdir=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/etc --enable-static --target=arm-anykav500-linux-uclibcgnueabi --with-sysroot=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/sysroot --disable-__cxa_atexit --with-gnu-ld --disable-multilib --with-gmp=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpc=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpfr=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-pkgversion='Buildroot 2018.02.7_V1.0.05-gec2d034' --with-bugurl=http://bugs.buildroot.net/ --disable-libquadmath --disable-libsanitizer --enable-tls --disable-libmudflap --enable-threads --without-isl --without-cloog --with-float=soft --disable-decimal-float --with-abi=aapcs-linux --with-cpu=arm926ej-s --with-float=soft --with-mode=arm --enable-languages=c,c++ --with-build-time-tools=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/bin --enable-shared --disable-libgomp --enable-libssp
+Thread model: posix
+gcc version 4.9.4 (Buildroot 2018.02.7_V1.0.05-gec2d034) 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu'
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/cc1 -quiet -v -iprefix /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/ -isysroot /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot /usr/share/cmake-3.22/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mcpu=arm926ej-s -mfloat-abi=soft -mabi=aapcs-linux -marm -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccHKCySs.s
+GNU C (Buildroot 2018.02.7_V1.0.05-gec2d034) version 4.9.4 (arm-anykav500-linux-uclibcgnueabi)
+	compiled by GNU C version 5.4.0 20160609, GMP version 6.1.2, MPFR version 3.1.6, MPC version 1.0.3
+warning: GMP header version 6.1.2 differs from library version 6.2.1.
+warning: MPFR header version 3.1.6 differs from library version 4.1.0.
+warning: MPC header version 1.0.3 differs from library version 1.2.1.
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include"
+ignoring nonexistent directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/local/include"
+ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed"
+ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include
+End of search list.
+GNU C (Buildroot 2018.02.7_V1.0.05-gec2d034) version 4.9.4 (arm-anykav500-linux-uclibcgnueabi)
+	compiled by GNU C version 5.4.0 20160609, GMP version 6.1.2, MPFR version 3.1.6, MPC version 1.0.3
+warning: GMP header version 6.1.2 differs from library version 6.2.1.
+warning: MPFR header version 3.1.6 differs from library version 4.1.0.
+warning: MPC header version 1.0.3 differs from library version 1.2.1.
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: f90187db2200eec05a5909ea840154ee
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu'
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/as -v -mcpu=arm926ej-s -mfloat-abi=soft -meabi=5 -o CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o /tmp/ccHKCySs.s
+GNU assembler version 2.29.1 (arm-anykav500-linux-uclibcgnueabi) using BFD version (GNU Binutils) 2.29.1
+COMPILER_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/
+LIBRARY_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu'
+Linking C executable cmTC_84e54
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_84e54.dir/link.txt --verbose=1
+/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-gcc  -v CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o -o cmTC_84e54 
+Using built-in specs.
+COLLECT_GCC=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-gcc.br_real
+COLLECT_LTO_WRAPPER=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/lto-wrapper
+Target: arm-anykav500-linux-uclibcgnueabi
+Configured with: ./configure --prefix=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --sysconfdir=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/etc --enable-static --target=arm-anykav500-linux-uclibcgnueabi --with-sysroot=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/sysroot --disable-__cxa_atexit --with-gnu-ld --disable-multilib --with-gmp=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpc=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpfr=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-pkgversion='Buildroot 2018.02.7_V1.0.05-gec2d034' --with-bugurl=http://bugs.buildroot.net/ --disable-libquadmath --disable-libsanitizer --enable-tls --disable-libmudflap --enable-threads --without-isl --without-cloog --with-float=soft --disable-decimal-float --with-abi=aapcs-linux --with-cpu=arm926ej-s --with-float=soft --with-mode=arm --enable-languages=c,c++ --with-build-time-tools=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/bin --enable-shared --disable-libgomp --enable-libssp
+Thread model: posix
+gcc version 4.9.4 (Buildroot 2018.02.7_V1.0.05-gec2d034) 
+COMPILER_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/
+LIBRARY_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_84e54' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu'
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/collect2 -plugin /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/liblto_plugin.so -plugin-opt=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/lto-wrapper -plugin-opt=-fresolution=/tmp/ccMneplu.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot --eh-frame-hdr -dynamic-linker /lib/ld-uClibc.so.0 -X -m armelf_linux_eabi -o cmTC_84e54 /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crt1.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crti.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4 -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crtn.o
+gmake[1]: Leaving directory '/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed C implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include]
+    add: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed]
+    add: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include]
+    add: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include]
+  end of search list found
+  collapse include dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include]
+  collapse include dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed]
+  collapse include dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include]
+  collapse include dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include]
+  implicit include dirs: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include]
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(arm-anykav500-linux-uclibcgnueabi-ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_84e54/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_84e54.dir/build.make CMakeFiles/cmTC_84e54.dir/build]
+  ignore line: [gmake[1]: Entering directory '/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building C object CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-gcc   -v -o CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-3.22/Modules/CMakeCCompilerABI.c]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-gcc.br_real]
+  ignore line: [Target: arm-anykav500-linux-uclibcgnueabi]
+  ignore line: [Configured with: ./configure --prefix=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --sysconfdir=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/etc --enable-static --target=arm-anykav500-linux-uclibcgnueabi --with-sysroot=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/sysroot --disable-__cxa_atexit --with-gnu-ld --disable-multilib --with-gmp=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpc=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpfr=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-pkgversion='Buildroot 2018.02.7_V1.0.05-gec2d034' --with-bugurl=http://bugs.buildroot.net/ --disable-libquadmath --disable-libsanitizer --enable-tls --disable-libmudflap --enable-threads --without-isl --without-cloog --with-float=soft --disable-decimal-float --with-abi=aapcs-linux --with-cpu=arm926ej-s --with-float=soft --with-mode=arm --enable-languages=c,c++ --with-build-time-tools=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/bin --enable-shared --disable-libgomp --enable-libssp]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 4.9.4 (Buildroot 2018.02.7_V1.0.05-gec2d034) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu']
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/cc1 -quiet -v -iprefix /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/ -isysroot /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot /usr/share/cmake-3.22/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mcpu=arm926ej-s -mfloat-abi=soft -mabi=aapcs-linux -marm -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccHKCySs.s]
+  ignore line: [GNU C (Buildroot 2018.02.7_V1.0.05-gec2d034) version 4.9.4 (arm-anykav500-linux-uclibcgnueabi)]
+  ignore line: [	compiled by GNU C version 5.4.0 20160609  GMP version 6.1.2  MPFR version 3.1.6  MPC version 1.0.3]
+  ignore line: [warning: GMP header version 6.1.2 differs from library version 6.2.1.]
+  ignore line: [warning: MPFR header version 3.1.6 differs from library version 4.1.0.]
+  ignore line: [warning: MPC header version 1.0.3 differs from library version 1.2.1.]
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include"]
+  ignore line: [ignoring nonexistent directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/local/include"]
+  ignore line: [ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed"]
+  ignore line: [ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include]
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed]
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include]
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C (Buildroot 2018.02.7_V1.0.05-gec2d034) version 4.9.4 (arm-anykav500-linux-uclibcgnueabi)]
+  ignore line: [	compiled by GNU C version 5.4.0 20160609  GMP version 6.1.2  MPFR version 3.1.6  MPC version 1.0.3]
+  ignore line: [warning: GMP header version 6.1.2 differs from library version 6.2.1.]
+  ignore line: [warning: MPFR header version 3.1.6 differs from library version 4.1.0.]
+  ignore line: [warning: MPC header version 1.0.3 differs from library version 1.2.1.]
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: f90187db2200eec05a5909ea840154ee]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu']
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/as -v -mcpu=arm926ej-s -mfloat-abi=soft -meabi=5 -o CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o /tmp/ccHKCySs.s]
+  ignore line: [GNU assembler version 2.29.1 (arm-anykav500-linux-uclibcgnueabi) using BFD version (GNU Binutils) 2.29.1]
+  ignore line: [COMPILER_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu']
+  ignore line: [Linking C executable cmTC_84e54]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_84e54.dir/link.txt --verbose=1]
+  ignore line: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-gcc  -v CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o -o cmTC_84e54 ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-gcc.br_real]
+  ignore line: [COLLECT_LTO_WRAPPER=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/lto-wrapper]
+  ignore line: [Target: arm-anykav500-linux-uclibcgnueabi]
+  ignore line: [Configured with: ./configure --prefix=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --sysconfdir=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/etc --enable-static --target=arm-anykav500-linux-uclibcgnueabi --with-sysroot=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/sysroot --disable-__cxa_atexit --with-gnu-ld --disable-multilib --with-gmp=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpc=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpfr=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-pkgversion='Buildroot 2018.02.7_V1.0.05-gec2d034' --with-bugurl=http://bugs.buildroot.net/ --disable-libquadmath --disable-libsanitizer --enable-tls --disable-libmudflap --enable-threads --without-isl --without-cloog --with-float=soft --disable-decimal-float --with-abi=aapcs-linux --with-cpu=arm926ej-s --with-float=soft --with-mode=arm --enable-languages=c,c++ --with-build-time-tools=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/bin --enable-shared --disable-libgomp --enable-libssp]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 4.9.4 (Buildroot 2018.02.7_V1.0.05-gec2d034) ]
+  ignore line: [COMPILER_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_84e54' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu']
+  link line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/collect2 -plugin /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/liblto_plugin.so -plugin-opt=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/lto-wrapper -plugin-opt=-fresolution=/tmp/ccMneplu.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot --eh-frame-hdr -dynamic-linker /lib/ld-uClibc.so.0 -X -m armelf_linux_eabi -o cmTC_84e54 /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crt1.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crti.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4 -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crtn.o]
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccMneplu.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [--sysroot=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib/ld-uClibc.so.0] ==> ignore
+    arg [-X] ==> ignore
+    arg [-m] ==> ignore
+    arg [armelf_linux_eabi] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_84e54] ==> ignore
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crt1.o] ==> obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crt1.o]
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crti.o] ==> obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crti.o]
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o] ==> obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o]
+    arg [-L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4] ==> dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4]
+    arg [-L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc] ==> dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc]
+    arg [-L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib] ==> dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib]
+    arg [-L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib] ==> dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib]
+    arg [-L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib] ==> dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib]
+    arg [CMakeFiles/cmTC_84e54.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [-lc] ==> lib [c]
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o] ==> obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o]
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crtn.o] ==> obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crtn.o]
+  collapse obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o]
+  collapse obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o]
+  collapse library dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4]
+  collapse library dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc]
+  collapse library dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/lib]
+  collapse library dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib]
+  collapse library dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib]
+  implicit libs: [gcc;gcc_s;c;gcc;gcc_s]
+  implicit objs: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crt1.o;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crti.o;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crtn.o]
+  implicit dirs: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/lib;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib]
+  implicit fwks: []
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_b17da/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_b17da.dir/build.make CMakeFiles/cmTC_b17da.dir/build
+gmake[1]: Entering directory '/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o
+/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++   -v -o CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.22/Modules/CMakeCXXCompilerABI.cpp
+Using built-in specs.
+COLLECT_GCC=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++.br_real
+Target: arm-anykav500-linux-uclibcgnueabi
+Configured with: ./configure --prefix=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --sysconfdir=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/etc --enable-static --target=arm-anykav500-linux-uclibcgnueabi --with-sysroot=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/sysroot --disable-__cxa_atexit --with-gnu-ld --disable-multilib --with-gmp=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpc=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpfr=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-pkgversion='Buildroot 2018.02.7_V1.0.05-gec2d034' --with-bugurl=http://bugs.buildroot.net/ --disable-libquadmath --disable-libsanitizer --enable-tls --disable-libmudflap --enable-threads --without-isl --without-cloog --with-float=soft --disable-decimal-float --with-abi=aapcs-linux --with-cpu=arm926ej-s --with-float=soft --with-mode=arm --enable-languages=c,c++ --with-build-time-tools=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/bin --enable-shared --disable-libgomp --enable-libssp
+Thread model: posix
+gcc version 4.9.4 (Buildroot 2018.02.7_V1.0.05-gec2d034) 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu'
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/cc1plus -quiet -v -iprefix /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/ -isysroot /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot -D_GNU_SOURCE /usr/share/cmake-3.22/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mcpu=arm926ej-s -mfloat-abi=soft -mabi=aapcs-linux -marm -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccj9plOc.s
+GNU C++ (Buildroot 2018.02.7_V1.0.05-gec2d034) version 4.9.4 (arm-anykav500-linux-uclibcgnueabi)
+	compiled by GNU C version 5.4.0 20160609, GMP version 6.1.2, MPFR version 3.1.6, MPC version 1.0.3
+warning: GMP header version 6.1.2 differs from library version 6.2.1.
+warning: MPFR header version 3.1.6 differs from library version 4.1.0.
+warning: MPC header version 1.0.3 differs from library version 1.2.1.
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4"
+ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/arm-anykav500-linux-uclibcgnueabi"
+ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/backward"
+ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include"
+ignoring nonexistent directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/local/include"
+ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed"
+ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/arm-anykav500-linux-uclibcgnueabi
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/backward
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include
+End of search list.
+GNU C++ (Buildroot 2018.02.7_V1.0.05-gec2d034) version 4.9.4 (arm-anykav500-linux-uclibcgnueabi)
+	compiled by GNU C version 5.4.0 20160609, GMP version 6.1.2, MPFR version 3.1.6, MPC version 1.0.3
+warning: GMP header version 6.1.2 differs from library version 6.2.1.
+warning: MPFR header version 3.1.6 differs from library version 4.1.0.
+warning: MPC header version 1.0.3 differs from library version 1.2.1.
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: cdabe829f67bf83b4ce22a86bb5c91d1
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu'
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/as -v -mcpu=arm926ej-s -mfloat-abi=soft -meabi=5 -o CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccj9plOc.s
+GNU assembler version 2.29.1 (arm-anykav500-linux-uclibcgnueabi) using BFD version (GNU Binutils) 2.29.1
+COMPILER_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/
+LIBRARY_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu'
+Linking CXX executable cmTC_b17da
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b17da.dir/link.txt --verbose=1
+/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++  -v CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_b17da 
+Using built-in specs.
+COLLECT_GCC=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++.br_real
+COLLECT_LTO_WRAPPER=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/lto-wrapper
+Target: arm-anykav500-linux-uclibcgnueabi
+Configured with: ./configure --prefix=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --sysconfdir=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/etc --enable-static --target=arm-anykav500-linux-uclibcgnueabi --with-sysroot=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/sysroot --disable-__cxa_atexit --with-gnu-ld --disable-multilib --with-gmp=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpc=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpfr=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-pkgversion='Buildroot 2018.02.7_V1.0.05-gec2d034' --with-bugurl=http://bugs.buildroot.net/ --disable-libquadmath --disable-libsanitizer --enable-tls --disable-libmudflap --enable-threads --without-isl --without-cloog --with-float=soft --disable-decimal-float --with-abi=aapcs-linux --with-cpu=arm926ej-s --with-float=soft --with-mode=arm --enable-languages=c,c++ --with-build-time-tools=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/bin --enable-shared --disable-libgomp --enable-libssp
+Thread model: posix
+gcc version 4.9.4 (Buildroot 2018.02.7_V1.0.05-gec2d034) 
+COMPILER_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/
+LIBRARY_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_b17da' '-shared-libgcc' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu'
+ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/collect2 -plugin /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/liblto_plugin.so -plugin-opt=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/lto-wrapper -plugin-opt=-fresolution=/tmp/ccap6qj2.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot --eh-frame-hdr -dynamic-linker /lib/ld-uClibc.so.0 -X -m armelf_linux_eabi -o cmTC_b17da /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crt1.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crti.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4 -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crtn.o
+gmake[1]: Leaving directory '/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed CXX implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4]
+    add: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/arm-anykav500-linux-uclibcgnueabi]
+    add: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/backward]
+    add: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include]
+    add: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed]
+    add: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include]
+    add: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include]
+  end of search list found
+  collapse include dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4]
+  collapse include dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/arm-anykav500-linux-uclibcgnueabi] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/arm-anykav500-linux-uclibcgnueabi]
+  collapse include dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/backward] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/backward]
+  collapse include dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include]
+  collapse include dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed]
+  collapse include dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include]
+  collapse include dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include]
+  implicit include dirs: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/arm-anykav500-linux-uclibcgnueabi;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/backward;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/include;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include]
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(arm-anykav500-linux-uclibcgnueabi-ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_b17da/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_b17da.dir/build.make CMakeFiles/cmTC_b17da.dir/build]
+  ignore line: [gmake[1]: Entering directory '/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building CXX object CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++   -v -o CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.22/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++.br_real]
+  ignore line: [Target: arm-anykav500-linux-uclibcgnueabi]
+  ignore line: [Configured with: ./configure --prefix=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --sysconfdir=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/etc --enable-static --target=arm-anykav500-linux-uclibcgnueabi --with-sysroot=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/sysroot --disable-__cxa_atexit --with-gnu-ld --disable-multilib --with-gmp=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpc=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpfr=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-pkgversion='Buildroot 2018.02.7_V1.0.05-gec2d034' --with-bugurl=http://bugs.buildroot.net/ --disable-libquadmath --disable-libsanitizer --enable-tls --disable-libmudflap --enable-threads --without-isl --without-cloog --with-float=soft --disable-decimal-float --with-abi=aapcs-linux --with-cpu=arm926ej-s --with-float=soft --with-mode=arm --enable-languages=c,c++ --with-build-time-tools=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/bin --enable-shared --disable-libgomp --enable-libssp]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 4.9.4 (Buildroot 2018.02.7_V1.0.05-gec2d034) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu']
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/cc1plus -quiet -v -iprefix /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/ -isysroot /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot -D_GNU_SOURCE /usr/share/cmake-3.22/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mcpu=arm926ej-s -mfloat-abi=soft -mabi=aapcs-linux -marm -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccj9plOc.s]
+  ignore line: [GNU C++ (Buildroot 2018.02.7_V1.0.05-gec2d034) version 4.9.4 (arm-anykav500-linux-uclibcgnueabi)]
+  ignore line: [	compiled by GNU C version 5.4.0 20160609  GMP version 6.1.2  MPFR version 3.1.6  MPC version 1.0.3]
+  ignore line: [warning: GMP header version 6.1.2 differs from library version 6.2.1.]
+  ignore line: [warning: MPFR header version 3.1.6 differs from library version 4.1.0.]
+  ignore line: [warning: MPC header version 1.0.3 differs from library version 1.2.1.]
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4"]
+  ignore line: [ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/arm-anykav500-linux-uclibcgnueabi"]
+  ignore line: [ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/backward"]
+  ignore line: [ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include"]
+  ignore line: [ignoring nonexistent directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/local/include"]
+  ignore line: [ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed"]
+  ignore line: [ignoring duplicate directory "/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/../../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4]
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/arm-anykav500-linux-uclibcgnueabi]
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include/c++/4.9.4/backward]
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include]
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/include-fixed]
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/include]
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C++ (Buildroot 2018.02.7_V1.0.05-gec2d034) version 4.9.4 (arm-anykav500-linux-uclibcgnueabi)]
+  ignore line: [	compiled by GNU C version 5.4.0 20160609  GMP version 6.1.2  MPFR version 3.1.6  MPC version 1.0.3]
+  ignore line: [warning: GMP header version 6.1.2 differs from library version 6.2.1.]
+  ignore line: [warning: MPFR header version 3.1.6 differs from library version 4.1.0.]
+  ignore line: [warning: MPC header version 1.0.3 differs from library version 1.2.1.]
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: cdabe829f67bf83b4ce22a86bb5c91d1]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu']
+  ignore line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/as -v -mcpu=arm926ej-s -mfloat-abi=soft -meabi=5 -o CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccj9plOc.s]
+  ignore line: [GNU assembler version 2.29.1 (arm-anykav500-linux-uclibcgnueabi) using BFD version (GNU Binutils) 2.29.1]
+  ignore line: [COMPILER_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu']
+  ignore line: [Linking CXX executable cmTC_b17da]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b17da.dir/link.txt --verbose=1]
+  ignore line: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++  -v CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_b17da ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++.br_real]
+  ignore line: [COLLECT_LTO_WRAPPER=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/lto-wrapper]
+  ignore line: [Target: arm-anykav500-linux-uclibcgnueabi]
+  ignore line: [Configured with: ./configure --prefix=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --sysconfdir=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/etc --enable-static --target=arm-anykav500-linux-uclibcgnueabi --with-sysroot=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/sysroot --disable-__cxa_atexit --with-gnu-ld --disable-multilib --with-gmp=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpc=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-mpfr=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi --with-pkgversion='Buildroot 2018.02.7_V1.0.05-gec2d034' --with-bugurl=http://bugs.buildroot.net/ --disable-libquadmath --disable-libsanitizer --enable-tls --disable-libmudflap --enable-threads --without-isl --without-cloog --with-float=soft --disable-decimal-float --with-abi=aapcs-linux --with-cpu=arm926ej-s --with-float=soft --with-mode=arm --enable-languages=c,c++ --with-build-time-tools=/home/leihaitao/nfs/project/buildroot/buildroot.stable/arm-anykav500-linux-uclibcgnueabi/arm-anykav500-linux-uclibcgnueabi/bin --enable-shared --disable-libgomp --enable-libssp]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 4.9.4 (Buildroot 2018.02.7_V1.0.05-gec2d034) ]
+  ignore line: [COMPILER_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib/:/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_b17da' '-shared-libgcc' '-mcpu=arm926ej-s' '-mfloat-abi=soft' '-mabi=aapcs-linux' '-marm' '-mtls-dialect=gnu']
+  link line: [ /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/collect2 -plugin /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/liblto_plugin.so -plugin-opt=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/lto-wrapper -plugin-opt=-fresolution=/tmp/ccap6qj2.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot --eh-frame-hdr -dynamic-linker /lib/ld-uClibc.so.0 -X -m armelf_linux_eabi -o cmTC_b17da /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crt1.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crti.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4 -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib -L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o /home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crtn.o]
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../libexec/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccap6qj2.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [--sysroot=/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib/ld-uClibc.so.0] ==> ignore
+    arg [-X] ==> ignore
+    arg [-m] ==> ignore
+    arg [armelf_linux_eabi] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_b17da] ==> ignore
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crt1.o] ==> obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crt1.o]
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crti.o] ==> obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crti.o]
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o] ==> obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o]
+    arg [-L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4] ==> dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4]
+    arg [-L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc] ==> dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc]
+    arg [-L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib] ==> dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib]
+    arg [-L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib] ==> dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib]
+    arg [-L/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib] ==> dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib]
+    arg [CMakeFiles/cmTC_b17da.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [-lstdc++] ==> lib [stdc++]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o] ==> obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o]
+    arg [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crtn.o] ==> obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crtn.o]
+  collapse obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o]
+  collapse obj [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o]
+  collapse library dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4]
+  collapse library dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc]
+  collapse library dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/../lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/../../../../arm-anykav500-linux-uclibcgnueabi/lib] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/lib]
+  collapse library dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib]
+  collapse library dir [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib] ==> [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib]
+  implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
+  implicit objs: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crt1.o;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crti.o;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtbegin.o;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4/crtend.o;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib/crtn.o]
+  implicit dirs: [/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc/arm-anykav500-linux-uclibcgnueabi/4.9.4;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/lib/gcc;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/lib;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/lib;/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/arm-anykav500-linux-uclibcgnueabi/sysroot/usr/lib]
+  implicit fwks: []
+
+
+
+
+Detecting CXX [-std=c++14] compiler features compiled with the following output:
+Change Dir: /home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_8833a/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_8833a.dir/build.make CMakeFiles/cmTC_8833a.dir/build
+gmake[1]: 进入目录“/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp”
+Building CXX object CMakeFiles/cmTC_8833a.dir/feature_tests.cxx.o
+/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++   -std=c++14 -o CMakeFiles/cmTC_8833a.dir/feature_tests.cxx.o -c /home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_8833a
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8833a.dir/link.txt --verbose=1
+/home/leo/workspace/CDV810QPT_LIB/outdoor/gcc/bin/arm-anykav500-linux-uclibcgnueabi-g++ CMakeFiles/cmTC_8833a.dir/feature_tests.cxx.o -o cmTC_8833a 
+gmake[1]: 离开目录“/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/CMakeFiles/CMakeTmp”
+
+
+
+    Feature record: CXX_FEATURE:1cxx_template_template_parameters
+    Feature record: CXX_FEATURE:1cxx_alias_templates
+    Feature record: CXX_FEATURE:1cxx_alignas
+    Feature record: CXX_FEATURE:1cxx_alignof
+    Feature record: CXX_FEATURE:1cxx_attributes
+    Feature record: CXX_FEATURE:1cxx_auto_type
+    Feature record: CXX_FEATURE:1cxx_constexpr
+    Feature record: CXX_FEATURE:1cxx_decltype
+    Feature record: CXX_FEATURE:1cxx_decltype_incomplete_return_types
+    Feature record: CXX_FEATURE:1cxx_default_function_template_args
+    Feature record: CXX_FEATURE:1cxx_defaulted_functions
+    Feature record: CXX_FEATURE:1cxx_defaulted_move_initializers
+    Feature record: CXX_FEATURE:1cxx_delegating_constructors
+    Feature record: CXX_FEATURE:1cxx_deleted_functions
+    Feature record: CXX_FEATURE:1cxx_enum_forward_declarations
+    Feature record: CXX_FEATURE:1cxx_explicit_conversions
+    Feature record: CXX_FEATURE:1cxx_extended_friend_declarations
+    Feature record: CXX_FEATURE:1cxx_extern_templates
+    Feature record: CXX_FEATURE:1cxx_final
+    Feature record: CXX_FEATURE:1cxx_func_identifier
+    Feature record: CXX_FEATURE:1cxx_generalized_initializers
+    Feature record: CXX_FEATURE:1cxx_inheriting_constructors
+    Feature record: CXX_FEATURE:1cxx_inline_namespaces
+    Feature record: CXX_FEATURE:1cxx_lambdas
+    Feature record: CXX_FEATURE:1cxx_local_type_template_args
+    Feature record: CXX_FEATURE:1cxx_long_long_type
+    Feature record: CXX_FEATURE:1cxx_noexcept
+    Feature record: CXX_FEATURE:1cxx_nonstatic_member_init
+    Feature record: CXX_FEATURE:1cxx_nullptr
+    Feature record: CXX_FEATURE:1cxx_override
+    Feature record: CXX_FEATURE:1cxx_range_for
+    Feature record: CXX_FEATURE:1cxx_raw_string_literals
+    Feature record: CXX_FEATURE:1cxx_reference_qualified_functions
+    Feature record: CXX_FEATURE:1cxx_right_angle_brackets
+    Feature record: CXX_FEATURE:1cxx_rvalue_references
+    Feature record: CXX_FEATURE:1cxx_sizeof_member
+    Feature record: CXX_FEATURE:1cxx_static_assert
+    Feature record: CXX_FEATURE:1cxx_strong_enums
+    Feature record: CXX_FEATURE:1cxx_thread_local
+    Feature record: CXX_FEATURE:1cxx_trailing_return_types
+    Feature record: CXX_FEATURE:1cxx_unicode_literals
+    Feature record: CXX_FEATURE:1cxx_uniform_initialization
+    Feature record: CXX_FEATURE:1cxx_unrestricted_unions
+    Feature record: CXX_FEATURE:1cxx_user_literals
+    Feature record: CXX_FEATURE:1cxx_variadic_macros
+    Feature record: CXX_FEATURE:1cxx_variadic_templates
+    Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
+    Feature record: CXX_FEATURE:1cxx_attribute_deprecated
+    Feature record: CXX_FEATURE:1cxx_binary_literals
+    Feature record: CXX_FEATURE:1cxx_contextual_conversions
+    Feature record: CXX_FEATURE:1cxx_decltype_auto
+    Feature record: CXX_FEATURE:1cxx_digit_separators
+    Feature record: CXX_FEATURE:1cxx_generic_lambdas
+    Feature record: CXX_FEATURE:1cxx_lambda_init_captures
+    Feature record: CXX_FEATURE:0cxx_relaxed_constexpr
+    Feature record: CXX_FEATURE:1cxx_return_type_deduction
+    Feature record: CXX_FEATURE:0cxx_variable_templates

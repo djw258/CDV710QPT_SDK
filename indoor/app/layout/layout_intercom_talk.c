@@ -108,11 +108,32 @@ static void intercom_talk_call_info_display(void)
         int index = extern_index_get_by_user(intercom_call_user);
         if (index != -1)
         {
-                lv_label_set_text_fmt(obj, "Call: %s %d    %04d-%02d-%02d %02d:%02d", lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), index, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "Call: %s %d", lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), index);
         }
         else
         {
-                lv_label_set_text_fmt(obj, "Call: %s    %04d-%02d-%02d %02d:%02d", intercom_call_user, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "Call: %s", intercom_call_user);
+        }
+}
+
+static void intercom_talk_call_date_display(void)
+{
+        lv_obj_t *obj = intercom_talk_call_top_obj_item_get(2);
+        if (obj == NULL)
+        {
+                SAT_DEBUG("lv_obj_t* obj = intercom_talk_call_top_obj_item_get(0);");
+                return;
+        }
+        struct tm tm;
+        user_time_read(&tm);
+        int index = extern_index_get_by_user(intercom_call_user);
+        if (index != -1)
+        {
+                lv_label_set_text_fmt(obj, "%04d-%02d-%02d %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+        }
+        else
+        {
+                lv_label_set_text_fmt(obj, "%04d-%02d-%02d %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
 }
 
@@ -135,7 +156,7 @@ static void intercom_talk_call_time_timer(lv_timer_t *ptime)
                 layout_monitor_goto_layout_process(true);
                 return;
         }
-        intercom_talk_call_info_display();
+        intercom_talk_call_date_display();
         intercom_talk_call_time_display();
         intercom_talk_timeout--;
 }
@@ -505,11 +526,11 @@ static void sat_layout_enter(intercom_talk)
                  ** 说明: 标题显示
                  ***********************************************/
                 {
-                        lv_common_text_create(parent, 0, 32, 25, 850, 42,
+                        lv_common_text_create(parent, 0, 273, 23, 478, 42,
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                              " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
                         intercom_talk_call_info_display();
                 }
                 /***********************************************
@@ -525,6 +546,19 @@ static void sat_layout_enter(intercom_talk)
                                               " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_RIGHT, lv_font_normal);
                         intercom_talk_call_time_display();
                         lv_sat_timer_create(intercom_talk_call_time_timer, 1000, NULL);
+                }
+                /***********************************************
+                 ** 作者: leo.liu
+                 ** 日期: 2023-2-2 13:46:56
+                 ** 说明: 日期显示
+                 ***********************************************/
+                {
+                        lv_common_text_create(parent, 2, 37, 25, 200, 73,
+                                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                        intercom_talk_call_date_display();
                 }
         }
         /***********************************************

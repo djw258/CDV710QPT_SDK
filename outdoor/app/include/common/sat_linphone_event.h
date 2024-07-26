@@ -178,4 +178,12 @@ bool sat_linphone_message_cmd_send(const char *user, const char *cmd);
 ** 说明: 查询通话状态
 ***********************************************/
 bool sat_linphone_calls_cmd_send(void);
+/************************************************************
+** 函数说明:主要是用来打开VI设备
+** 作者: xiaoxiao
+** 日期：2024-06-07 08:12:21
+** 参数说明:
+** 注意事项：
+************************************************************/
+bool sat_linphone_media_open_cmd_send(bool stream);
 #endif

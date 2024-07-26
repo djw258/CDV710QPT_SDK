@@ -203,7 +203,6 @@ static void setting_time_set_roller_click(lv_event_t *ev)
 
 static void sat_layout_enter(setting_time)
 {
-        standby_timer_close();
         /************************************************************
         ** 函数说明: 用来标志时间是否被修改了
         ** 作者: xiaoxiao

@@ -269,9 +269,11 @@ void alarm_release_detetion_timer(lv_timer_t *ptimer)
         {
                 if (user_data_get()->alarm.alarm_trigger[i] == true && user_data_get()->alarm.alarm_trigger_enable[i] == false)
                 {
+
                         if ((alarm_delay_count[i]++ == release_time) || (user_data_get()->alarm.alarm_enable_always[i] == true))
                         {
                                 main_sync_lock_set(true);
+                                alarm_delay_count[i] = 0;
                                 layout_common_alarm_log(security_emergency, i);
                                 asterisk_server_alarm_log_force(true);
                                 user_data_get()->alarm.alarm_trigger_enable[i] = true;

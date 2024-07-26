@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+Server: gSOAP/2.7
+Content-Type: application/soap+xml; charset=utf-8
+Content-Length: %d
+Connection: close
+
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope" ><SOAP-ENV:Header></SOAP-ENV:Header><SOAP-ENV:Body>%s</SOAP-ENV:Body></SOAP-ENV:Envelope>

@@ -45,6 +45,9 @@ enum
 	setting_language_obj_id_language_list_alabo,
 	setting_language_obj_id_language_list_alabo_label,
 	setting_language_obj_id_language_list_alabo_img,
+	setting_language_obj_id_language_list_bolan,
+	setting_language_obj_id_language_list_bolan_label,
+	setting_language_obj_id_language_list_bolan_img,
 };
 
 /***********************************************
@@ -86,7 +89,12 @@ static int setting_language_list_id_get(LANGUAGE_ID lang, int type)
 					setting_language_obj_id_language_list_alabo,
 					setting_language_obj_id_language_list_alabo_label,
 					setting_language_obj_id_language_list_alabo_img,
-			}
+			},
+			{
+					setting_language_obj_id_language_list_bolan,
+					setting_language_obj_id_language_list_bolan_label,
+					setting_language_obj_id_language_list_bolan_img,
+			},
 
 	};
 
@@ -136,7 +144,7 @@ static void setting_language_list_client(lv_event_t *ev)
 
 				user_data_get()->etc.language = id;
 				language_id_set(id);
-				user_data_save(false,false);
+				user_data_save(false, false);
 			}
 
 			return;

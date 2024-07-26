@@ -75,7 +75,7 @@ static void sat_layout_enter(emergency_setting)
         ** 注意事项:
         ************************************************************/
         {
-                lv_common_text_create(sat_cur_layout_screen_get(), emergency_occupy_obj_id_title, 372, 333, 281, 78,
+                lv_common_text_create(sat_cur_layout_screen_get(), emergency_occupy_obj_id_title, 372, 333, 281, 90,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

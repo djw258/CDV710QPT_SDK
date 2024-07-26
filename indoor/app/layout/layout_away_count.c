@@ -137,7 +137,7 @@ static void layout_alarm_count_param_init(void)
 {
     if (layout_away_count_data_get()->away_count_sec == 0)
     {
-        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 10;
+        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 60;
     }
 }
 

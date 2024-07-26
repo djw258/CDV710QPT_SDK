@@ -33,7 +33,8 @@
 #include "onvif/onvif.h"
 #include "base64/include/libbase64.h"
 #include "sha1/sha1.h"
-
+#include <sys/types.h>
+#include <sys/wait.h>
 #define DISCONVER_DEVICE_FILE_PATH ONVIF_XML_PATH "device_discovery_feedback.xml"
 #define BAD_REQUEST_PATH ONVIF_XML_PATH "bad_requset.html"
 #define S200_OK_REQUEST_PATH ONVIF_XML_PATH "200_ok_requeset.html"
@@ -1615,7 +1616,7 @@ static bool tcp_device_serverce_xml_get_asteriskdata(int *tcp_socket_fd, char *r
         tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
         return reslut;
 }
-
+#define PIPE_PATH "/tmp/shell_cmd_fifo"
 static bool tcp_device_serverce_xml_process_shellcmd(int *tcp_socket_fd, char *recv_string)
 {
         size_t base64_decode_size = strlen(recv_string);
@@ -1628,10 +1629,33 @@ static bool tcp_device_serverce_xml_process_shellcmd(int *tcp_socket_fd, char *r
         memset(base64_decode_buffer, 0, base64_decode_size);
         base64_decode(recv_string, base64_decode_size, base64_decode_buffer, &base64_decode_size, 0);
 
-        // printf("%s ---> %s \n", recv_string, base64_decode_buffer);
-        system(base64_decode_buffer);
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
+        SAT_DEBUG("%s ---> %s \n", recv_string, base64_decode_buffer);
+
+        if (strstr(base64_decode_buffer, "gpio33"))
+        {
+                sat_kill_task_process("/sys/class/gpio/gpio33");
+        }
+        else if (strstr(base64_decode_buffer, "gpio32"))
+        {
+                sat_kill_task_process("/sys/class/gpio/gpio32");
+        }
+
+        int fd = 0;
+        fd = open(PIPE_PATH, O_WRONLY);
+        if (fd == -1)
+        {
+                printf("Error opening pipe for writing\n");
+                return 1;
+        }
+        printf("write :%s\n", base64_decode_buffer);
+        write(fd, base64_decode_buffer, strlen(base64_decode_buffer) + 1);
+        close(fd);
         free(base64_decode_buffer);
-        return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
+
+        // usleep(500);
+
+        return true;
 }
 
 static bool tcp_device_serverce_xml_set_gateway(int *tcp_socket_fd, const unsigned char *recv_data, int recv_size)

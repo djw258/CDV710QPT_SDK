@@ -425,8 +425,9 @@ static void setting_sensor_settings_list_click(lv_event_t *e)
     item[1] = lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NO);
     item[2] = lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NC);
     item[3] = lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_ALWAYS);
-    lv_obj_t *msgbox = layout_senesor_setting_msgbox_create("Sensor setting",
-                                                            sensor_setting_msgbox_cancel_click, sensor_setting_msgbox_confirm_click, sensor_setting_msgbox_click,
+    lv_obj_t *msgbox = layout_senesor_setting_msgbox_create(lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_SETTINGS),
+                                                            sensor_setting_msgbox_cancel_click,
+                                                            sensor_setting_msgbox_confirm_click, sensor_setting_msgbox_click,
                                                             item);
     setting_sensor_settings_option_display(msgbox);
 }

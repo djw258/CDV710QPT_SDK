@@ -1,0 +1,11 @@
+POST /onvif/device_service HTTP/1.1
+Host: %s
+Content-Type: application/soap+xml; charset=utf-8
+%sContent-Length: %d
+
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope">
+  %s<soap:Body>
+    <soap:%s>%s</soap:%s>
+  </soap:Body>
+</soap:Envelope>

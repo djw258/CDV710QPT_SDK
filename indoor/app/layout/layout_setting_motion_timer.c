@@ -543,17 +543,17 @@ static void sat_layout_enter(setting_motion_timer)
                         lv_obj_add_event_cb(roller, setting_moiton_timer_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
                 }
 
-                lv_common_text_create(parent, setting_motion_timer_obj_id_start_labelj, 90, 70, 66, 43,
+                lv_common_text_create(parent, setting_motion_timer_obj_id_start_labelj, 30, 70, 186, 43,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(SETTING_MOTION_XLS_LANG_ID_START), 0XFFFFFFFF, 0XFFFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_MOTION_XLS_LANG_ID_START), 0XFFFFFFFF, 0XFFFFFFFF, LV_TEXT_ALIGN_CENTER_CENTER, lv_font_large);
 
-                lv_common_text_create(parent, setting_motion_timer_obj_id_end_label, 90, 270, 66, 43,
+                lv_common_text_create(parent, setting_motion_timer_obj_id_end_label, 30, 270, 186, 43,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(SETTING_MOTION_XLS_LANG_ID_END), 0XFFFFFFFF, 0XFFFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_MOTION_XLS_LANG_ID_END), 0XFFFFFFFF, 0XFFFFFFFF, LV_TEXT_ALIGN_CENTER_CENTER, lv_font_large);
         }
         setting_motion_time_param_init();
 }

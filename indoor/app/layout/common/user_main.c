@@ -258,7 +258,7 @@ asterisk_server_sync_task(void *arg)
                                 timeout++;
                                 if (timeout == 100) // 1分钟左右同步一次数据
                                 {
-                                        is_asterisk_server_sync_network_data_force = false;
+                                        is_asterisk_server_sync_user_data_force = false;
                                         sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                                 }
                                 else if (timeout == 150) // 1分钟左右同步一次数据
@@ -268,7 +268,7 @@ asterisk_server_sync_task(void *arg)
                                 }
                                 else if (timeout == 200)
                                 {
-                                        is_asterisk_server_sync_user_data_force = false;
+                                        is_asterisk_server_sync_network_data_force = false;
                                         sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
                                 }
                                 else if (timeout == 250)
@@ -312,7 +312,7 @@ int main(int argc, char *argv[])
         // system("sysctl -w kernel.printk=\"3 3 3 3\""); // 设置内核打印等级，忽略内核打印
         signal(SIGCHLD, sigchld);
         signal(SIGPIPE, SIG_IGN);
-        signal(SIGSEGV, signal_handler);
+        // signal(SIGSEGV, signal_handler);
         signal(SIGILL, signal_handler);
         signal(SIGABRT, signal_handler);
         signal(SIGFPE, signal_handler);

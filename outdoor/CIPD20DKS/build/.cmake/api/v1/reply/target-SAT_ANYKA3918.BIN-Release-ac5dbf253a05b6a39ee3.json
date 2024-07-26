@@ -1,0 +1,452 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "SAT_ANYKA3918.BIN"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries",
+			"add_definitions",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 116,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 125,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 18,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 56,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 33,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 39,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 65,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 69,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 73,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : " -O2 -s -Wall -std=gnu11  -Werror"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 3,
+					"define" : "CIPD20DKS"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "ENABLE_DEBUG"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "ENABLE_TRACE"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "IN_LINPHONE"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "LEO_ADD_LINPHONE"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "LEO_MULTICASE_RTP"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "MAC_ETH0_BACKUP_PATH=\"/etc/config/mac_backup.txt\""
+				},
+				{
+					"backtrace" : 3,
+					"define" : "MAC_ETH0_PATH=\"/etc/config/mac.txt\""
+				},
+				{
+					"backtrace" : 3,
+					"define" : "MAC_ETH1_PATH=\"/appconfigs/run/eth1_mac\""
+				},
+				{
+					"backtrace" : 3,
+					"define" : "ONVIF_XML_PATH=\"/app/onvif/\""
+				},
+				{
+					"backtrace" : 4,
+					"define" : "OSIP_MT"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "RESOURCE_RING_PATH=\"/app/rings/\""
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 5,
+					"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/../common"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/../layout"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/../res"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/../include"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/../share"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/../share/zlib"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/../share/onvif"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/../share/tuya"
+				}
+			],
+			"language" : "C",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7
+			]
+		}
+	],
+	"id" : "SAT_ANYKA3918.BIN::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-O2 -s -Wall -std=gnu11  -Werror",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-L/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/../lib/anyka",
+				"role" : "libraryPath"
+			},
+			{
+				"fragment" : "-Wl,-rpath,/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/build/../lib/anyka",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-Wl,--start-group",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-lstdc++",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-lm",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-lpthread",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-ldl",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/common/libuser_common.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/libbase64.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/libexosip2.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/libffmpeg.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/liblinphone.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/liblive555.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/libmediastreamer2.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/libmxml.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/libonvif.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/libortp.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/libosip2.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/libsha1.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/libspeex.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..//lib/share/libzlib.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_ao",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_thread",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_vqe",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_mem",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_common",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_osal",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_ai",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_vi",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lakaudiofilter",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_isp_sdk",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_log",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_dbg",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lplat_vpss",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lmpi_venc",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lakv_encode",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-Wl,--end-group",
+				"role" : "libraries"
+			}
+		],
+		"language" : "C"
+	},
+	"name" : "SAT_ANYKA3918.BIN",
+	"nameOnDisk" : "SAT_ANYKA3918.BIN",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/layout/common/user_data.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/layout/common/user_gpio.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/layout/common/user_key.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/layout/common/user_linphone.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/layout/common/user_main.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/layout/common/user_monitor.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/layout/common/user_network.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/leo/workspace/CDV810QPT_LIB/outdoor/CIPD20DKS/layout/common/user_record.c",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

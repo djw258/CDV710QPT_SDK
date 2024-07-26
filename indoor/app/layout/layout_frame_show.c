@@ -564,6 +564,10 @@ static void frame_show_date_obj_display(lv_obj_t *parent)
 	{
 		lv_label_set_text_fmt(label_date, "%d %s %04d %s", tm.tm_mday, mon_str, tm.tm_year, week_str);
 	}
+	else if (lang == LANGUAGE_ID_BOLAN)
+	{
+		lv_label_set_text_fmt(label_date, "%d %s %04d %s", tm.tm_mday, mon_str, tm.tm_year, week_str);
+	}
 }
 
 static void frame_show_setting_time_label_display(void)
@@ -590,7 +594,7 @@ static void frame_show_setting_time_label_display(void)
 	lv_obj_t *time_obj = lv_obj_get_child_form_id(parent, frame_show_scr_act_obj_id_timer_label_obj);
 	if (time_obj == NULL)
 	{
-		time_obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_timer_label_obj, 360, 139, 304, 147,
+		time_obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_timer_label_obj, 260, 139, 504, 147,
 																		 NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0,
 																		 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 																		 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -600,7 +604,7 @@ static void frame_show_setting_time_label_display(void)
 	lv_obj_t *date_obj = lv_obj_get_child_form_id(parent, frame_show_scr_act_obj_id_date_label_obj);
 	if (date_obj == NULL)
 	{
-		date_obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_date_label_obj, 360, 288, 304, 30,
+		date_obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_date_label_obj, 260, 288, 504, 30,
 																		 NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0,
 																		 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 																		 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
