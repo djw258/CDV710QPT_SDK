@@ -17,7 +17,6 @@ enum
         layout_alarm_obj_id_passwd_cont,
 
         layout_alarm_obj_id_buzzer_call_label,
-
 };
 
 typedef enum

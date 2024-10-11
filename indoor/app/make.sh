@@ -38,6 +38,7 @@ copy_to_rootfs()
         cp -r ./layout/resource/ttf/ ./rootfs/board/CDV810QPT/resource/
         cp -r ./layout/resource/ui/ ./rootfs/board/CDV810QPT/resource/
         cp -r ./layout/resource/wallpaper/ ./rootfs/board/CDV810QPT/resource/
+        cp -r ./layout/resource/tuya/* ./rootfs/board/CDV810QPT/tuya/
 }
 make_rootfs()
 {	
@@ -51,7 +52,7 @@ make_rootfs()
        
 }
 
-make_app
+# make_app
 
 if [ $# -ge 1 ] && [ $1 == "rootfs" ]; then
 

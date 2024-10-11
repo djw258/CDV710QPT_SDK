@@ -68,6 +68,7 @@ static bool layout_power_setting_default_data_changge_check(void)
 	memcpy(&default_user_data, user_default_data_get(), sizeof(user_data_info));
 	// 拷贝启动以后才自动赋值的变量
 	memcpy(default_user_data.mastar_wallpad_ip, user_data_get()->mastar_wallpad_ip, sizeof(user_data_get()->mastar_wallpad_ip));
+	default_user_data.etc.language = user_data_get()->etc.language;
 	default_user_data.sync_timestamp = user_data_get()->sync_timestamp;
 	memcpy(default_user_data.compile_time, user_data_get()->compile_time, sizeof(user_data_get()->compile_time));
 	memcpy(default_user_data.alarm.alarm_gpio_value_group, user_data_get()->alarm.alarm_gpio_value_group, sizeof(user_data_get()->alarm.alarm_gpio_value_group));
@@ -85,7 +86,6 @@ static bool layout_power_setting_default_data_changge_check(void)
 ***********************************************/
 static void power_setting_skip_btn_client(lv_event_t *ev)
 {
-
 	if (layout_power_setting_default_data_changge_check())
 	{
 		lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(power_setting_obj_id_msgbox_bg, 0, 282, 143, 460, 283);
@@ -96,6 +96,7 @@ static void power_setting_skip_btn_client(lv_event_t *ev)
 	{
 		user_data_get()->is_device_init = true;
 		user_data_save(false, false);
+		network_data_save();
 		sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 	}
 }

@@ -829,10 +829,12 @@ static void monitor_obj_talk_click(lv_event_t *e)
                 {
                         sat_linphone_audio_input_volume_set(13);
                 }
+
                 int cur_volume = 0;
                 if (is_channel_ipc_camera(ch) == 0)
                 {
                         cur_volume = user_data_get()->audio.entrance_voice;
+                        sat_ipcamera_device_talking_status_report(1, ch, 1000); // 针对CIPD20DKS
                 }
                 else if (ch == 16)
                 {
@@ -955,15 +957,14 @@ static void *monitor_unlock_ctrl_task(void *arg)
                 sprintf(cmd, "echo %d > /sys/class/gpio/export;echo out > /sys/class/gpio/gpio%d/direction;echo 1 > /sys/class/gpio/gpio%d/value;", gpio_id, gpio_id, gpio_id);
                 char lock_cmd_buff[256] = {0};
                 int duration_index = user_data_get()->etc.open_duration_time[info->ch];
-                double open_duration_time = duration_index == 0 ? 10.5 : duration_index == 1 ? 3
-                                                                     : duration_index == 2   ? 5
-                                                                     : duration_index == 3   ? 7
-                                                                     : duration_index == 4   ? 10
-                                                                     : duration_index == 5   ? 15
-                                                                                             : 20;
+                double open_duration_time = duration_index == 0 ? 1.5 : duration_index == 1 ? 3
+                                                                    : duration_index == 2   ? 5
+                                                                    : duration_index == 3   ? 7
+                                                                    : duration_index == 4   ? 10
+                                                                    : duration_index == 5   ? 15
+                                                                                            : 20;
 
                 sprintf(lock_cmd_buff, "(sleep %.1f; echo 0 > /sys/class/gpio/gpio%d/value)&", open_duration_time, gpio_id);
-                SAT_DEBUG("lock_cmd_buff is %s", lock_cmd_buff);
                 strcat(cmd, lock_cmd_buff);
                 // cmd[1] = lock_cmd_buff;
 
@@ -2389,8 +2390,11 @@ static void sat_layout_enter(monitor)
         is_monitor_snapshot_ing = true;
         is_monitor_record_video_ing = true;
         monitor_timeout_sec_reset(30);
-
         int ch = monitor_channel_get();
+        if (is_channel_ipc_camera(ch) == 0)
+        {
+                sat_ipcamera_device_talking_status_report(0, ch, 1000); // 针对CIPD20DKS
+        }
         if ((is_channel_ipc_camera(monitor_channel_get()) == 0) && ((user_data_get()->system_mode & 0xf) == 0x01 || monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG)) // 主机或者分机手动进门监控才通知门改变分辨率,所有分机都发指令给门，对门的负荷大
         {
                 if (tuya_api_client_num() >= 1)
@@ -3445,6 +3449,10 @@ static bool truye_event_cmd_audio_start(void)
                                                                                : -1;
                 call_timestamp[index] = user_timestamp_get();
                 sat_linphone_answer(-1, true);
+                if (is_channel_ipc_camera(ch) == 0)
+                {
+                        sat_ipcamera_device_talking_status_report(1, ch, 1000); // 针对CIPD20DKS
+                }
                 monitor_obj_talk_display();
                 monitor_obj_handup_display();
                 monitor_obj_normal_lock_display();

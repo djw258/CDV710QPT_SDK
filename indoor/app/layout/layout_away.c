@@ -1339,13 +1339,13 @@ static void sat_layout_enter(away)
     ** 注意事项:
     ************************************************************/
     {
-        lv_obj_t *obj = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), layout_away_obj_id_main_bg, 514, 100, 510, 500,
+        lv_obj_t *obj = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), layout_away_obj_id_main_bg, 514, 60, 510, 540,
                                                       NULL, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      0, 300, 514, 46, layout_away_obj_id_main_bg_tips,
+                                                      0, 360, 514, 46, layout_away_obj_id_main_bg_tips,
                                                       lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_RUNNING), 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
-                                                      0, 0, 510, 300, -1,
+                                                      0, 60, 510, 300, -1,
                                                       resource_ui_src_get("img_away.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         if (!user_data_get()->alarm.away_alarm_enable)
             lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);

@@ -278,4 +278,10 @@ void ipcamera_online_check_func_register(bool (*callback)(int ch, int status, ch
 
 // ipcamera注册检查回调函数
 void ipcamera_register_query_func_register(bool (*callback)(int status));
+/****************************************************************
+**@日期: 2023-09-21
+**@作者: leo.liu
+**@功能: 室内机通知门口机，室内机点击了接受通话按键(客户需求，需要对通话状态的门口机作特殊处理，但因为室内机手动监控的时候，门口机默认自动建立通话，且暴露给用户仍然为未通话状态)
+*****************************************************************/
+bool sat_ipcamera_device_talking_status_report(int status, int index, int timeout);
 #endif
